@@ -1,0 +1,5 @@
+# gitignore
+# ignore the following files and file extensions
+*.desktop
+*.avi
+
