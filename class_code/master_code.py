@@ -50,6 +50,9 @@ import cv2
 import os
 import gc
 
+import demo_steering as demo
+from helpers import intialize_car
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-c", "--confidence", type=float, default=0.5,
@@ -173,13 +176,19 @@ config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)
 pipeline.start(config)
 
 # initialize communication with the arduino
-ser = serial.Serial("/dev/ttyUSB0",115200)
-ser.flushInput()
+initialize_car()
+
 time.sleep(2)
 
+<<<<<<< HEAD
 # loop over frames from the video file stream
 try:
     while True:
+=======
+try:
+        # loop over frames from the video file stream
+        while True:
+>>>>>>> 389a8ddc4017c5d159638bd571975d6781753534
         # read the next frame from the file
         (grabbed, frame) = vs.read()
 
@@ -240,7 +249,11 @@ try:
         '''
         Use the following functions to access the data.
         get_all_data returns the current time followed by all the data.
+<<<<<<< HEAD
         The other functions return the current time and only the corresponding data.
+=======
+        The other functions return the current time and only the corresponding data. 
+>>>>>>> 389a8ddc4017c5d159638bd571975d6781753534
         Store and use the data however you decide
         '''
         all_data = get_all_data()
@@ -251,6 +264,7 @@ try:
         object_id = get_class_id()
         object_score = get_score()
         object_bb = get_bb() # bounding box coordinates (x, y, w, h). (x, y) are the
+<<<<<<< HEAD
      # top left coordinates of the bounding box. (w, h) are
              # the width and height of the bounding box
 
@@ -258,6 +272,15 @@ try:
         #print("RGB is of type ", type(rgb),  " and contains: ", rgb)
         #print("Accel is of type ", type(accel),  " and contains: ", accel)
         #print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
+=======
+                 # top left coordinates of the bounding box. (w, h) are
+                     # the width and height of the bounding box
+
+        print("Depth is of type ", type(depth),  " and contains: ", depth)
+        print("RGB is of type ", type(rgb),  " and contains: ", rgb)
+        print("Accel is of type ", type(accel),  " and contains: ", accel)
+        print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
+>>>>>>> 389a8ddc4017c5d159638bd571975d6781753534
         #print("ID is of type ", type(object_id),  " and contains: ", object_id)
         #print("Score is of type ", type(object_score),  " and contains: ", object_score)
         #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
@@ -265,6 +288,7 @@ try:
         '''
         Controlling the Car
         Use the following functions to control the car:
+<<<<<<< HEAD
         steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight
         drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
         	IMPORTANT: Never go full speed. See note near top of file.
@@ -306,7 +330,20 @@ try:
         '''
 except KeyboardInterrupt:
     pass
+=======
+        steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight 
+        drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
+            IMPORTANT: Never go full speed. See note near top of file.
+            time.sleep(x) can be used in between function calls if needed, where x is time in seconds
+        '''
 
+        demo.demo_steering()
 
-#writer.release()
-vs.release()
+except KeyboardInterrupt:
+>>>>>>> 389a8ddc4017c5d159638bd571975d6781753534
+
+    drive(1500)
+    steer(1500)
+
+    #writer.release()
+    vs.release()
