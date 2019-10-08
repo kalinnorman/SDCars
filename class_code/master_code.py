@@ -254,10 +254,10 @@ try:
         object_score = get_score()
         object_bb = get_bb() # bounding box coordinates (x, y, w, h). (x, y) are the
 
-        print("Depth is of type ", type(depth),  " and contains: ", depth)
-        print("RGB is of type ", type(rgb),  " and contains: ", rgb)
-        print("Accel is of type ", type(accel),  " and contains: ", accel)
-        print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
+        #print("Depth is of type ", type(depth),  " and contains: ", depth)
+        #print("RGB is of type ", type(rgb),  " and contains: ", rgb)
+        #print("Accel is of type ", type(accel),  " and contains: ", accel)
+        #print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
         #print("ID is of type ", type(object_id),  " and contains: ", object_id)
         #print("Score is of type ", type(object_score),  " and contains: ", object_score)
         #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
