@@ -4,7 +4,7 @@ Repository for Team 2, Self-Driving Cars class
 
 ## Jetson Notes
 
-Note that both your computer and the Jetson must be on the NETGEAR24 network in order to SSH into it correctly.
+Note that both your computer and the Jetson must be on the NETGEAR24 network in order to SSH into it correctly (password is greattrail272).
 
 If you do not see the `SDCars` or `class_code` folders on the Desktop when you power on the Jetson, it did not boot to the SD card. You must restart the Jetson if this happens. Unplug it, reinsert the SD card, and try again. If you use the `reboot` command in the terminal, you will likely not boot to the SD card. 
 
