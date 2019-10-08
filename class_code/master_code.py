@@ -50,7 +50,7 @@ import cv2
 import os
 import gc
 
-import demo_steering as demo
+from demo_steering import demo_steering
 from helpers import initialize_car
 
 # construct the argument parse and parse the arguments
@@ -176,7 +176,7 @@ config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)
 pipeline.start(config)
 
 # initialize communication with the arduino
-initialize_car()
+initialize_car(pid=False)
 
 
 # loop over frames from the video file stream
@@ -271,7 +271,7 @@ try:
             time.sleep(x) can be used in between function calls if needed, where x is time in seconds
         '''
 
-        demo.demo_steering()
+        demo_steering()
 
         '''
         # Example car control
