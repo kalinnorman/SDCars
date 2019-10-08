@@ -23,7 +23,7 @@ def send_command(ser, command, addnewline=False):
     ser.write(command.encode())
 
 
-def intialize_car(pid=True):
+def initialize_car(pid=True):
     """
     Initializes the car. This must be run before we can control the car.
     :return:

@@ -21,6 +21,9 @@ def demo_steering():
     time.sleep(1)
     master.drive(1600)
     time.sleep(2)
+    master.drive(1700)
+    time.sleep(2)
+    master.drive(1600)
     master.drive(1500)
     time.sleep(1)
 
