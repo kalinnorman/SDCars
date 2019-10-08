@@ -5,7 +5,7 @@ Author: redd
 This is a demo function for controlling the car
 """
 
-import master_code as master
+from car_control import steer, drive
 import time
 
 
@@ -15,16 +15,16 @@ def demo():
     :return:
     """
     print("Driving")
-    master.steer(1200)
+    steer(1200)
     time.sleep(1)
-    master.steer(1800)
+    steer(1800)
     time.sleep(1)
-    master.drive(1600)
+    drive(1600)
     time.sleep(2)
-    master.drive(1700)
+    drive(1700)
     time.sleep(2)
-    master.drive(1600)
-    master.drive(1500)
+    drive(1600)
+    drive(1500)
     time.sleep(1)
 
     '''
