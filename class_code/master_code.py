@@ -51,6 +51,7 @@ import os
 import gc
 
 import demo_steering as demo
+from helpers import intialize_car
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -175,8 +176,8 @@ config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)
 pipeline.start(config)
 
 # initialize communication with the arduino
-ser = serial.Serial("/dev/ttyUSB0",115200)
-ser.flushInput()
+initialize_car()
+
 time.sleep(2)
 
 try:
