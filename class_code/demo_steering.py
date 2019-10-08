@@ -9,7 +9,7 @@ import master_code as master
 import time
 
 
-def demo_steering():
+def demo():
     """
     Demo steering commands.
     :return:

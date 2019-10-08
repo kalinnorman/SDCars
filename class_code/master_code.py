@@ -50,7 +50,7 @@ import cv2
 import os
 import gc
 
-from demo_steering import demo_steering
+import demo_steering
 from helpers import initialize_car
 
 # construct the argument parse and parse the arguments
@@ -271,7 +271,7 @@ try:
             time.sleep(x) can be used in between function calls if needed, where x is time in seconds
         '''
 
-        demo_steering()
+        demo_steering.demo()
 
         '''
         # Example car control
