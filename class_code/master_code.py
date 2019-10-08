@@ -3,29 +3,29 @@
 Use the following inputs to control the car
 *************** Inputs ***************
 From the Realsense camera:
-	Depth Data
-	RGB Data
-	Gyroscope Data
-	Accelerometer Data
+    Depth Data
+    RGB Data
+    Gyroscope Data
+    Accelerometer Data
 From GPS system
-	GPS Coordinates
+    GPS Coordinates
 From yolo
-	Class ID
-	Confidence
-	Bounding Box Coordinates
+    Class ID
+    Confidence
+    Bounding Box Coordinates
 **************************************
 ******* Controlling The Car **********
-	steer(int degree)	1000 = Full left turn
-				2000 = Full right turn
-				1500 = (nearly) Straight
-	drive(int speed)  	1000 = Fast reverse
-				2000 = Fast forward
-				1500 = (nearly) Stopped
-				EXTREMELY IMPORTANT: Be very careful whe controlling the car.
-				NEVER tell it to go full speed. Safely test the car to find
-				a safe range for your particular car, and don't go beyond that
-				speed. These cars can go very fast, and there is expensive hardware
-				on them, so don't risk losing control of the car and breaking anything.
+    steer(int degree)	1000 = Full left turn
+    2000 = Full right turn
+    1500 = (nearly) Straight
+    drive(int speed)  	1000 = Fast reverse
+    2000 = Fast forward
+    1500 = (nearly) Stopped
+    EXTREMELY IMPORTANT: Be very careful whe controlling the car.
+    NEVER tell it to go full speed. Safely test the car to find
+    a safe range for your particular car, and don't go beyond that
+    speed. These cars can go very fast, and there is expensive hardware
+    on them, so don't risk losing control of the car and breaking anything.
 **************************************
 '''
 
@@ -124,7 +124,7 @@ def get_all_data():
    global current_score
    global current_bb
    return (time.time(), current_depth, current_rgb, current_gyro,
-	   current_accel, current_class_id, current_score, current_bb)
+       current_accel, current_class_id, current_score, current_bb)
 
 # Functions to access camera/IMU data
 def get_depth_data():
@@ -181,129 +181,129 @@ time.sleep(2)
 try:
     while True:
         # read the next frame from the file
-	    (grabbed, frame) = vs.read()
+        (grabbed, frame) = vs.read()
 
-	    # if the frame was not grabbed, then we have reached the end
-	    # of the stream
-	    if not grabbed:
-	        break
+        # if the frame was not grabbed, then we have reached the end
+        # of the stream
+        if not grabbed:
+            break
 
-	    # if the frame dimensions are empty, grab them
-	    if W is None or H is None:
-	        (H, W) = frame.shape[:2]
+        # if the frame dimensions are empty, grab them
+        if W is None or H is None:
+            (H, W) = frame.shape[:2]
 
-	    # start realsense pipeline
-	    rsframes = pipeline.wait_for_frames()
+        # start realsense pipeline
+        rsframes = pipeline.wait_for_frames()
 
-	    # Implement YOLOv3MXNet
-	    net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)
+        # Implement YOLOv3MXNet
+        net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)
 
-	    # from gluoncv import data
-	    yolo_image = Image.fromarray(frame, 'RGB')
-	    x, img = load_test(yolo_image, short=416)
+        # from gluoncv import data
+        yolo_image = Image.fromarray(frame, 'RGB')
+        x, img = load_test(yolo_image, short=416)
 
-	    # Set device to GPU
-	    device=mx.gpu()
+        # Set device to GPU
+        device=mx.gpu()
 
-	    net.collect_params().reset_ctx(device)
+        net.collect_params().reset_ctx(device)
 
-	    class_IDs, scores, bounding_boxs = net(x.copyto(device))
+        class_IDs, scores, bounding_boxs = net(x.copyto(device))
 
-	    # Convert to numpy arrays, then to lists
-	    class_IDs = class_IDs.asnumpy().tolist()
-	    scores = scores.asnumpy().tolist()
-	    bounding_boxs = bounding_boxs.asnumpy()
+        # Convert to numpy arrays, then to lists
+        class_IDs = class_IDs.asnumpy().tolist()
+        scores = scores.asnumpy().tolist()
+        bounding_boxs = bounding_boxs.asnumpy()
 
-	    # iterate through detected objects, updating global variable
-	    for i in range(len(class_IDs[0])):
-	        if ((scores[0][i])[0]) > args["confidence"]:
-	            current_class_id = net.classes[int((class_IDs[0][i])[0])]
-	            current_score = (scores[0][i])[0]
-	            current_bb = bounding_boxs[0][i]
+        # iterate through detected objects, updating global variable
+        for i in range(len(class_IDs[0])):
+            if ((scores[0][i])[0]) > args["confidence"]:
+                current_class_id = net.classes[int((class_IDs[0][i])[0])]
+                current_score = (scores[0][i])[0]
+                current_bb = bounding_boxs[0][i]
 
-	    # iterate through camera/IMU data, updating global variable
-	    for rsframe in rsframes:
-	        # Retrieve IMU data
-	        if rsframe.is_motion_frame():
-	            current_accel = accel_data(rsframe.as_motion_frame().get_motion_data())
-	            current_gyro = gyro_data(rsframe.as_motion_frame().get_motion_data())
-	        # Retrieve depth data
-	        if rsframe.is_depth_frame():
-	            depth_frame = rsframes.get_depth_frame()
-	            # Convert to numpy array
-	            depth_image = np.asanyarray(depth_frame.get_data())
-	            current_depth = depth_image
-	            current_rgb = frame
+        # iterate through camera/IMU data, updating global variable
+        for rsframe in rsframes:
+            # Retrieve IMU data
+            if rsframe.is_motion_frame():
+                current_accel = accel_data(rsframe.as_motion_frame().get_motion_data())
+                current_gyro = gyro_data(rsframe.as_motion_frame().get_motion_data())
+            # Retrieve depth data
+            if rsframe.is_depth_frame():
+                depth_frame = rsframes.get_depth_frame()
+                # Convert to numpy array
+                depth_image = np.asanyarray(depth_frame.get_data())
+                current_depth = depth_image
+                current_rgb = frame
 
-	    gc.collect()
+        gc.collect()
 
-	    '''
-	    Use the following functions to access the data.
-	    get_all_data returns the current time followed by all the data.
-	    The other functions return the current time and only the corresponding data.
-	    Store and use the data however you decide
-	    '''
-	    all_data = get_all_data()
-	    depth = get_depth_data()
-	    rgb = get_rgb_data()
-	    accel = get_accel_data()
-	    gyro = get_gyro_data()
-	    object_id = get_class_id()
-	    object_score = get_score()
-	    object_bb = get_bb() # bounding box coordinates (x, y, w, h). (x, y) are the
-				 # top left coordinates of the bounding box. (w, h) are
-			         # the width and height of the bounding box
+        '''
+        Use the following functions to access the data.
+        get_all_data returns the current time followed by all the data.
+        The other functions return the current time and only the corresponding data.
+        Store and use the data however you decide
+        '''
+        all_data = get_all_data()
+        depth = get_depth_data()
+        rgb = get_rgb_data()
+        accel = get_accel_data()
+        gyro = get_gyro_data()
+        object_id = get_class_id()
+        object_score = get_score()
+        object_bb = get_bb() # bounding box coordinates (x, y, w, h). (x, y) are the
+     # top left coordinates of the bounding box. (w, h) are
+             # the width and height of the bounding box
 
-	    #print("Depth is of type ", type(depth),  " and contains: ", depth)
-	    #print("RGB is of type ", type(rgb),  " and contains: ", rgb)
-	    #print("Accel is of type ", type(accel),  " and contains: ", accel)
-	    #print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
-	    #print("ID is of type ", type(object_id),  " and contains: ", object_id)
-	    #print("Score is of type ", type(object_score),  " and contains: ", object_score)
-	    #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
+        #print("Depth is of type ", type(depth),  " and contains: ", depth)
+        #print("RGB is of type ", type(rgb),  " and contains: ", rgb)
+        #print("Accel is of type ", type(accel),  " and contains: ", accel)
+        #print("Gyro is of type ", type(gyro),  " and contains: ", gyro)
+        #print("ID is of type ", type(object_id),  " and contains: ", object_id)
+        #print("Score is of type ", type(object_score),  " and contains: ", object_score)
+        #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
 
-	    '''
-	    Controlling the Car
-	    Use the following functions to control the car:
-	    steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight
-	    drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
-	    	IMPORTANT: Never go full speed. See note near top of file.
-	        time.sleep(x) can be used in between function calls if needed, where x is time in seconds
-	    '''
+        '''
+        Controlling the Car
+        Use the following functions to control the car:
+        steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight
+        drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
+        	IMPORTANT: Never go full speed. See note near top of file.
+            time.sleep(x) can be used in between function calls if needed, where x is time in seconds
+        '''
 
-	    print("Driving")
-	    steer(1200)
-	    time.sleep(1)
-	    steer(1800)
-	    time.sleep(1)
-		drive(1600)
-		time.sleep(2)
-	    '''
-	    # Example car control
-	    print("Turn right")
-	    steer(1800)
-	    time.sleep(1)
-	    print("Turn left")
-	    steer(1200)
-	    time.sleep(1)
-	    print("Turn straight")
-	    steer(1500)
-	    time.sleep(1)
+        print("Driving")
+        steer(1200)
+        time.sleep(1)
+        steer(1800)
+        time.sleep(1)
+    drive(1600)
+    time.sleep(2)
+        '''
+        # Example car control
+        print("Turn right")
+        steer(1800)
+        time.sleep(1)
+        print("Turn left")
+        steer(1200)
+        time.sleep(1)
+        print("Turn straight")
+        steer(1500)
+        time.sleep(1)
 
-	    print("Drive Forward")
-	    drive(1700)
-	    time.sleep(1)
-	    print("Stop")
-	    drive(1500)
-	    time.sleep(1)
-	    print("Drive Backward")
-	    drive(1300)
-	    time.sleep(1)
-	    print("Stop")
-	    drive(1500)
-	    time.sleep(1)
+        print("Drive Forward")
+        drive(1700)
+        time.sleep(1)
+        print("Stop")
+        drive(1500)
+        time.sleep(1)
+        print("Drive Backward")
+        drive(1300)
+        time.sleep(1)
+        print("Stop")
+        drive(1500)
+        time.sleep(1)
 
-	    '''
+        '''
 except KeyboardInterrupt:
     pass
 
