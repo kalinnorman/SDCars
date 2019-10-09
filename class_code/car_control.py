@@ -42,9 +42,9 @@ def initialize_car(pid=True):
 
     # initialize controller values
     send_command(ser, "!start1590\n")
-    send_command(ser, "!inits0.5\n")
-    send_command(ser, "!kp0.01\n")
-    send_command(ser, "!kd0.01\n")
+    send_command(ser, "!inits00.50\n")
+    send_command(ser, "!kp00.01\n")
+    send_command(ser, "!kd00.01\n")
     send_command(ser, "!straight1500\n")
 
     if pid:
