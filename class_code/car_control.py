@@ -15,6 +15,7 @@ class carControl():
         ser = serial.Serial("/dev/ttyUSB0", 115200)
         ser.flushInput()
         time.sleep(1)
+        print(ser)
         return ser
 
     def drive(self, speed):
@@ -66,3 +67,5 @@ class carControl():
 
         self.drive(0.0)
         self.steer(0.0)
+
+        print(self.ser)
