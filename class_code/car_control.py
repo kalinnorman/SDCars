@@ -15,15 +15,14 @@ class carControl():
         ser = serial.Serial("/dev/ttyUSB0", 115200)
         ser.flushInput()
         time.sleep(1)
-        print(ser)
         return ser
 
     def drive(self, speed):
-        forward_command = "!drive" + str(speed) + "\n"
+        forward_command = "!speed" + str(speed) + "\n"
         self.ser.write(forward_command.encode())
 
     def steer(self, degree):
-        steer_command = "!turn" + str(degree) + "\n"
+        steer_command = "!steering" + str(degree) + "\n"
         self.ser.write(steer_command.encode())
 
     # def send_command(ser, command, addnewline=False):
@@ -68,4 +67,3 @@ class carControl():
         self.drive(0.0)
         self.steer(0.0)
 
-        print(self.ser)
