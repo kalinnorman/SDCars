@@ -16,18 +16,18 @@ def steering_commands():
     Demo steering commands.
     :return:
     """
-    steer("15.00")
-    time.sleep(1)
-    steer("00.00")
-    time.sleep(1)
-    steer("00.00")
-    drive("00.40")
+    print("right")
+    steer(15.0)
     time.sleep(2)
-    drive("00.50")
+    print("left")
+    steer(-15.0)
     time.sleep(2)
-    drive("00.00")
-    drive("00.00")
-    time.sleep(1)
+    print("go")
+    drive(0.5)
+    time.sleep(2)
+    print("stop")
+    drive(0.0)
+    time.sleep(2)
 
 
 if __name__ == '__main__':

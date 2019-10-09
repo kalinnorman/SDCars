@@ -1,9 +1,9 @@
 import serial
 import time
 
-ser = serial.Serial("/dev/ttyUSB0",115200)
+ser = serial.Serial("/dev/ttyUSB0", 115200)
 ser.flushInput()
-time.sleep(10)
+time.sleep(1)
 
 start = "!start1590\n"
 inits = "!inits0.5\n"
