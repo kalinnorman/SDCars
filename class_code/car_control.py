@@ -18,36 +18,32 @@ class carControl():
         return ser
 
     def drive(self, speed):
-        command = "!speed" + str(speed) + "\n"
-        self.ser.write(command.encode())
+        drive_command = "!speed" + str(speed) + "\n"
+        self.ser.write(drive_command.encode())
 
     def steer(self, degree):
         steer_command = "!steering" + str(degree) + "\n"
         self.ser.write(steer_command.encode())
 
-    # def send_command(ser, command, addnewline=False):
-    #     """
-    #     Sends a command to the car. Remember that every command must end with a new line.
-    #
-    #     Author: redd
-    #
-    #     :param ser: the serial port to send the string to
-    #     :param command: the command to send
-    #     :return: no return
-    #     """
-    #     if addnewline:
-    #         command = command + "\n"
-    #     ser.write(command.encode())
+    def _send_command(self, command, addnewline=False):
+        """
+        Sends a command to the car. Remember that every command must end with a new line.
+
+        Author: redd
+        """
+        if addnewline:
+            command = command + "\n"
+        self.ser.write(command.encode())
 
     def _initialize_car(self, pid_flag=True):
         """
         Initializes the car. This must be run before we can control the car.
 
-        Author: norman
+        Author: redd
         """
 
         print("Initializing Car")
-        start = "!start1600\n"
+        start = "!start1590\n"
         self.ser.write(start.encode())
 
         # inits = "!inits0.5\n"
@@ -64,6 +60,17 @@ class carControl():
         # self.ser.write(kd.encode())
         # self.ser.write(straight.encode())
         # self.ser.write(pid.encode())
+
+        '''
+        self._send_command("!start1590\n")
+        self._send_command("!kp0.01\n")
+        self._send_command("!kd0.01\n")
+        self._send_command("!straight1500\n")
+        if pid_flag:
+            self._send_command("!pid1\n")
+        else:
+            self._send_command("!pid0\n")
+        '''
 
         #self.drive(0.0)
         #self.steer(0.0)

@@ -23,10 +23,10 @@ def steering_commands():
     cc.steer(-15.0)
     time.sleep(2)
     print("go")
-    cc.drive(1.0)
+    cc.drive(1)
     time.sleep(2)
     print("stop")
-    cc.drive(0.0)
+    cc.drive(0)
     time.sleep(2)
 
 
