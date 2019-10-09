@@ -18,7 +18,7 @@ class carControl():
         return ser
 
     def drive(self, speed):
-        command = "!speed" + str(value) + "\n"
+        command = "!speed" + str(speed) + "\n"
         self.ser.write(command.encode())
 
     def steer(self, degree):
@@ -48,22 +48,23 @@ class carControl():
 
         print("Initializing Car")
         start = "!start1590\n"
-        inits = "!inits0.5\n"
-        kp = "!kp0.01\n"
-        kd = "!kd0.01\n"
-        straight = "!straight1500\n"
-        if pid_flag:
-            pid = "!pid1\n"
-        else:
-            pid = "!pid0\n"
-
         self.ser.write(start.encode())
-        self.ser.write(inits.encode())
-        self.ser.write(kp.encode())
-        self.ser.write(kd.encode())
-        self.ser.write(straight.encode())
-        self.ser.write(pid.encode())
 
-        self.drive(0.0)
-        self.steer(0.0)
+        # inits = "!inits0.5\n"
+        # kp = "!kp0.01\n"
+        # kd = "!kd0.01\n"
+        # straight = "!straight1500\n"
+        # if pid_flag:
+        #     pid = "!pid1\n"
+        # else:
+        #     pid = "!pid0\n"
+        #
+        # self.ser.write(inits.encode())
+        # self.ser.write(kp.encode())
+        # self.ser.write(kd.encode())
+        # self.ser.write(straight.encode())
+        # self.ser.write(pid.encode())
+
+        #self.drive(0.0)
+        #self.steer(0.0)
 

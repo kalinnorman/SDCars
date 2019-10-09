@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
     # run the loop, waiting for a keyboard interrupt
     try:
+        time.sleep(2)
         print("Beginning loop")
         while True:
             steering_commands()  # run the sequence of steering commands
