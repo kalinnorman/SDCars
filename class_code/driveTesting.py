@@ -25,8 +25,8 @@ def steer(value):
     ser.write(command.encode())
 
 print("right")
-steer(1900)
+steer(15.0)
 time.sleep(2)
 print("left")
-steer(1100)
+steer(-15.0)
 time.sleep(2)
