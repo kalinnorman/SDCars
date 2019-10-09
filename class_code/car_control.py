@@ -3,59 +3,64 @@
 import serial
 import time
 
-ser = serial.Serial("/dev/ttyUSB0", 115200)
-ser.flushInput()
-time.sleep(1)
 
+class carControl():
 
-def drive(speed):
-    forward_command = "!drive" + str(speed) + "\n"
-    ser.write(forward_command.encode())
+    def __init__(self):
+        self.ser = self._initialize_serial_communication()  # establish serial communication
+        self._initialize_car()  # initialize the car
 
+    def _initialize_serial_communication(self):
+        ser = serial.Serial("/dev/ttyUSB0", 115200)
+        ser.flushInput()
+        time.sleep(1)
+        return ser
 
-def steer(degree):
-    steer_command = "!turn" + str(degree) + "\n"
-    ser.write(steer_command.encode())
+    def drive(self, speed):
+        forward_command = "!drive" + str(speed) + "\n"
+        self.ser.write(forward_command.encode())
 
+    def steer(self, degree):
+        steer_command = "!turn" + str(degree) + "\n"
+        self.ser.write(steer_command.encode())
 
-# def send_command(ser, command, addnewline=False):
-#     """
-#     Sends a command to the car. Remember that every command must end with a new line.
-#
-#     Author: redd
-#
-#     :param ser: the serial port to send the string to
-#     :param command: the command to send
-#     :return: no return
-#     """
-#     if addnewline:
-#         command = command + "\n"
-#     ser.write(command.encode())
+    # def send_command(ser, command, addnewline=False):
+    #     """
+    #     Sends a command to the car. Remember that every command must end with a new line.
+    #
+    #     Author: redd
+    #
+    #     :param ser: the serial port to send the string to
+    #     :param command: the command to send
+    #     :return: no return
+    #     """
+    #     if addnewline:
+    #         command = command + "\n"
+    #     ser.write(command.encode())
 
+    def _initialize_car(self, pid=True):
+        """
+        Initializes the car. This must be run before we can control the car.
 
-def initialize_car(pid=True):
-    """
-    Initializes the car. This must be run before we can control the car.
+        Author: norman
+        """
 
-    Author: norman
-    """
+        start = "!start1590\n"
+        inits = "!inits0.5\n"
+        kp = "!kp0.01\n"
+        kd = "!kd0.01\n"
+        straight = "!straight1500\n"
+        if pid:
+            pid = "!pid1\n"
+        else:
+            pid = "!pid0\n"
 
-    start = "!start1590\n"
-    inits = "!inits0.5\n"
-    kp = "!kp0.01\n"
-    kd = "!kd0.01\n"
-    straight = "!straight1500\n"
-    if pid:
-        pid = "!pid1\n"
-    else:
-        pid = "!pid0\n"
+        self.ser.write(start.encode())
+        self.ser.write(inits.encode())
+        self.ser.write(kp.encode())
+        self.ser.write(kd.encode())
+        self.ser.write(straight.encode())
+        self.ser.write(pid.encode())
 
-    ser.write(start.encode())
-    ser.write(inits.encode())
-    ser.write(kp.encode())
-    ser.write(kd.encode())
-    ser.write(straight.encode())
-    ser.write(pid.encode())
-
-    drive(0.0)
-    steer(0.0)
+        self.drive(0.0)
+        self.steer(0.0)

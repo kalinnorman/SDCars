@@ -7,7 +7,7 @@ This is a demo function for controlling the car.
 If this script this run as the main, this will initialize the car and tell it to turn the wheels and drive.
 """
 
-import car_control as cc
+from car_control import carControl
 import time
 
 
@@ -17,7 +17,7 @@ def steering_commands():
     :return:
     """
     print("right")
-    cc.steer(15.0)
+    cc.steer(15)
     time.sleep(2)
     print("left")
     cc.steer(-15.0)
@@ -32,8 +32,7 @@ def steering_commands():
 
 if __name__ == '__main__':
 
-    # initialize communication with the Arduino
-    cc.initialize_car(pid=False)
+    cc = carControl()  # create object to control car
 
     # run the loop, waiting for a keyboard interrupt
     try:
