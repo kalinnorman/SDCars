@@ -16,17 +16,17 @@ def steering_commands():
     Demo steering commands.
     :return:
     """
-    steer(15.0)
+    steer("15.00")
     time.sleep(1)
-    steer(-15.0)
+    steer("00.00")
     time.sleep(1)
-    steer(0.0)
-    drive(0.4)
+    steer("00.00")
+    drive("00.40")
     time.sleep(2)
-    drive(0.5)
+    drive("00.50")
     time.sleep(2)
-    drive(0)
-    drive(0)
+    drive("00.00")
+    drive("00.00")
     time.sleep(1)
 
 
