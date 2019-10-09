@@ -11,6 +11,7 @@ class carControl():
         self._initialize_car()  # initialize the car
 
     def _initialize_serial_communication(self):
+        print("Initializing Serial Communications")
         ser = serial.Serial("/dev/ttyUSB0", 115200)
         ser.flushInput()
         time.sleep(1)
@@ -38,19 +39,20 @@ class carControl():
     #         command = command + "\n"
     #     ser.write(command.encode())
 
-    def _initialize_car(self, pid=True):
+    def _initialize_car(self, pid_flag=True):
         """
         Initializes the car. This must be run before we can control the car.
 
         Author: norman
         """
 
+        print("Initializing Car")
         start = "!start1590\n"
         inits = "!inits0.5\n"
         kp = "!kp0.01\n"
         kd = "!kd0.01\n"
         straight = "!straight1500\n"
-        if pid:
+        if pid_flag:
             pid = "!pid1\n"
         else:
             pid = "!pid0\n"
