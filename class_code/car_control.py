@@ -18,8 +18,8 @@ class carControl():
         return ser
 
     def drive(self, speed):
-        forward_command = "!speed" + str(speed) + "\n"
-        self.ser.write(forward_command.encode())
+        command = "!speed" + str(value) + "\n"
+        self.ser.write(command.encode())
 
     def steer(self, degree):
         steer_command = "!steering" + str(degree) + "\n"
