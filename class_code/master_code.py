@@ -262,47 +262,13 @@ try:
         #print("Score is of type ", type(object_score),  " and contains: ", object_score)
         #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
 
-        '''
-        Controlling the Car
-        Use the following functions to control the car:
-        steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight
-        drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
-        	IMPORTANT: Never go full speed. See note near top of file.
-            time.sleep(x) can be used in between function calls if needed, where x is time in seconds
-        '''
+        demo()  # Runs demo steering program.
 
-        demo()
 
-        '''
-        # Example car control
-        print("Turn right")
-        steer(1800)
-        time.sleep(1)
-        print("Turn left")
-        steer(1200)
-        time.sleep(1)
-        print("Turn straight")
-        steer(1500)
-        time.sleep(1)
-
-        print("Drive Forward")
-        drive(1700)
-        time.sleep(1)
-        print("Stop")
-        drive(1500)
-        time.sleep(1)
-        print("Drive Backward")
-        drive(1300)
-        time.sleep(1)
-        print("Stop")
-        drive(1500)
-        time.sleep(1)
-
-        '''
 except KeyboardInterrupt:
 
-    drive(1500)
-    steer(1500)
+    drive(0.0)
+    steer(0.0)
 
     #writer.release()
     vs.release()

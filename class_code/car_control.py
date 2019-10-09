@@ -1,36 +1,54 @@
 # car-control.py
-'''
-******* Controlling The Car **********
-	steer(int degree)	1000 = Full left turn	
-				2000 = Full right turn	
-				1500 = (nearly) Straight
-	drive(int speed)  	1000 = Fast reverse 	
-				2000 = Fast forward	
-				1500 = (nearly) Stopped
-				EXTREMELY IMPORTANT: Be very careful whe controlling the car. 
-				NEVER tell it to go full speed. Safely test the car to find 
-				a safe range for your particular car, and don't go beyond that 
-				speed. These cars can go very fast, and there is expensive hardware 
-				on them, so don't risk losing control of the car and breaking anything.
-**************************************
-'''
 
 import serial
 import time
 
 ser = serial.Serial("/dev/ttyUSB0", 115200)
 ser.flushInput()
-time.sleep(2)
+time.sleep(0.5)
+
 
 def drive(speed):
     forward_command = "!drive" + str(speed) + "\n"
     ser.write(forward_command.encode())
-   
+
+
 def steer(degree):
     steer_command = "!turn" + str(degree) + "\n"
     ser.write(steer_command.encode())
 
-'''
-#ser.write(("!turn1800\n").encode())
-'''
+
+def send_command(ser, command, addnewline=False):
+    """
+    Sends a command to the car. Remember that every command must end with a new line.
+
+    Author: redd
+
+    :param ser: the serial port to send the string to
+    :param command: the command to send
+    :return: no return
+    """
+    if addnewline:
+        command = command + "\n"
+    ser.write(command.encode())
+
+
+def initialize_car(pid=True):
+    """
+    Initializes the car. This must be run before we can control the car.
+
+    Author: redd
+    """
+
+    # initialize controller values
+    send_command(ser, "!start1590\n")
+    send_command(ser, "!inits0.5\n")
+    send_command(ser, "!kp0.01\n")
+    send_command(ser, "!kd0.01\n")
+    send_command(ser, "!straight1500\n")
+
+    if pid:
+        send_command(ser, "!pid1")
+    else:
+        send_command(ser, "!pid0")
 
