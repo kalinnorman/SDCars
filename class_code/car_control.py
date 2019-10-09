@@ -47,7 +47,7 @@ class carControl():
         """
 
         print("Initializing Car")
-        start = "!start1590\n"
+        start = "!start1600\n"
         self.ser.write(start.encode())
 
         # inits = "!inits0.5\n"
