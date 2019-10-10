@@ -16,9 +16,11 @@ ser.write(kp.encode())
 ser.write(kd.encode())
 ser.write(straight.encode())
 
+
 def drive(value):
     command = "!speed" + str(value) + "\n"
     ser.write(command.encode())
+
 
 def steer(value):
     command = "!steering" + str(value) + "\n"
@@ -29,4 +31,10 @@ steer(15.0)
 time.sleep(2)
 print("left")
 steer(-15.0)
+time.sleep(2)
+print("go")
+drive(1)
+time.sleep(2)
+print("stop")
+drive(0)
 time.sleep(2)
