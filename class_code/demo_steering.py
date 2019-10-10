@@ -40,14 +40,16 @@ if __name__ == '__main__':
         print("Beginning loop")
         while True:
 
-            rgb = cc.get_rgb_data()  # get color image
-            depth = cc.get_depth_data()  # get depth data
+            cc.update_sensors()
+            time, rgb = cc.get_rgb_data()  # get color image
+            time, depth = cc.get_depth_data()  # get depth data
 
+            print(time)
             print(rgb)
             print(depth)
 
             #cv2.imshow("RGB", rgb)  # show color image
-            cv2.imshow("Depth", depth)  # show depth image
+            #cv2.imshow("Depth", depth)  # show depth image
 
             steering_commands()  # run the sequence of steering commands
 
