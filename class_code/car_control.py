@@ -49,7 +49,7 @@ class carControl():
         # inits = "!inits0.5\n"
         # kp = "!kp0.01\n"
         # kd = "!kd0.01\n"
-        # straight = "!straight1500\n"
+        straight = "!straight1500\n"
         # if pid_flag:
         #     pid = "!pid1\n"
         # else:
@@ -58,7 +58,7 @@ class carControl():
         # self.ser.write(inits.encode())
         # self.ser.write(kp.encode())
         # self.ser.write(kd.encode())
-        # self.ser.write(straight.encode())
+        self.ser.write(straight.encode())
         # self.ser.write(pid.encode())
 
         '''
@@ -71,6 +71,10 @@ class carControl():
         else:
             self._send_command("!pid0\n")
         '''
+
+        self.ser.write("!speed0.2\n".encode())
+        time.sleep(2)
+        self.ser.write("!speed0\n".encode())
 
         #self.drive(0.0)
         #self.steer(0.0)
