@@ -5,28 +5,45 @@ import time
 
 
 class carControl():
+    """
+    This class will be used to control the car.
+    """
 
     def __init__(self):
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
 
-    def _initialize_serial_communication(self):
-        print("Initializing Serial Communications")
-        ser = serial.Serial("/dev/ttyUSB0", 115200)
-        time.sleep(2)
-        print("Flushing Input")
-        ser.flushInput()
-        time.sleep(1)
-        return ser
-
     def drive(self, speed):
-        drive_command = "!speed" + str(speed) + "\n"
-        self.ser.write(drive_command.encode())
+        """
+        Commands the car to drive.
+        :param speed: -2.0 to 2.0
+        :return: nothing
+        """
+        # drive_command = "!speed" + str(speed) + "\n"
+        # self.ser.write(drive_command.encode())
+        self._send_command("!speed" + str(speed) + "\n")
 
     def steer(self, degree):
-        # steer_command = "!steering" + str(degree) + "\n"
-        # self.ser.write(steer_command.encode())
+        """
+        Commands the car to turn.
+        :param degree: -30.0 to 30.0
+        :return: nothing
+        """
         self._send_command("!steering" + str(degree) + "\n")
+
+    def _initialize_serial_communication(self):
+        """
+        Initializes the serial communication.
+
+        :return: Object required for communication.
+        """
+        print("Initializing Serial Communications")
+        ser = serial.Serial("/dev/ttyUSB0", 115200)
+        time.sleep(2)  # must sleep for a bit while initializing
+        print("Flushing Input")
+        ser.flushInput()
+        time.sleep(1) # must sleep for a bit while initializing
+        return ser
 
     def _send_command(self, command, addnewline=False):
         """
@@ -46,45 +63,18 @@ class carControl():
         """
 
         print("Initializing Car")
-        # start = "!start1590\n"
-        # self.ser.write(start.encode())
-        # time.wait(0.5)
-        #
-        # # inits = "!inits0.5\n"
-        # # kp = "!kp0.01\n"
-        # # kd = "!kd0.01\n"
-        # straight = "!straight1500\n"
-        # # if pid_flag:
-        # #     pid = "!pid1\n"
-        # # else:
-        # #     pid = "!pid0\n"
-        # #
-        # # self.ser.write(inits.encode())
-        # # self.ser.write(kp.encode())
-        # # self.ser.write(kd.encode())
-        # self.ser.write(straight.encode())
-        # # self.ser.write(pid.encode())
-
         print("Sending Start Command")
-        #self.ser.write("!start1600\n".encode())
         self._send_command("!start1590\n")
-        time.sleep(1)
+        # time.sleep(1)
 
-        # self._send_command("!kp0.01\n")
-        # self._send_command("!kd0.01\n")
-        # self._send_command("!straight1500\n")
-        # if pid_flag:
-        #     self._send_command("!pid1\n")
-        # else:
-        #     self._send_command("!pid0\n")
+        self._send_command("!kp0.01\n")
+        self._send_command("!kd0.01\n")
+        self._send_command("!straight1500\n")
+        if pid_flag:
+            self._send_command("!pid1\n")
+        else:
+            self._send_command("!pid0\n")
 
-        #self.ser.write("!speed0.2\n".encode())
-        self.drive(0.5)
-        time.sleep(3)
-        #self.ser.write("!speed0\n".encode())
+        print("Stopping Car")
         self.drive(0.0)
-        time.sleep(1)
-
-        #self.drive(0.0)
-        #self.steer(0.0)
 
