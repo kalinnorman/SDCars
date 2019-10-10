@@ -43,38 +43,39 @@ class carControl():
         """
 
         print("Initializing Car")
-        start = "!start1590\n"
-        self.ser.write(start.encode())
-
-        # inits = "!inits0.5\n"
-        # kp = "!kp0.01\n"
-        # kd = "!kd0.01\n"
-        straight = "!straight1500\n"
-        # if pid_flag:
-        #     pid = "!pid1\n"
-        # else:
-        #     pid = "!pid0\n"
+        # start = "!start1590\n"
+        # self.ser.write(start.encode())
+        # time.wait(0.5)
         #
-        # self.ser.write(inits.encode())
-        # self.ser.write(kp.encode())
-        # self.ser.write(kd.encode())
-        self.ser.write(straight.encode())
-        # self.ser.write(pid.encode())
+        # # inits = "!inits0.5\n"
+        # # kp = "!kp0.01\n"
+        # # kd = "!kd0.01\n"
+        # straight = "!straight1500\n"
+        # # if pid_flag:
+        # #     pid = "!pid1\n"
+        # # else:
+        # #     pid = "!pid0\n"
+        # #
+        # # self.ser.write(inits.encode())
+        # # self.ser.write(kp.encode())
+        # # self.ser.write(kd.encode())
+        # self.ser.write(straight.encode())
+        # # self.ser.write(pid.encode())
 
-        '''
         self._send_command("!start1590\n")
-        self._send_command("!kp0.01\n")
-        self._send_command("!kd0.01\n")
-        self._send_command("!straight1500\n")
-        if pid_flag:
-            self._send_command("!pid1\n")
-        else:
-            self._send_command("!pid0\n")
-        '''
+        time.sleep(1)
+        # self._send_command("!kp0.01\n")
+        # self._send_command("!kd0.01\n")
+        # self._send_command("!straight1500\n")
+        # if pid_flag:
+        #     self._send_command("!pid1\n")
+        # else:
+        #     self._send_command("!pid0\n")
 
         self.ser.write("!speed0.2\n".encode())
-        time.sleep(2)
+        time.sleep(1)
         self.ser.write("!speed0\n".encode())
+        time.sleep(1)
 
         #self.drive(0.0)
         #self.steer(0.0)
