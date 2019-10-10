@@ -43,10 +43,11 @@ if __name__ == '__main__':
             cc.update_sensors()
             t, rgb = cc.get_rgb_data()  # get color image
             t, depth = cc.get_depth_data()  # get depth data
+            cv2.applyColorMap(depth, cv2.COLORMAP_RAINBOW)  # apply color map for pretty colors
 
             print(t)
-            print(rgb)
-            print(depth)
+            #print(rgb)
+            #print(depth)
 
             cv2.imwrite("color.jpg", rgb)  # show color image
             cv2.imwrite("depth.jpg", depth)  # show depth image
