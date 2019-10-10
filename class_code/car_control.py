@@ -13,10 +13,10 @@ class carControl():
     def _initialize_serial_communication(self):
         print("Initializing Serial Communications")
         ser = serial.Serial("/dev/ttyUSB0", 115200)
-        time.sleep(3)
+        time.sleep(2)
         print("Flushing Input")
         ser.flushInput()
-        time.sleep(3)
+        time.sleep(1)
         return ser
 
     def drive(self, speed):
