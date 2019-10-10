@@ -22,8 +22,9 @@ class carControl():
         self.ser.write(drive_command.encode())
 
     def steer(self, degree):
-        steer_command = "!steering" + str(degree) + "\n"
-        self.ser.write(steer_command.encode())
+        # steer_command = "!steering" + str(degree) + "\n"
+        # self.ser.write(steer_command.encode())
+        self._send_command("!steering" + str(degree) + "\n")
 
     def _send_command(self, command, addnewline=False):
         """
