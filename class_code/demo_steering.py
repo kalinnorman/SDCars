@@ -41,10 +41,10 @@ if __name__ == '__main__':
         while True:
 
             cc.update_sensors()
-            time, rgb = cc.get_rgb_data()  # get color image
-            time, depth = cc.get_depth_data()  # get depth data
+            t, rgb = cc.get_rgb_data()  # get color image
+            t, depth = cc.get_depth_data()  # get depth data
 
-            print(time)
+            print(t)
             print(rgb)
             print(depth)
 
@@ -59,3 +59,4 @@ if __name__ == '__main__':
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
         print("User stopped the script. (KeyboardInterrupt)")
+
