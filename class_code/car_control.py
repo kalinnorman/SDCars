@@ -1,8 +1,11 @@
-# car-control.py
+"""
+car_control.py
+Author: redd
+"""
 
 import serial
 import time
-
+from sensors import sensors
 
 class carControl():
     """
@@ -12,6 +15,28 @@ class carControl():
     def __init__(self):
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
+        self.sensor = sensors()  # initialize sensors
+
+    def update_sensors(self):
+        """
+        updates the sensors values
+        :return:
+        """
+        self.sensor.update_sensors()
+
+    def get_depth_data(self):
+        """
+        Getter for depth information with time information as well
+        :return: (time, depth)
+        """
+        return self.sensor.get_depth_data()
+
+    def get_rgb_data(self):
+        """
+        Getter for rgb data with time information
+        :return: (time, rgb)
+        """
+        return self.sensor.get_rgb_data()
 
     def drive(self, speed):
         """

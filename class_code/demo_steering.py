@@ -9,7 +9,7 @@ If this script this run as the main, this will initialize the car and tell it to
 
 from car_control import carControl
 import time
-
+import cv2
 
 def steering_commands():
     """
@@ -36,10 +36,20 @@ if __name__ == '__main__':
 
     # run the loop, waiting for a keyboard interrupt
     try:
-        time.sleep(2)
+        time.sleep(1)
         print("Beginning loop")
         while True:
+
+            rgb = cc.get_rgb_data()  # get color image
+            depth = cc.get_depth_data()  # get depth data
+
+            cv2.imshow("RGB", rgb)  # show color image
+            cv2.imshow("Depth", depth)  # show depth image
+
             steering_commands()  # run the sequence of steering commands
+
+            cv2.destroyAllWindows()  # reset the windows for the next loop
+
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
