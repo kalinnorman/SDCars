@@ -66,8 +66,8 @@ class carControl():
         # # self.ser.write(pid.encode())
 
         print("Sending Start Command")
-        self.ser.write("!start1600\n".encode())
-        #self._send_command("!start1590\n")
+        #self.ser.write("!start1600\n".encode())
+        self._send_command("!start1590\n")
         time.sleep(1)
 
         # self._send_command("!kp0.01\n")
