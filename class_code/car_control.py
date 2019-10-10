@@ -73,9 +73,11 @@ class carControl():
         # else:
         #     self._send_command("!pid0\n")
 
-        self.ser.write("!speed0.2\n".encode())
-        time.sleep(1)
-        self.ser.write("!speed0\n".encode())
+        #self.ser.write("!speed0.2\n".encode())
+        self.drive(0.5)
+        time.sleep(3)
+        #self.ser.write("!speed0\n".encode())
+        self.drive(0.0)
         time.sleep(1)
 
         #self.drive(0.0)
