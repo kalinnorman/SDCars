@@ -48,8 +48,8 @@ if __name__ == '__main__':
             print(rgb)
             print(depth)
 
-            #cv2.imshow("RGB", rgb)  # show color image
-            #cv2.imshow("Depth", depth)  # show depth image
+            cv2.imwrite("color.jpg", rgb)  # show color image
+            cv2.imwrite("depth.jpg", depth)  # show depth image
 
             steering_commands()  # run the sequence of steering commands
 
