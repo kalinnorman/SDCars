@@ -44,7 +44,7 @@ if __name__ == '__main__':
             cc.update_sensors()
             t, rgb = cc.get_rgb_data()  # get color image
             t, depth = cc.get_depth_data()  # get depth data
-            depth_scaled = np.log(np.add(depth, 0.01))
+            depth_scaled = np.log(np.add(depth, 1))
             depth_scaled = ((depth_scaled / np.median(depth)) * 128).astype(dtype='uint8')
             depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_RAINBOW)  # apply color map for pretty colors
 
