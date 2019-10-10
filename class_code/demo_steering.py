@@ -10,6 +10,7 @@ If this script this run as the main, this will initialize the car and tell it to
 from car_control import carControl
 import time
 import cv2
+import numpy as np
 
 def steering_commands():
     """
@@ -43,14 +44,16 @@ if __name__ == '__main__':
             cc.update_sensors()
             t, rgb = cc.get_rgb_data()  # get color image
             t, depth = cc.get_depth_data()  # get depth data
-            cv2.applyColorMap(depth, cv2.COLORMAP_RAINBOW)  # apply color map for pretty colors
+            depth_scaled = np.divide(depth, np.amax(depth) / 255).astype(int)
+            depth_scaled = cv2.cvtColor(depth_scaled, cv2.COLOR_GRAY2BGR)
+            cv2.applyColorMap(depth_scaled, cv2.COLORMAP_RAINBOW)  # apply color map for pretty colors
 
             print(t)
             #print(rgb)
             #print(depth)
 
             cv2.imwrite("color.jpg", rgb)  # show color image
-            cv2.imwrite("depth.jpg", depth)  # show depth image
+            cv2.imwrite("depth.jpg", depth_scaled)  # show depth image
 
             steering_commands()  # run the sequence of steering commands
 
