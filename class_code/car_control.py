@@ -13,8 +13,10 @@ class carControl():
     def _initialize_serial_communication(self):
         print("Initializing Serial Communications")
         ser = serial.Serial("/dev/ttyUSB0", 115200)
+        time.sleep(3)
+        print("Flushing Input")
         ser.flushInput()
-        time.sleep(1)
+        time.sleep(3)
         return ser
 
     def drive(self, speed):
@@ -63,9 +65,11 @@ class carControl():
         # self.ser.write(straight.encode())
         # # self.ser.write(pid.encode())
 
+        print("Sending Start Command")
         self.ser.write("!start1600\n".encode())
         #self._send_command("!start1590\n")
         time.sleep(1)
+
         # self._send_command("!kp0.01\n")
         # self._send_command("!kd0.01\n")
         # self._send_command("!straight1500\n")
