@@ -162,6 +162,8 @@ def updateController(rightProcessed, leftProcessed):
     cv2.line(finalImg, (centerPoint), (midPoint), (100, 200, 200), 4)
     angle = calculateAngle(centerPoint, intPoint, midPoint)
 
+    angle = 180/np.pi
+
     return [angle, finalImg]
 
 car = carControl()
@@ -171,8 +173,12 @@ while (runNavigation):
     # Get image 
 
     # path = 'C:/Users/benjj/Documents/College/Fall2019/Ecen522/TestingPhotos/Photo3.jpg'
+    # rawImg = cv2.imread(path)
+
+
+    car.update_sensors()
     time, rawImg = car.get_rgb_data()
-    
+
     imgHeight = rawImg.shape[0] 
     imgWidth = rawImg.shape[1] 
 
@@ -198,7 +204,14 @@ while (runNavigation):
     # [rightProcessed, leftProcessed] = processImage(frame)
     [angle, finalImg] = updateController(rightCannyed, leftCannyed)
 
+    if angle > 30:
+        angle = 29
+    elif angle < -30:
+        angle = -29
+
     car.steer(angle)
+
+    # print(angle)
 
     # plt.imshow(finalImg)
     # plt.show()
