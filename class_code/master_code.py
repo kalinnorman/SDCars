@@ -50,6 +50,9 @@ import cv2
 import os
 import gc
 
+from demo_steering import demo
+from helpers import initialize_car
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-c", "--confidence", type=float, default=0.5,
@@ -173,9 +176,8 @@ config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)
 pipeline.start(config)
 
 # initialize communication with the arduino
-ser = serial.Serial("/dev/ttyUSB0",115200)
-ser.flushInput()
-time.sleep(2)
+initialize_car(pid=False)
+
 
 # loop over frames from the video file stream
 try:
@@ -251,8 +253,6 @@ try:
         object_id = get_class_id()
         object_score = get_score()
         object_bb = get_bb() # bounding box coordinates (x, y, w, h). (x, y) are the
-     # top left coordinates of the bounding box. (w, h) are
-             # the width and height of the bounding box
 
         #print("Depth is of type ", type(depth),  " and contains: ", depth)
         #print("RGB is of type ", type(rgb),  " and contains: ", rgb)
@@ -262,51 +262,13 @@ try:
         #print("Score is of type ", type(object_score),  " and contains: ", object_score)
         #print("Bounding Box is of type ", type(object_bb),  " and contains: ", object_bb)
 
-        '''
-        Controlling the Car
-        Use the following functions to control the car:
-        steer(int degree) - 1000 = Full left turn	2000 = Full right turn	1500 = (nearly) Straight
-        drive(int speed) - 1000 = Fast reverse 	2000 = Fast forward	1500 = (nearly) Stopped
-        	IMPORTANT: Never go full speed. See note near top of file.
-            time.sleep(x) can be used in between function calls if needed, where x is time in seconds
-        '''
+        demo()  # Runs demo steering program.
 
-        print("Driving")
-        steer(1200)
-        time.sleep(1)
-        steer(1800)
-        time.sleep(1)
-    drive(1600)
-    time.sleep(2)
-        '''
-        # Example car control
-        print("Turn right")
-        steer(1800)
-        time.sleep(1)
-        print("Turn left")
-        steer(1200)
-        time.sleep(1)
-        print("Turn straight")
-        steer(1500)
-        time.sleep(1)
 
-        print("Drive Forward")
-        drive(1700)
-        time.sleep(1)
-        print("Stop")
-        drive(1500)
-        time.sleep(1)
-        print("Drive Backward")
-        drive(1300)
-        time.sleep(1)
-        print("Stop")
-        drive(1500)
-        time.sleep(1)
-
-        '''
 except KeyboardInterrupt:
-    pass
 
+    drive(0.0)
+    steer(0.0)
 
-#writer.release()
-vs.release()
+    #writer.release()
+    vs.release()
