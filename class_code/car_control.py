@@ -16,7 +16,7 @@ class carControl():
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = sensors()  # initialize sensors
-        for i in range(0, 20):
+        for i in range(0, 100):
             self.update_sensors()
 
     def update_sensors(self):

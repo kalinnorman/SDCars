@@ -2,9 +2,13 @@
 # Takes in an image and identifies the proper power and angle
 # IN TESTING - 10 Oct 2019!
 
+
+# Make a LaneFollower() class
+# Wrap lane follower in a try block 
+
 import numpy as np 
 from matplotlib import pyplot as plt 
-from matplotlib import image as mpimg
+from matplotlib import image as mpimg  # Unnecessary ???
 import cv2
 import math
 from car_control import carControl
@@ -172,7 +176,7 @@ car.drive(0.7)
 while (runNavigation):
     # Get image 
 
-    # path = 'C:/Users/benjj/Documents/College/Fall2019/Ecen522/TestingPhotos/Photo3.jpg'
+    # path = 'C:/Users/benjj/Documents/College/Fall2019/Ecen522/Code/SDCars/class_code/image.jpg'
     # rawImg = cv2.imread(path)
 
 
@@ -187,7 +191,8 @@ while (runNavigation):
     cleanImg = cv2.morphologyEx(rawImg, cv2.MORPH_OPEN, kernel)
     cleanImg = cv2.cvtColor(cleanImg, cv2.COLOR_BGR2RGB)
 
-    imgHSV = cv2.cvtColor(cleanImg, cv2.COLOR_BGR2HSV) # Convert to HSV
+    imgHSV = cv2.cvtColor(rawImg, cv2.COLOR_BGR2HSV) # Convert to HSV
+
 
     leftColorMin = np.asarray(leftColorMin)
     leftColorMax = np.asarray(leftColorMax)
