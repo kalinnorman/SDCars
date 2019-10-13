@@ -19,7 +19,7 @@ class CarControl:
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
-
+    
     def update_sensors(self):
         """
         updates the sensors values

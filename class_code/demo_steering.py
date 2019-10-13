@@ -29,7 +29,7 @@ def steering_commands():
     print("stop")
     cc.drive(0)
     time.sleep(2)
-
+    
 
 if __name__ == '__main__':
 
@@ -51,14 +51,16 @@ if __name__ == '__main__':
             #print(rgb)
             #print(depth)
 
-            cv2.imwrite("color.jpg", rgb)  # show color image
-            cv2.imwrite("depth.jpg", depth_scaled)  # show depth image
+            # cv2.imwrite("color.jpg", rgb)  # show color image
+            # cv2.imwrite("depth.jpg", depth_scaled)  # show depth image
+            # cv2.imshow("Color", rgb)
+            # cv2.imshow("Depth", depth)
+            
+            steering_commands()  # run the sequence of steering commands
 
-            # steering_commands()  # run the sequence of steering commands
+            # cv2.destroyAllWindows()  # reset the windows for the next loop
 
-            cv2.destroyAllWindows()  # reset the windows for the next loop
-
-            cc.action.drive_straight()  # drive straight for a bit.
+            # cc.action.drive_straight()  # drive straight for a bit.
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car

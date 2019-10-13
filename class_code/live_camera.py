@@ -23,4 +23,4 @@ while True:
         break
     
 vs.release()
-cv2.destroyAllWindoes()
+cv2.destroyAllWindows()
