@@ -54,7 +54,7 @@ if __name__ == '__main__':
             cv2.imwrite("color.jpg", rgb)  # show color image
             cv2.imwrite("depth.jpg", depth_scaled)  # show depth image
 
-            steering_commands()  # run the sequence of steering commands
+            # steering_commands()  # run the sequence of steering commands
 
             cv2.destroyAllWindows()  # reset the windows for the next loop
 
