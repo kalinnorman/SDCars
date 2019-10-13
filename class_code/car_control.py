@@ -7,6 +7,7 @@ import serial
 import time
 from sensors import sensors
 
+
 class carControl():
     """
     This class will be used to control the car.
