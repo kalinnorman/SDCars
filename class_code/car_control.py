@@ -18,7 +18,7 @@ class CarControl:
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
-        self.action = CarActions()  # allows us to perform hard-coded actions in the car
+        self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
 
     def update_sensors(self):
         """
@@ -70,7 +70,7 @@ class CarControl:
         time.sleep(2)  # must sleep for a bit while initializing
         print("Flushing Input")
         ser.flushInput()
-        time.sleep(1) # must sleep for a bit while initializing
+        time.sleep(1)  # must sleep for a bit while initializing
         return ser
 
     def _send_command(self, command, addnewline=False):
