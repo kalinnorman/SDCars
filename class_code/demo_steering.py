@@ -7,7 +7,7 @@ This is a demo function for controlling the car.
 If this script this run as the main, this will initialize the car and tell it to turn the wheels and drive.
 """
 
-from car_control import CarControl
+from CarControl import CarControl
 import time
 import cv2
 import numpy as np
@@ -42,8 +42,8 @@ if __name__ == '__main__':
         while True:
 
             cc.update_sensors()
-            t, rgb = cc.get_rgb_data()  # get color image
-            t, depth = cc.get_depth_data()  # get depth data
+            t, rgb = cc.sensor.get_rgb_data()  # get color image
+            t, depth = cc.sensor.get_depth_data()  # get depth data
             depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
             depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 

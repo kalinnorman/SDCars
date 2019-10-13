@@ -1,12 +1,12 @@
 """
-car_control.py
+CarControl.py
 Author: redd
 """
 
 import serial
 import time
-from sensors import Sensors
-from car_actions import CarActions
+from Sensors import Sensors
+from CarActions import CarActions
 
 
 class CarControl:
@@ -26,20 +26,6 @@ class CarControl:
         :return:
         """
         self.sensor.update_sensors()
-
-    def get_depth_data(self):
-        """
-        Getter for depth information with time information as well
-        :return: (time, depth)
-        """
-        return self.sensor.get_depth_data()
-
-    def get_rgb_data(self):
-        """
-        Getter for rgb data with time information
-        :return: (time, rgb)
-        """
-        return self.sensor.get_rgb_data()
 
     def drive(self, speed):
         """

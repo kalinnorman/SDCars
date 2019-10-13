@@ -1,5 +1,5 @@
 """
-sensors.py
+Sensors.py
 
 A class for handling sensor data
 
