@@ -5,10 +5,11 @@ Author: redd
 
 import serial
 import time
-from sensors import sensors
+from sensors import Sensors
+from car_actions import CarActions
 
 
-class carControl():
+class CarControl:
     """
     This class will be used to control the car.
     """
@@ -16,7 +17,8 @@ class carControl():
     def __init__(self):
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
-        self.sensor = sensors()  # initialize sensors
+        self.sensor = Sensors()  # initialize sensors
+        self.action = CarActions()  # allows us to perform hard-coded actions in the car
 
     def update_sensors(self):
         """

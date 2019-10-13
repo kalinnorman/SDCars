@@ -7,7 +7,7 @@ This is a demo function for controlling the car.
 If this script this run as the main, this will initialize the car and tell it to turn the wheels and drive.
 """
 
-from car_control import carControl
+from car_control import CarControl
 import time
 import cv2
 import numpy as np
@@ -33,7 +33,7 @@ def steering_commands():
 
 if __name__ == '__main__':
 
-    cc = carControl()  # create object to control car
+    cc = CarControl()  # create object to control car
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -57,6 +57,8 @@ if __name__ == '__main__':
             steering_commands()  # run the sequence of steering commands
 
             cv2.destroyAllWindows()  # reset the windows for the next loop
+
+            cc.action.drive_straight()  # drive straight for a bit.
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car

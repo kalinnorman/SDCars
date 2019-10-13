@@ -13,7 +13,7 @@ import numpy as np
 import gc
 
 
-class sensors():
+class Sensors():
 
     def __init__(self):
         # initialize variables that will contain the data
