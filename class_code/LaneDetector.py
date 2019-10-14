@@ -14,10 +14,21 @@ leftColorMax = [100, 255, 210]       # Yellow
 rightColorMin = [5, 15, 170]         # White
 rightColorMax = [20, 40, 230]        # White
 
-croppedHeightRatio = (2.0/3.0)
+croppedHeightRatio = (1.0/2.0)
 minSlope = 0.4
+carCenter = 772     # X value of center of the car, as camera is offcenter
 
 # Functions
+def calculateAngle(c, p1, p2):                    # AKA Inner Product
+    c = np.asarray(c)
+    p1 = np.asarray(p1)
+    p2 = np.asarray(p2)
+                                            # (P1 dot P2) / |P1| * |P2|
+    angle = np.arccos( (np.dot(p1, p2)) / 
+                        (np.linalg.norm(p1) * np.linalg.norm(p2)) )
+    
+    return angle
+
 def regionOfInterest(img, vertices):
     # Blank matrix that matches the image height/width
     mask = np.zeros_like(img)
@@ -32,8 +43,20 @@ def regionOfInterest(img, vertices):
 
     return masked_image
 
+def findIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
+    tNumerator   = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)
+    tDenominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+
+    t = tNumerator/tDenominator
+
+    intX = x1 + t * (x2 - x1)
+    intY = y1 + t * (y2 - y1)
+    
+    intPoint = (int(intX), int(intY))
+    return intPoint
+
 ##### 1) Load Image #####
-path = 'C:/Users/benjj/Documents/College/Fall2019/Ecen522/TestingPhotos/Turn1.jpg'
+path = 'C:/Users/benjj/Documents/College/Fall2019/Ecen522/TestingPhotos/Photo3.jpg'
 rawImg = cv2.imread(path) 
 imgHeight = rawImg.shape[0] 
 imgWidth = rawImg.shape[1] 
@@ -45,6 +68,9 @@ cleanImg = cv2.morphologyEx(rawImg, cv2.MORPH_OPEN, kernel)
 cleanImg = cv2.cvtColor(cleanImg, cv2.COLOR_BGR2RGB)
 
 imgHSV = cv2.cvtColor(cleanImg, cv2.COLOR_BGR2HSV) # Convert to HSV
+
+plt.imshow(imgHSV)
+plt.show()
 
 ##### 2) Filter #####
 
@@ -88,7 +114,6 @@ rightLines = cv2.HoughLinesP(
     minLineLength = 60,
     maxLineGap = 40)
 
-
 # Filter out lines and group remaining
 leftLine_x = []
 leftLine_y = []
@@ -112,7 +137,7 @@ for line in rightLines:
 
 # Calculate and draw left line
 leftLine = np.polyfit(leftLine_y, leftLine_x, 1)
-lspace = np.linspace(imgHeight * croppedHeightRatio, imgHeight, 10)
+lspace = np.linspace(0, imgHeight, 10)
 drawY = lspace
 drawX = np.polyval(leftLine, drawY)       # May cause a problem if not a real function
 leftPoints = (np.asarray([drawX, drawY]).T).astype(np.int32)
@@ -122,7 +147,24 @@ finalLeft = cv2.polylines(rawImg, [leftPoints], False, (255, 0, 225), thickness 
 rightLine = np.polyfit(rightLine_y, rightLine_x, 1)
 drawX = np.polyval(rightLine, drawY)
 rightPoints = (np.asarray([drawX, drawY]).T).astype(np.int32)
-final = cv2.polylines(finalLeft, [rightPoints], False, (255, 0, 255), thickness = 10)
+finalImg = cv2.polylines(finalLeft, [rightPoints], False, (255, 0, 255), thickness = 10)
 
-plt.imshow(final)
+# Calculate intersection point
+intPoint = findIntersection(leftPoints[0][0], leftPoints[0][1],
+                            leftPoints[1][0], leftPoints[1][1],
+                            rightPoints[0][0], rightPoints[0][1],
+                            rightPoints[1][0], rightPoints[1][1])
+
+# Draw line from center to intersection point
+centerPoint = (carCenter, imgHeight)
+cv2.line(finalImg, (centerPoint), (intPoint[0], intPoint[1]), (0,255,0), 5)
+
+# Calculate angle off of center
+midPoint = (carCenter, int(imgHeight/2))              # Center of screen. Used as a vertical reference for angle of departure
+cv2.line(finalImg, (centerPoint), (midPoint), (100, 200, 200), 4)
+angle = calculateAngle(centerPoint, intPoint, midPoint)
+
+print(angle)
+
+plt.imshow(finalImg)
 plt.show()
