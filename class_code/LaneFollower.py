@@ -65,7 +65,7 @@ class LaneFollower:
         """
         Finds all edges in an image
         """
-        return cv2.Canny(img, 100, 200)     # Lower and upper thresholds not chosen for any specific reason
+        return cv2.Canny(img,75, 250)     # Lower and upper thresholds not chosen for any specific reason
 
     def crop_image(self, img):
         """

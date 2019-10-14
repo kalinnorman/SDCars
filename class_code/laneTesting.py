@@ -8,6 +8,11 @@ import imutils
 import numpy as np
 import cv2
 
+leftColorMin = [90, 245, 180]        # Yellow - Determined by plotting imgHSV and hovering over the colors
+leftColorMax = [100, 255, 210]       # Yellow
+rightColorMin = [5, 15, 170]         # White
+rightColorMax = [20, 40, 230]        # White
+
 LF = LaneFollower()
 
 vs = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L) # ls -ltr /dev/video*
