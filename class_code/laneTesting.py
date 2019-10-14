@@ -40,7 +40,19 @@ while True:
     leftCropped = LF.crop_image(leftCanny)
     rightCropped = LF.crop_image(rightCanny)
 
-    image = (leftCropped | rightCropped)
+    leftLines = LF.hough_lines(leftCropped)
+    rightLines = LF.hough_lines(rightCropped)
+
+
+    try:
+        left_line_x, left_line_y, right_line_x, right_line_y = LF.find_lines(leftLines, rightLines)
+
+        leftFinal, left_points = LF.calculate_lines(rawImg, left_line_x, left_line_y, 1)
+        rightFinal, right_points = LF.calculate_lines(leftFinal, right_line_x, right_line_y, 1)
+    except:
+        rightFinal = img
+
+    image = rightFinal
 
 
     cv2.imshow("Camera Feed", image)
