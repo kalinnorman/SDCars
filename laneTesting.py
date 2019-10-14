@@ -1,7 +1,7 @@
 # Lane Testing
 
-from LaneFollower import LaneFollower
-from car_control import carControl
+from class_code/LaneFollower import LaneFollower
+from class_code/car_control import carControl
 from matplotlib import pyplot as plt
 import argparse
 import imutils
