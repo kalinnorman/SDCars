@@ -16,7 +16,7 @@ rightColorMax = [20, 40, 230]        # White
 LF = LaneFollower()
 
 vs = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L) # ls -ltr /dev/video*
-M = np.load("M.npy")
+# M = np.load("M.npy")
 
 while True:
     # read the next frame from the file
