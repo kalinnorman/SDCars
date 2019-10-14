@@ -10,7 +10,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import cv2
 import math
-from car_control import carControl
+from CarControl import CarControl
 
 
 class LaneFollower:
@@ -170,13 +170,13 @@ class LaneFollower:
 
     def runLaneDetection(self):
 
-        car = carControl()
+        car = CarControl()
         car.drive(0.7)
 
         while (self.runNavigation):
             # Get image
             car.update_sensors()
-            time, rawImg = car.get_rgb_data()
+            time, rawImg = car.sensor.get_rgb_data()
 
             imgHeight = rawImg.shape[0]
             imgWidth = rawImg.shape[1]
