@@ -10,8 +10,8 @@ import cv2
 
 leftColorMin = [90, 245, 180]        # Yellow - Determined by plotting imgHSV and hovering over the colors
 leftColorMax = [100, 255, 210]       # Yellow
-rightColorMin = [5, 15, 170]         # White
-rightColorMax = [20, 40, 230]        # White
+rightColorMin = [70, 60, 195]         # White
+rightColorMax = [85, 80, 210]        # White
 
 LF = LaneFollower()
 
@@ -40,7 +40,20 @@ while True:
     leftCropped = LF.crop_image(leftCanny)
     rightCropped = LF.crop_image(rightCanny)
 
-    image = (leftCropped | rightCropped)
+    leftLines = LF.hough_lines(leftCropped)
+    rightLines = LF.hough_lines(rightCropped)
+
+
+    try:
+        left_line_x, left_line_y, right_line_x, right_line_y = LF.find_lines(leftLines, rightLines)
+
+        leftFinal, left_points = LF.calculate_lines(rawImg, left_line_x, left_line_y, 1)
+        rightFinal, right_points = LF.calculate_lines(leftFinal, right_line_x, right_line_y, 1)
+
+        image = rightFinal
+        print("Success!")
+    except:
+        image = (leftCropped | rightCropped)
 
 
     cv2.imshow("Camera Feed", image)
@@ -50,7 +63,7 @@ while True:
         break
     
 vs.release()
-cv2.destroyAllWindoes()
+cv2.destroyAllWindows()
 
 
 
