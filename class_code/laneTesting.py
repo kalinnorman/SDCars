@@ -10,8 +10,8 @@ import cv2
 
 leftColorMin = [90, 245, 180]        # Yellow - Determined by plotting imgHSV and hovering over the colors
 leftColorMax = [100, 255, 210]       # Yellow
-rightColorMin = [5, 15, 170]         # White
-rightColorMax = [20, 40, 230]        # White
+rightColorMin = [65, 60, 190]       # White   - Updated values
+rightColorMax = [85, 80, 210]        # White
 
 LF = LaneFollower()
 
