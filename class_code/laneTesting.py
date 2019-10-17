@@ -23,7 +23,7 @@ rightColorMax = [30, 65, 240]
 LF = LaneFollower()
 count = 0
 vs = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L) # ls -ltr /dev/video*
-# vs = cv2.VideoCapture("C:/Users/benjj/Documents/College/Fall2019/ECEN522/Code/SDCars/class_code/TestVideo.avi")
+vs = cv2.VideoCapture("C:/Users/benjj/Documents/College/Fall2019/ECEN522/Code/SDCars/class_code/TestVideo.avi")
 
 while True:
     # read the next frame from the file
@@ -55,7 +55,17 @@ while True:
         leftFinal, left_points = LF.calculate_lines(frame, left_line_x, left_line_y, 1)
         rightFinal, right_points = LF.calculate_lines(leftFinal, right_line_x, right_line_y, 1)
         frame = rightFinal
-      
+
+        int_point = LF.find_intersection(left_points[0][0], left_points[0][1],
+                                left_points[1][0], left_points[1][1],
+                                right_points[0][0], right_points[0][1],
+                                right_points[1][0], right_points[1][1])
+        frame = LF.plot_center(frame, int_point)
+
+        angle = LF.calculate_angle(int_point)
+
+        print(angle)
+
     except:
         frame = frame
 #        try:
@@ -82,7 +92,7 @@ while True:
     cv2.imshow("Camera Feed", frame)
     key = cv2.waitKey(1) & 0xFF
     count = count + 1
-    # time.sleep(0.03)
+    time.sleep(0.1)
        
     
 vs.release()

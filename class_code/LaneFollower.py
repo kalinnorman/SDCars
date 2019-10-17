@@ -166,7 +166,7 @@ class LaneFollower:
         Draws a line from the center of the screen to the intersection points of the lanes
         """
         # centerPoint = (self.carCenter, imgHeight)     # Used if we are accounting for the camera offset
-        cv2.line(img, (self.center_point), (intersection_point[0], intersection_point[1]), (0,255,0), 3)
+        cv2.line(img, (self.center_point), (intersection_point[0], intersection_point[1]), (0,50,0), 1)
 
         return img
 
@@ -187,13 +187,22 @@ class LaneFollower:
         # Determines the points and formats as arrays
         mid_point = (int(self.imgWidth/2), int(self.imgHeight/2))
         c = np.asarray(self.center_point)
-        p1 = np.asarray(intersection_point)
-        p2 = np.asarray(mid_point)    
+        p1 = np.asarray(mid_point) 
+        p2 = np.asarray(intersection_point)   
+
+        p1[0] = p1[0] - c[0]            # References each point to the center 
+        p1[1] = p1[1] - c[1]
+        p2[0] = p2[0] - c[0]
+        p2[1] = p2[1] - c[1]
 
         angle = np.arccos( (np.dot(p1, p2)) /           # (P1 dot P2) / |P1| * |P2|
                             (np.linalg.norm(p1) * np.linalg.norm(p2)) )
 
-        angle = angle * 180/np.pi                       # Convert to degrees
+        angle = angle * 180/np.pi         # Convert to degrees
+        
+        # Sets angle sign with reference to the center line
+        if ((p1[0] - p2[0]) > 0 ):         # (if path line is right of mid line, it is a postitive angle)
+            angle = -angle
 
         angle = self.saturate(angle)                    # Saturate angle
         return angle
