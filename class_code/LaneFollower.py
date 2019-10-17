@@ -22,7 +22,7 @@ class LaneFollower:
         self.rightColorMin = np.asarray([5, 15, 170])         # White
         self.rightColorMax = np.asarray([20, 40, 230])        # White
         self.croppedHeightRatio = (1.0/2.0)     # Dimensions of the cropped image
-        self.minSlope = 0.4      # Used to filter out lines that couldn't be the lanes
+        self.minSlope = 0.3      # Used to filter out lines that couldn't be the lanes
         self.max_angle = 30      # Maximum steering angle
             # NOT USED CURRENTLY #
         self.carCenter = 772     # X value of center of the car, as camera is offcenter
@@ -43,7 +43,7 @@ class LaneFollower:
         Smooths out image. 
         Values need to be tuned
         """
-        kernel = np.ones((5,5), up.uint8)
+        kernel = np.ones((5,5), np.uint8)
         return cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
 
     def convert_to_HSV(self, img):
@@ -65,7 +65,7 @@ class LaneFollower:
         """
         Finds all edges in an image
         """
-        return cv2.Canny(img,75, 250)     # Lower and upper thresholds not chosen for any specific reason
+        return cv2.Canny(img,100, 200)     # Lower and upper thresholds not chosen for any specific reason
 
     def crop_image(self, img):
         """
@@ -157,7 +157,7 @@ class LaneFollower:
         drawY = lspace
         drawX = np.polyval(line, drawY)                 # May cause a problem if not a real function
         points = (np.asarray([drawX, drawY]).T).astype(np.int32)                    # Points on line
-        final = cv2.polylines(img, [points], False, (255, 0, 225), thickness = 10)  # Draws lines
+        final = cv2.polylines(img, [points], False, (255, 0, 225), thickness = 3)  # Draws lines
 
         return final, points
 
@@ -166,7 +166,7 @@ class LaneFollower:
         Draws a line from the center of the screen to the intersection points of the lanes
         """
         # centerPoint = (self.carCenter, imgHeight)     # Used if we are accounting for the camera offset
-        cv2.line(img, (self.center_point), (intersection_point[0], intersection_point[1]), (0,255,0), 5)
+        cv2.line(img, (self.center_point), (intersection_point[0], intersection_point[1]), (0,255,0), 3)
 
         return img
 
