@@ -235,7 +235,7 @@ class RoadDetection:
         # theta values:
         # 0 corresponds to vertical
         # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
-        # pi/3 corresponds to horizontal line
+        # pi/2 corresponds to horizontal line
         leftlines = cv2.HoughLines(imgBtse, 2, np.pi / 180, rdp.LINE_HOUGH_THRESHOLD, min_theta=0.1 * np.pi / 4, max_theta=1.9 * np.pi / 4)
 
         leftline = np.mean(leftlines, 0)  # takes average of all lines found
