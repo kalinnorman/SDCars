@@ -15,7 +15,8 @@ from car_control import carControl
 runNavigation = True
 
 car = carControl()
-car.drive(0.7)
+driveSpeed = 0.7
+car.drive(driveSpeed)
 lanef = LaneFollower()
 
 while (runNavigation):
@@ -51,9 +52,13 @@ while (runNavigation):
         frame = LF.plot_center(frame, int_point)
 
         angle = LF.calculate_angle(int_point)
+        driveSpeed = 0.7
+        car.drive(driveSpeed)
 
     except:
         frame = frame
+        driveSpeed = driveSpeed*.9
+        car.drive(driveSpeed)
 
     cv2.imshow("Camera Feed", frame)
     key = cv2.waitKey(1) & 0xFF
