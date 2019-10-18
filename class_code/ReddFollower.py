@@ -10,7 +10,7 @@ class ReddFollower:
     def __init__(self):
         # do nothing
         self.steering_state = '.'  # '.' means don't turn, '<' means turn left, '>' means turn right
-        self.car_control_speed = 0.6
+        self.car_control_speed = 0.4
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix.npy')
 
@@ -116,7 +116,7 @@ class ReddFollower:
             leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 20,
                                         min_theta=-45 * np.pi / 180, max_theta =70 * np.pi / 180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
-            leftline = np.mean(leftline, 0)  # rightline is a list in a list, so this gets rid of the outer list
+            leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
 
             return True, leftline, low
         except:
@@ -161,15 +161,77 @@ class ReddFollower:
         right_lane_found, right_parameters, right_offset = self.find_right_lane(white_edges)  # looks for right lane
         left_lane_found, left_parameters, left_offset = self.find_left_lane(yellow_edges)  # looks for right lane
 
+        theta_deg_left = left_parameters[1]*(180/np.pi)
+        theta_deg_right = right_parameters[1]*(180/np.pi)
+
+        # print(theta_deg_left, theta_deg_right)
         # Show lines on images if desired
         if left_lane_found:
             self.steering_control(left_parameters)
 
-        if abs(left_parameters[1]) > 0:
+
+        if right_lane_found and left_lane_found:
+            print('both lanes')
+            print(abs(theta_deg_left) - abs(theta_deg_right))
+            if abs(theta_deg_right) > abs(theta_deg_left):
+                self.car_control_steering_angle = -7
+            elif abs(theta_deg_left) > abs(theta_deg_right):
+                self.car_control_steering_angle = 1
+            else:
+                self.car_control_steering_angle = -3
+        elif left_lane_found:
+            print('left lane')
             if self.steering_state == '<':
-                self.car_control_steering_angle = -5
+                if abs(theta_deg_left) > 10.0:
+                    self.car_control_steering_angle = -19
+                elif abs(theta_deg_left) > 7.0:
+                    self.car_control_steering_angle = -14
+                else:
+                    self.car_control_steering_angle = -7
             elif self.steering_state == '>':
-                self.car_control_steering_angle = 5
+                if abs(theta_deg_left) > 10.0:
+                    self.car_control_steering_angle = 13
+                elif abs(theta_deg_left) > 7.0:
+                    self.car_control_steering_angle = 8
+                else:
+                    self.car_control_steering_angle = 1
+        elif right_lane_found:
+            print('right lane')
+            if theta_deg_right < 0.0:
+                if abs(theta_deg_right) > 10.0:
+                    self.car_control_steering_angle = -19
+                elif abs(theta_deg_right) > 7.0:
+                    self.car_control_steering_angle = -14
+                else:
+                    self.car_control_steering_angle = -7
+            elif theta_deg_right >= 0.0:
+                if abs(theta_deg_right) > 10.0:
+                    self.car_control_steering_angle = 13
+                elif abs(theta_deg_right) > 7.0:
+                    self.car_control_steering_angle = 8
+                else:
+                    self.car_control_steering_angle = 1
+        else:
+            print('NO LANES FOUND!!!')
+        # if abs(left_parameters[1]) > 0:
+        #     if self.steering_state == '<':
+        #         if theta_deg_left < -10.0:
+        #             self.car_control_steering_angle = -19 # KALIN TRIED TO ADD SHARPER TURNS
+        #         elif theta_deg_left < -8.0:
+        #             self.car_control_steering_angle = -17
+        #         elif theta_deg_left < -5.0:
+        #             self.car_control_steering_angle = -11
+        #         else:
+        #             self.car_control_steering_angle = -7
+        #     elif self.steering_state == '>':
+        #         if theta_deg_left > 10.0:
+        #             self.car_control_steering_angle = 13 # KALIN TRIED TO ADD SHARPER TURNS
+        #         elif theta_deg_left > 8.0:
+        #             self.car_control_steering_angle = 11
+        #         elif theta_deg_left > 5.0:
+        #             self.car_control_steering_angle = 5
+        #         else:
+        #             self.car_control_steering_angle = 1
 
         """     
         if (self.steering_state == '<') and (left_parameters[1] > 0):
