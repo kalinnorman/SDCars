@@ -47,6 +47,15 @@ class CarControl:
         :param degree: -30.0 to 30.0
         :return: nothing
         """
+
+        degree = round(degree - 3)  # tuning for our car
+
+        # saturation values
+        if degree > 30:
+            degree = 30  # maximum saturation
+        elif degree < -30:
+            degree = -30  # minimum saturation
+
         self._send_command("!steering" + str(degree) + "\n")
 
     def _initialize_serial_communication(self):
