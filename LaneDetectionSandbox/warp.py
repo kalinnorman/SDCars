@@ -7,7 +7,7 @@ img = cv2.imread("saved_frame.jpg")
 """
 Tunable Parameters
 """
-warped_size = (400, 400)  # the size of the resultant warped image
+warped_size = (200, 200)  # the size of the resultant warped image
 
 car_perspective_y_top = 240
 car_perspective_y_bottom = 480

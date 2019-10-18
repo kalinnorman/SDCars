@@ -47,20 +47,10 @@ if __name__ == '__main__':
             depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
             depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
-            print(t)
-            #print(rgb)
-            #print(depth)
-
-            # cv2.imwrite("color.jpg", rgb)  # show color image
-            # cv2.imwrite("depth.jpg", depth_scaled)  # show depth image
-            # cv2.imshow("Color", rgb)
-            # cv2.imshow("Depth", depth)
+            speed, angle = cc.rf.find_lanes()
             
-            steering_commands()  # run the sequence of steering commands
-
-            # cv2.destroyAllWindows()  # reset the windows for the next loop
-
-            # cc.action.drive_straight()  # drive straight for a bit.
+            cc.steer(angle)
+            cc.speed(speed)
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car

@@ -7,7 +7,7 @@ import serial
 import time
 from Sensors import Sensors
 from CarActions import CarActions
-
+from ReddFollower import ReddFollower
 
 class CarControl:
     """
@@ -21,6 +21,7 @@ class CarControl:
         for i in range(0, 10):
             self.update_sensors()
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
+        self.rf = ReddFollower()
 
 
     def update_sensors(self):
