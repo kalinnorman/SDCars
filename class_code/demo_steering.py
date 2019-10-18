@@ -1,8 +1,6 @@
 """
 demo_steering.py
-
 Author: redd
-
 This is a demo function for controlling the car.
 If this script this run as the main, this will initialize the car and tell it to turn the wheels and drive.
 """
@@ -29,7 +27,7 @@ def steering_commands():
     print("stop")
     cc.drive(0)
     time.sleep(2)
-    
+
 
 if __name__ == '__main__':
 
@@ -41,9 +39,14 @@ if __name__ == '__main__':
         time.sleep(1)
         print("Beginning loop")
         cc.drive(0.6)
-        cc.steer(-3)
-        while True:
+        cc.steer(0)
+        lastSteerAngle = 0
+        time.sleep(0.5)
+        cc.drive(0.4)
 
+        count = 0
+        while True:
+            count += 1
             cc.update_sensors()
             t, rgb = cc.sensor.get_rgb_data()  # get color image
             #t, depth = cc.sensor.get_depth_data()  # get depth data
@@ -51,11 +54,16 @@ if __name__ == '__main__':
             #depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
             frame, commands = cc.rf.find_lanes(rgb)
-            
+            # print(commands) #ADDED BY KALIN TO SEE OUTPUT
             speed = commands[0]
             angle = commands[1]
             steering_state = commands[2]
             limit_found = commands[3]
+            nextSteerAngle = angle
+            if nextSteerAngle != lastSteerAngle:
+                cc.steer(angle)
+                lastSteerAngle = nextSteerAngle
+
 
             #print((speed, angle*2))
             #if count == 5:
@@ -65,12 +73,14 @@ if __name__ == '__main__':
             #    count = count + 1
             #steering_commands()
 
-            if limit_found:
+            if limit_found and count > 25:
                 cc.action.turn_right_while_moving()
                 print("I found the limit line!")
+                count = 0
 
-    except:
+            time.sleep(1/30)  # for 30 ish fps
+
+    except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
         print("\nUser stopped the script. (KeyboardInterrupt)")
-

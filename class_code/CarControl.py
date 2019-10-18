@@ -22,6 +22,7 @@ class CarControl:
             self.update_sensors()
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
         self.rf = ReddFollower()
+        self.previous_steering_update_timestamp = time.time() # keeps track of previous time
 
 
     def update_sensors(self):
@@ -45,7 +46,7 @@ class CarControl:
         """
         Commands the car to turn.
         :param degree: -30.0 to 30.0
-        :return: nothing
+        :return:
         """
 
         degree = round(degree - 3)  # tuning for our car
@@ -56,7 +57,15 @@ class CarControl:
         elif degree < -30:
             degree = -30  # minimum saturation
 
-        self._send_command("!steering" + str(degree) + "\n")
+        # check to make sure steering commands aren't set more than once every half of a second
+        new_time = time.time()  # get the current time
+        if (new_time - self.previous_steering_update_timestamp) > 0.5:  # if its been sufficiently delayed
+            self._send_command("!steering" + str(degree) + "\n")  # send the command
+            self.previous_steering_update_timestamp = new_time  # update the old value
+            return True  # indicate the command was sent
+
+        return False  # indicate that no command was sent
+
 
     def _initialize_serial_communication(self):
         """
@@ -90,7 +99,6 @@ class CarControl:
         """
 
         print("Initializing Car")
-        print("Sending Start Command")
         self._send_command("!start1590\n")
         # time.sleep(1)
 
@@ -102,6 +110,5 @@ class CarControl:
         else:
             self._send_command("!pid0\n")
 
-        print("Stopping Car")
         self.drive(0.0)
 
