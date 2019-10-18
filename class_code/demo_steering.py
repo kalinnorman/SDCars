@@ -24,7 +24,7 @@ def steering_commands():
     cc.steer(-15.0)
     time.sleep(2)
     print("go")
-    cc.drive(0.5)
+    cc.drive(0.6)
     time.sleep(2)
     print("stop")
     cc.drive(0)
@@ -34,26 +34,43 @@ def steering_commands():
 if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
+    count = 0
 
     # run the loop, waiting for a keyboard interrupt
     try:
         time.sleep(1)
         print("Beginning loop")
+        cc.drive(0.6)
+        cc.steer(-3)
         while True:
 
             cc.update_sensors()
             t, rgb = cc.sensor.get_rgb_data()  # get color image
-            t, depth = cc.sensor.get_depth_data()  # get depth data
-            depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
-            depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
+            #t, depth = cc.sensor.get_depth_data()  # get depth data
+            #depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
+            #depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
-            speed, angle = cc.rf.find_lanes()
+            frame, commands = cc.rf.find_lanes(rgb)
             
-            cc.steer(angle)
-            cc.speed(speed)
+            speed = commands[0]
+            angle = commands[1]
+            steering_state = commands[2]
+            limit_found = commands[3]
 
-    except KeyboardInterrupt:
+            #print((speed, angle*2))
+            #if count == 5:
+            #    cc.steer(angle*2)
+            #    count = 0
+            #else:
+            #    count = count + 1
+            #steering_commands()
+
+            if limit_found:
+                cc.action.turn_right_while_moving()
+                print("I found the limit line!")
+
+    except:
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
-        print("User stopped the script. (KeyboardInterrupt)")
+        print("\nUser stopped the script. (KeyboardInterrupt)")
 
