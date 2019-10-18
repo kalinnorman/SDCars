@@ -15,6 +15,7 @@ class ReddFollower:
         """
         Looks for the brightest colors in the images
         """
+        # frameblur = cv2.blur(frame, (10, 10))
         framehsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         framethresh = cv2.inRange(cv2.extractChannel(framehsv, 2), 175, 255)
 
@@ -69,11 +70,60 @@ class ReddFollower:
             limitline = np.mean(limitlines, 0)  # takes average of all lines found
             limitline = np.mean(limitline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
-            return True, limitline
+            return True, limitline, low
         except:
             # nothing found, don't do anything
-            return False, (0, 0)
+            return False, (0, 0), 0
 
+    def find_right_lane(self, white_edges):
+        """
+        Looks in bottom half of image for white lane
+        Pass in the white edges image
+        """
+        try:
+            # Find lines
+            # theta values:
+            # 0 corresponds to vertical
+            # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
+            # pi/2 corresponds to horizontal line
+            high = white_edges.shape[0]
+            low = int(2*high/4)
+            white_edges_bottom_fourth = white_edges[low:high, :]
+            cv2.imshow('white_edges_stuff', white_edges_bottom_fourth)
+            rightlines = cv2.HoughLines(white_edges_bottom_fourth, 2, np.pi / 180, 140,
+                                        min_theta=-75 * np.pi / 180, max_theta =0 * np.pi / 180)
+            rightline = np.mean(rightlines, 0)  # takes average of all lines found
+            rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
+
+            return True, rightline, low
+        except:
+            # nothing found, don't do anything
+            return False, (0, 0), 0
+
+    def find_left_lane(self, frame):
+        """
+        Looks in bottom half of image for yellow lane
+        Pass in the yellow edges image
+        """
+        try:
+            # Find lines
+            # theta values:
+            # 0 corresponds to vertical
+            # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
+            # pi/2 corresponds to horizontal line
+            high = frame.shape[0]
+            low = int(2*high/4)
+            white_edges_bottom_fourth = frame[low:high, :]
+            cv2.imshow('white_edges_stuff', white_edges_bottom_fourth)
+            leftlines = cv2.HoughLines(white_edges_bottom_fourth, 2, np.pi / 180, 70,
+                                        min_theta=-45 * np.pi / 180, max_theta =70 * np.pi / 180)
+            leftline = np.mean(leftlines, 0)  # takes average of all lines found
+            leftline = np.mean(leftline, 0)  # rightline is a list in a list, so this gets rid of the outer list
+
+            return True, leftline, low
+        except:
+            # nothing found, don't do anything
+            return False, (0, 0), 0
 
     def find_lanes(self, frame):
         """
@@ -85,12 +135,20 @@ class ReddFollower:
         white_edges = self.find_edges(white)  # find white edges
         yellow_edges = self.find_edges(yellow)  # find yellow edges
 
-        limit_found, limit_parameters = self.find_limit_lines(white_edges)  # looks for horizonal limit lines
+        limit_found, limit_parameters, offset = self.find_limit_lines(white_edges)  # looks for horizonal limit lines
+        right_lane_found, right_parameters, right_offset = self.find_right_lane(white_edges)  # looks for right lane
+        left_lane_found, left_parameters, left_offset = self.find_left_lane(yellow_edges)  # looks for right lane
 
         if limit_found:  # if a limit line is found
-            self.show_line_on_image(frame, limit_parameters[0], limit_parameters[1], offset=360)  # draw it on the image
+            self.show_line_on_image(frame, limit_parameters[0], limit_parameters[1], offset=offset)  # draw it on the image
 
-        return frame, white_edges, yellow_edges  # return these images for plotting
+        if right_lane_found:  # if a right line is found
+            self.show_line_on_image(frame, right_parameters[0], right_parameters[1], offset=right_offset)  # draw it on the image
+
+        if left_lane_found:  # if a right line is found
+            self.show_line_on_image(frame, left_parameters[0], left_parameters[1], offset=left_offset)  # draw it on the image
+
+        return frame, white, yellow, white_edges, yellow_edges  # return these images for plotting
 
     def show_line_on_image(self, img, r, theta, offset=0):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
