@@ -15,10 +15,10 @@ import cv2
 #rightColorMin = [5, 15, 170]       # White   - Updated values
 #rightColorMax = [20, 40, 230]        # White
 
-leftColorMin = [85, 240, 175]        # Yellow - Determined by plotting imgHSV and hovering over the colors
-leftColorMax = [105, 255, 220]       # Yellow
-rightColorMin = [1, 10, 160]
-rightColorMax = [30, 65, 240]
+# leftColorMin = [85, 240, 175]        # Yellow - Determined by plotting imgHSV and hovering over the colors
+# leftColorMax = [105, 255, 220]       # Yellow
+# rightColorMin = [1, 10, 160]
+# rightColorMax = [30, 65, 240]
 
 LF = LaneFollower()
 count = 0
@@ -38,8 +38,9 @@ while True:
 
     img = LF.convert_to_HSV(frame)
 
-    leftMask = LF.filter_by_color(img, leftColorMin, leftColorMax)
-    rightMask = LF.filter_by_color(img, rightColorMin, rightColorMax)
+    leftMask = LF.filter_by_color(img, True)
+    rightMask = LF.filter_by_color(img, False)
+
 
     leftCanny = LF.canny_img(leftMask)
     rightCanny = LF.canny_img(rightMask)

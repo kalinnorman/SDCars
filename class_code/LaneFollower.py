@@ -21,11 +21,12 @@ class LaneFollower:
         self.leftColorMax = np.asarray([105, 255, 220])       # Yellow
         self.rightColorMin = np.asarray([1, 10, 160])
         self.rightColorMax = np.asarray([30, 65, 240])
-        self.croppedHeightRatio = (1.0/2.0)     # Dimensions of the cropped image
-        self.minSlope = 0.3      # Used to filter out lines that couldn't be the lanes
+        self.croppedHeightRatio = (0/5.0)     # Dimensions of the cropped image
+        self.minSlope = 0.4      # Used to filter out lines that couldn't be the lanes
         self.max_angle = 30      # Maximum steering angle
             # NOT USED CURRENTLY #
-        self.carCenter = 772     # X value of center of the car, as camera is offcenter
+        self.carCenter = 106     # X value of center of the car, as camera is offcenter
+        self.birdseye_transform_matrix = np.load('C:/Users/benjj/Documents/College/Fall2019/ECEN522/Code/SDCars/class_code/car_perspective_transform_matrix.npy')
 
     def update_picture(self, img):
         """
@@ -36,6 +37,9 @@ class LaneFollower:
         self.imgWidth = img.shape[1]
             # MAY NEED TO BE UPDATED TO CAR CENTER #
         self.center_point = (int(self.imgWidth/2), self.imgHeight) 
+
+    def get_birds_eye_view(self, img):
+       return cv2.warpPerspective(img, self.birdseye_transform_matrix, (200, 200))
 
     def clean_image(self, img):
         """
@@ -52,19 +56,39 @@ class LaneFollower:
         """
         return cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
-    def filter_by_color(self, imgHSV, filterLeft):
+    def filter_by_color(self, imgHSV):
         """ 
         Searches through an HSV image and filters out all pixels not in 
-        the specified range of values. filterLeft is true if you are filtering
-        by the left color (white) 
+        the specified range of values. 
         """
-        if filterLeft:
-            min_array = self.leftColorMin
-            max_array = self.leftColorMax
-        else:
-            min_array = self.rightColorMin
-            max_array = self.rightColorMax
-        return cv2.inRange(imgHSV, min_array, max_array)
+
+        min_array = self.leftColorMin
+        max_array = self.leftColorMax
+        left = cv2.inRange(imgHSV, min_array, max_array)
+        
+        # Eliminate left white line
+        sumLine = 0
+        cnt = 0
+        avg_left_x_value = 0
+        for y in range(1,len(left)):
+            for x in range(1,len(left[y])):
+                if left[y][x] != 0:
+                    sumLine = sumLine + x
+                    cnt = cnt + 1
+
+        if cnt > 0:
+            avg_left_x_value = sumLine / cnt
+
+        min_array = self.rightColorMin
+        max_array = self.rightColorMax
+        right = cv2.inRange(imgHSV, min_array, max_array)
+
+        for y in range(1,len(right)):
+            for x in range(1,len(right[y])):
+                if (right[y][x] != 0) * (x < avg_left_x_value):
+                    right[y][x] = 0
+
+        return left, right
  
     def canny_img(self, img):
         """
@@ -112,6 +136,21 @@ class LaneFollower:
         int_point = (int(intX), int(intY))
         return int_point
 
+    def calculate_center(self, img, left_lines, right_lines, order):
+        """
+        Takes in a list of left line points and right line points, as well as a degree
+        Finds center points
+        """
+        center_lines_x = []
+        center_lines_y = []
+        for count in range(1, len(left_lines)):
+            center_lines_x.extend([((left_lines[count][0] + right_lines[count][0])/2)])
+            center_lines_y.extend([((left_lines[count][1] + right_lines[count][1])/2)])
+
+        img, center_points = self.calculate_lines(img, center_lines_x, center_lines_y, order, 1)
+
+        return img, center_points
+
     def hough_lines(self, img):
         """
         Takes in edges and connects the pixels into lines
@@ -119,9 +158,9 @@ class LaneFollower:
         """
         return cv2.HoughLinesP(
                 img,
-                rho = 6,
-                theta = np.pi/60,
-                threshold = 100,
+                rho = 1, # 6
+                theta = np.pi/180,  
+                threshold = 10, # 100
                 lines = np.array([]),
                 minLineLength = 20,
                 maxLineGap = 80)
@@ -153,7 +192,7 @@ class LaneFollower:
 
         return left_line_x, left_line_y, right_line_x, right_line_y
 
-    def calculate_lines(self, img, line_x, line_y, order):
+    def calculate_lines(self, img, line_x, line_y, order, width):
         """
         Takes in a list of x and y coordinates and uses them to fit a line of a designated order
         """
@@ -162,7 +201,7 @@ class LaneFollower:
         drawY = lspace
         drawX = np.polyval(line, drawY)                 # May cause a problem if not a real function
         points = (np.asarray([drawX, drawY]).T).astype(np.int32)                    # Points on line
-        final = cv2.polylines(img, [points], False, (255, 0, 225), thickness = 3)  # Draws lines
+        final = cv2.polylines(img, [points], False, (255, 0, 225), thickness = width)  # Draws lines
 
         return final, points
 
@@ -190,8 +229,8 @@ class LaneFollower:
         """
 
         # Determines the points and formats as arrays
-        mid_point = (int(self.imgWidth/2), int(self.imgHeight/2))
-        c = np.asarray(self.center_point)
+        mid_point = (self.carCenter, int(self.imgHeight/2))
+        c = np.asarray([self.carCenter, self.imgHeight])
         p1 = np.asarray(mid_point) 
         p2 = np.asarray(intersection_point)   
 
