@@ -17,10 +17,10 @@ class LaneFollower:
     """
 
     def __init__(self):
-        self.leftColorMin = np.asarray([90, 245, 180])        # Yellow - Determined by plotting imgHSV and hovering over the colors
-        self.leftColorMax = np.asarray([100, 255, 210])       # Yellow
-        self.rightColorMin = np.asarray([5, 15, 170])         # White
-        self.rightColorMax = np.asarray([20, 40, 230])        # White
+        self.leftColorMin = np.asarray([85, 240, 175])        # Yellow - Determined by plotting imgHSV and hovering over the colors
+        self.leftColorMax = np.asarray([105, 255, 220])       # Yellow
+        self.rightColorMin = np.asarray([1, 10, 160])
+        self.rightColorMax = np.asarray([30, 65, 240])
         self.croppedHeightRatio = (1.0/2.0)     # Dimensions of the cropped image
         self.minSlope = 0.3      # Used to filter out lines that couldn't be the lanes
         self.max_angle = 30      # Maximum steering angle
@@ -52,13 +52,18 @@ class LaneFollower:
         """
         return cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
-    def filter_by_color(self, imgHSV, color_min, color_max):
+    def filter_by_color(self, imgHSV, filterLeft):
         """ 
         Searches through an HSV image and filters out all pixels not in 
-        the specified range of values.
+        the specified range of values. filterLeft is true if you are filtering
+        by the left color (white) 
         """
-        min_array = np.asarray([color_min])
-        max_array = np.asarray([color_max])
+        if filterLeft:
+            min_array = self.leftColorMin
+            max_array = self.leftColorMax
+        else:
+            min_array = self.rightColorMin
+            max_array = self.rightColorMax
         return cv2.inRange(imgHSV, min_array, max_array)
  
     def canny_img(self, img):
