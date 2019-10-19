@@ -112,7 +112,7 @@ class ReddFollower:
             # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
             # pi/2 corresponds to horizontal line
             high = frame.shape[0]
-            low = int(2/3*high)
+            low = int(1/3*high)
             white_edges_bottom_fourth = frame[low:high, :]
 
             leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 20,
