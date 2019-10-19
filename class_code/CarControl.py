@@ -15,6 +15,8 @@ class CarControl:
     """
 
     def __init__(self):
+        print("You must uncomment the following lines for use on the car!")
+
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors

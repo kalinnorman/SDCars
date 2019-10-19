@@ -89,7 +89,7 @@ class ReddFollower:
             black = np.zeros((white_edges.shape[0], width), "uint8")
             white_edges[:, 0:width] = black
             rightlines = cv2.HoughLines(white_edges, 1, np.pi/180, 40,
-                                        min_theta=-45*np.pi/180, max_theta=45*np.pi/180)
+                                        min_theta=-60*np.pi/180, max_theta=60*np.pi/180)
             rightline = np.mean(rightlines, 0)  # takes average of all lines found
             rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
@@ -114,7 +114,7 @@ class ReddFollower:
             white_edges_bottom_fourth = frame[low:high, :]
 
             leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 20,
-                                        min_theta=-45 * np.pi / 180, max_theta =70 * np.pi / 180)
+                                        min_theta=-60*np.pi/180, max_theta=60*np.pi/180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
@@ -167,18 +167,15 @@ class ReddFollower:
 
         if abs(left_parameters[1]) > 0:
             if self.steering_state == '<':
-                self.car_control_steering_angle = -5
+                if abs(left_parameters[1]) > (10 * np.pi / 180):
+                    self.car_control_steering_angle = -20
+                else:
+                    self.car_control_steering_angle = -5
             elif self.steering_state == '>':
-                self.car_control_steering_angle = 5
-
-        """     
-        if (self.steering_state == '<') and (left_parameters[1] > 0):
-            self.steering_state = '.'
-            self.car_control_steering_angle = 0
-        elif (self.steering_state == '>') and (left_parameters[1] < 0):
-            self.steering_state = '.'
-            self.car_control_steering_angle = 0
-        """
+                if abs(left_parameters[1]) > (10 * np.pi / 180):
+                    self.car_control_steering_angle = 20
+                else:
+                    self.car_control_steering_angle = 5
 
         control_values = (self.car_control_speed, self.car_control_steering_angle, self.steering_state, limit_found)
 

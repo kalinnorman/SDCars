@@ -64,15 +64,6 @@ if __name__ == '__main__':
                 cc.steer(angle)
                 lastSteerAngle = nextSteerAngle
 
-
-            #print((speed, angle*2))
-            #if count == 5:
-            #    cc.steer(angle*2)
-            #    count = 0
-            #else:
-            #    count = count + 1
-            #steering_commands()
-
             if limit_found and count > 25:
                 cc.action.turn_right_while_moving()
                 print("I found the limit line!")
