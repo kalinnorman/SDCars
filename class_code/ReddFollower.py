@@ -1,5 +1,7 @@
 """
 Lane detection and following algorithm.
+
+This class will
 """
 import cv2
 import numpy as np
@@ -10,33 +12,35 @@ class ReddFollower:
     def __init__(self):
         # do nothing
         self.steering_state = '.'  # '.' means don't turn, '<' means turn left, '>' means turn right
-        self.car_control_speed = 0.4
-        self.car_control_steering_angle = 0.0
-        # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
-        # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range_warp.npy')
-        self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
+        self.car_control_speed = 0.4  # the commanded speed
+        self.car_control_steering_angle = 0.0  # the commanded angle
+        # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')  # this matrix takes the car's perspective and transforms it to a bird's eye perspective
+        # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range_warp.npy')  # this matrix doesn't look as far forward
+        self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')  # this matrix accounts for the camera being consistently tilted
         self.theta_left_base = -0.5
         self.theta_right_base = 0.0
-        self.counts = [0,0,0]
+        self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
     def filter_bright(self, frame):
         """
-        Looks for the brightest colors in the images
+        Looks for the brightest colors in the images.
+        Blacks out any part of the image that doesn't meet thoat threshold
         """
         # frameblur = cv2.blur(frame, (10, 10))
-        framehsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        framethresh = cv2.inRange(cv2.extractChannel(framehsv, 2), 175, 255)
+        framehsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # convert image to HSV
+        framethresh = cv2.inRange(cv2.extractChannel(framehsv, 2), 175, 255)  # threshold based on value
 
-        frameb = cv2.extractChannel(frame, 0)
-        frameg = cv2.extractChannel(frame, 1)
-        framer = cv2.extractChannel(frame, 2)
+        frameb = cv2.extractChannel(frame, 0)  # blue channel
+        frameg = cv2.extractChannel(frame, 1)  # green channel
+        framer = cv2.extractChannel(frame, 2)  # red channel
 
-        newframe = frame.copy()
-        newframe[:, :, 0] = cv2.bitwise_and(frameb, framethresh)
+        # black out the portion of the image that doesn't meet the threshold
+        newframe = frame.copy()  # create a new copy of the frame
+        newframe[:, :, 0] = cv2.bitwise_and(frameb, framethresh)  # bitwise AND the blue channel and the thresholded image
         newframe[:, :, 1] = cv2.bitwise_and(frameg, framethresh)
         newframe[:, :, 2] = cv2.bitwise_and(framer, framethresh)
 
-        return newframe  # returns
+        return newframe  # returns the thresholded image
 
     def find_edges(self, frame, lowthresh=50, highthresh=200):
         """
@@ -54,7 +58,8 @@ class ReddFollower:
         notwhite = cv2.inRange(white, 0, 0)
         notblack = cv2.inRange(frameb, 1, 255)
         yellow = cv2.bitwise_and(notwhite, notblack)
-        return white, yellow
+
+        return white, yellow  # return the white part of the image and the yellow part of the image
 
     def find_limit_lines(self, white_edges):
         """
@@ -63,12 +68,7 @@ class ReddFollower:
         Returns True if a limit line was found.
         Returns False if not.
         """
-        try:
-            # Find lines
-            # theta values:
-            # 0 corresponds to vertical
-            # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
-            # pi/2 corresponds to horizontal line
+        try:  # try to find lines in the image
             high = white_edges.shape[0]
             low = int(3*high/4)
             white_edges_bottom_fourth = white_edges[low:high, :]
@@ -78,49 +78,43 @@ class ReddFollower:
             limitline = np.mean(limitline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
             return True, limitline, low
-        except:
-            # nothing found, don't do anything
-            return False, (0, 0), 0
+
+        except:  # if we didn't find anything
+            return False, (0, 0), 0  # return that the lane wasn't found
 
     def find_right_lane(self, frame):
         """
         Looks in bottom half of image for white lane
         Pass in the white edges image
         """
-        try:
-
+        try:  # try to find lines in the right half of the image
             # Blank out the left side of the image
-            percentage_crop = .5
+            percentage_crop = .5  # we only want to look at the right half of the image
             width = int(frame.shape[1] * percentage_crop)
             black = np.zeros((frame.shape[0], width), "uint8")
-            frame[:, 0:width] = black
+            frame[:, 0:width] = black  # black out the left-hand side
 
-
-            high = frame.shape[0]
-            low = int(1/3*high)
-            white_edges_cropped = frame[low:high, :]
+            # Only look in bottom two-thirds of image
+            high = frame.shape[0]  # height of image
+            low = int(1/3*high)  # y-coordinate for a third of the way down
+            white_edges_cropped = frame[low:high, :]  # crop the image
 
             rightlines = cv2.HoughLines(white_edges_cropped, 1, np.pi/180, 40,
                                         min_theta=-35*np.pi/180, max_theta=35*np.pi/180)
             rightline = np.mean(rightlines, 0)  # takes average of all lines found
             rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
-            return True, rightline, 0
-        except:
-            # nothing found, don't do anything
-            return False, (0, 0), 0
+            return True, rightline, low  # report that a line was found
+        except:  # if a line wasn't found
+            return False, (0, 0), 0  # report that nothing was found
 
     def find_left_lane(self, frame):
         """
         Looks in bottom half of image for yellow lane
         Pass in the yellow edges image
         """
-        try:
-            # Find lines
-            # theta values:
-            # 0 corresponds to vertical
-            # pi/4 corresponds to diagonal from lower left-hand corner to upper right-hand corner
-            # pi/2 corresponds to horizontal line
+        try: # try to find yellow lines
+            # look in the bottom third of the image
             high = frame.shape[0]
             low = int(1/3*high)
             white_edges_cropped = frame[low:high, :]
@@ -130,10 +124,10 @@ class ReddFollower:
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
 
-            return True, leftline, low
-        except:
-            # nothing found, don't do anything
-            return False, (0, 0), 0
+            return True, leftline, low  # report to user
+
+        except:  # if nothing was found
+            return False, (0, 0), 0  # report to user
 
     def steering_control(self, lane_parameters, print_info=False):
         """
@@ -283,10 +277,10 @@ class ReddFollower:
             #cv2.imshow('frame', frame)
             #cv2.imshow('misc', white_edges)
             #cv2.imshow('yellow', yellow_edges)
-            # cv2.imshow('birdseye', birdseye_frame)
+            #cv2.imshow('birdseye', birdseye_frame)
 
-        # return frame, control_values  # return these images for plotting
-        return birdseye_frame, control_values
+        # return frame, control_values  # returns original frame and commands
+        return birdseye_frame, control_values  # returns the bird's eye view with lane indications and commands
 
     def get_line_coordinates(self, img, r, theta, offset=0, showImg=False):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
@@ -308,5 +302,8 @@ class ReddFollower:
         return ((y0-y1)*(x2-x1))/(y2-y1) + x1
 
     def get_counts(self):
+        """
+        Returns the counts for the number of frames that contained both lanes, just the right, and just the left.
+        """
         return self.counts
 
