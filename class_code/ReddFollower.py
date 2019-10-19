@@ -306,6 +306,6 @@ class ReddFollower:
 
         return x1, y1+offset, x2, y2+offset
 
-    def get_counts(self)
+    def get_counts(self):
         return self.counts
 
