@@ -82,18 +82,25 @@ class ReddFollower:
             # nothing found, don't do anything
             return False, (0, 0), 0
 
-    def find_right_lane(self, white_edges):
+    def find_right_lane(self, frame):
         """
         Looks in bottom half of image for white lane
         Pass in the white edges image
         """
         try:
-
+            """
+            # Blank out the left side of the image
             percentage_crop = .4
-            width = int(white_edges.shape[1] * percentage_crop)
-            black = np.zeros((white_edges.shape[0], width), "uint8")
-            white_edges[:, 0:width] = black
-            rightlines = cv2.HoughLines(white_edges, 1, np.pi/180, 40,
+            width = int(frame.shape[1] * percentage_crop)
+            black = np.zeros((frame.shape[0], width), "uint8")
+            frame[:, 0:width] = black
+            """
+
+            high = frame.shape[0]
+            low = int(1/3*high)
+            white_edges_cropped = frame[low:high, :]
+
+            rightlines = cv2.HoughLines(white_edges_cropped, 1, np.pi/180, 40,
                                         min_theta=-35*np.pi/180, max_theta=35*np.pi/180)
             rightline = np.mean(rightlines, 0)  # takes average of all lines found
             rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
@@ -116,9 +123,9 @@ class ReddFollower:
             # pi/2 corresponds to horizontal line
             high = frame.shape[0]
             low = int(1/3*high)
-            white_edges_bottom_fourth = frame[low:high, :]
+            white_edges_cropped = frame[low:high, :]
 
-            leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 15,
+            leftlines = cv2.HoughLines(white_edges_cropped, 1, np.pi / 180, 15,
                                         min_theta=-35 * np.pi / 180, max_theta =30 * np.pi / 180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
