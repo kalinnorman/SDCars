@@ -184,6 +184,7 @@ class ReddFollower:
         if right_lane_found:  # if a right line is found
             rx1, ry1, rx2, ry2 = self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
                                         offset=right_offset)  # get line coords
+            x_intercept = get_x_intercept_bottom(rx1, ry1, rx2, ry2)
 
         if left_lane_found:  # if a left line is found
             lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
@@ -229,7 +230,7 @@ class ReddFollower:
             # print('right lane')
             self.counts[2] += 1
             if theta_deg_right < self.theta_right_base:
-                if abs(theta_deg_right) > 10.0:
+                if abs(theta_deg_right) > 10.0 and x_intercept > 110:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_right) > 7.0:
                     self.car_control_steering_angle = -11
@@ -308,6 +309,9 @@ class ReddFollower:
             cv2.line(img, (x1, y1 + offset), (x2, y2 + offset), (0, 0, 255), 2)
 
         return x1, y1+offset, x2, y2+offset
+
+    def get_x_intercept_bottom(self, x1, y1, x2, y2, y0=200):
+        return ((y0-y1)*(x2-x1))/(y2-y1) + x1
 
     def get_counts(self):
         return self.counts
