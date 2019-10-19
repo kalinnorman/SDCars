@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 import gc
 import requests # needed to for get_gps_coord()
-
+from ChooseTurn import ChooseTurn
 
 
 class Sensors():
@@ -26,6 +26,10 @@ class Sensors():
         self.current_class_id = None
         self.current_score = None
         self.current_bb = None
+        self.region = None
+
+        # GPS region code
+        self.turn_chooser = ChooseTurn()
 
         # initialize the video stream, pointer to output video file, and
         # frame dimensions
@@ -69,6 +73,10 @@ class Sensors():
     def get_accel_data(self):
         return time.time(), self.current_accel
 
+    # Functions for GPS
+    def get_region(self):
+        return time.time(), self.region
+
     # Functions to access yolo data
     def get_class_id(self):
         return time.time(), self.current_class_id
@@ -102,6 +110,9 @@ class Sensors():
 
         # start realsense pipeline
         rsframes = self.pipeline.wait_for_frames()
+
+        # GPS data
+        self.region = self.turn_chooser.getCoordinates()
 
         # Implement YOLOv3MXNet
         #net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)

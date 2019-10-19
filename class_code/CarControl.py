@@ -23,7 +23,6 @@ class CarControl:
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
         self.rf = ReddFollower()
 
-
     def update_sensors(self):
         """
         updates the sensors values

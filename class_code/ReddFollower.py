@@ -126,7 +126,7 @@ class ReddFollower:
             white_edges_cropped = frame[low:high, :]
 
             leftlines = cv2.HoughLines(white_edges_cropped, 1, np.pi / 180, 15,
-                                        min_theta=-35 * np.pi / 180, max_theta =30 * np.pi / 180)
+                                        min_theta=-35 * np.pi / 180, max_theta=30 * np.pi / 180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
 
@@ -151,7 +151,7 @@ class ReddFollower:
                     print('turn left')  # inform the user
 
 
-    def find_lanes(self, frame, show_images=False):
+    def find_lanes(self, frame, region=None, show_images=False):
         """
         The main function to call in this class
         """
@@ -263,15 +263,8 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = 3
 
-        """     
-        if (self.steering_state == '<') and (left_parameters[1] > 0):
-            self.steering_state = '.'
-            self.car_control_steering_angle = 0
-        elif (self.steering_state == '>') and (left_parameters[1] < 0):
-            self.steering_state = '.'
-            self.car_control_steering_angle = 0
-        """
-
+        # IMPORTANT
+        # If a limit line is found, demo_steering.py will override the decisions made above
         control_values = (self.car_control_speed, self.car_control_steering_angle, self.steering_state, limit_found)
 
         # if show_images:

@@ -64,14 +64,35 @@ if __name__ == '__main__':
             if nextSteerAngle != lastSteerAngle:
                 cc.steer(angle)
                 lastSteerAngle = nextSteerAngle
-            
 
             if limit_found and count > 25:
-                # cc.action.turn_right_while_moving()
                 print("I found the limit line!")
-                cc.drive(0.25)
+                current_region = cc.sensor.turn_chooser.getCoordinates()
+                if current_region == 'south':
+                    print("I'm turning left at the southern stop sign.")
+                    cc.action.turn_left_while_moving()
+                elif current_region == 'middleSouth':
+                    print("I'm turning right at the southern stop sign.")
+                    cc.action.turn_right_while_moving()
+                elif current_region == 'middleNorth':
+                    print("I'm turning right at the northern stop sign.")
+                    cc.action.turn_right_while_moving()
+                elif current_region == 'north':
+                    print("I'm turning left at the northern stop sign.")
+                else:
+                    print("I'm at the intersection.")
+                    if (count % 3) == 0:
+                        print("I decided to go straight.")
+                        cc.action.drive_straight()
+                    elif (count % 3) == 1:
+                        print("I decided to turn right.")
+                        cc.action.turn_right_while_moving()
+                    else:
+                        print("I decided to turn left.")
+                        cc.action.turn_left_while_moving()
+
                 count = 0
-            cv2.imshow('birds',frame)
+            cv2.imshow('birds', frame)
             # time.sleep(0.005)
             key = cv2.waitKey(25) & 0xFF
 
