@@ -64,7 +64,7 @@ class CarActions:
         #End of driving up
         time.sleep(1)
         self.cc.steer(33)
-        time.sleep(1)
+        time.sleep(3)
         # self.cc.drive(0) # FIXME must be deleted for implementation
         self.cc.steer(-3)
 
