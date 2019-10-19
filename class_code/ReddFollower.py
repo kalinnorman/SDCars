@@ -242,6 +242,22 @@ class ReddFollower:
                     self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 5
+        elif left_lane_found:
+            self.counts[1] += 1
+            if self.steering_state == '<':
+                if abs(theta_deg_left) > 10.0:
+                    self.car_control_steering_angle = -19
+                elif abs(theta_deg_left) > 7.0:
+                    self.car_control_steering_angle = -11
+                else:
+                    self.car_control_steering_angle = -5
+            elif self.steering_state == '>':
+                if abs(theta_deg_left) > 10.0:
+                    self.car_control_steering_angle = 19
+                elif abs(theta_deg_left) > 7.0:
+                    self.car_control_steering_angle = 11
+                else:
+                    self.car_control_steering_angle = 3
         # else:
             # print('NO LANES FOUND!!!')
 
