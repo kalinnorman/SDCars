@@ -13,8 +13,8 @@ class ReddFollower:
         self.car_control_speed = 0.4
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix.npy')
-        self.theta_left_base = 0.0
-        self.theta_right_base = 0.0
+        self.theta_left_base = -0.5
+        self.theta_right_base = -0.4
 
     def filter_bright(self, frame):
         """
@@ -129,7 +129,7 @@ class ReddFollower:
         """
         To control the steering
         """
-        if lane_parameters[1] > 0:  # if the angle is to the right
+        if lane_parameters[1] > self.theta_left_base:  # if the angle is to the right
             if self.steering_state != '>':  # if we haven't already
                 self.steering_state = '>'  # tell the car to turn right
                 if print_info:
@@ -209,12 +209,12 @@ class ReddFollower:
                     self.car_control_steering_angle = 5
         elif right_lane_found:
             print('right lane')
-            if theta_deg_right < 0.0:
+            if theta_deg_right < self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -16
                 else:
                     self.car_control_steering_angle = -5
-            elif theta_deg_right >= 0.0:
+            elif theta_deg_right >= self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = 16
                 else:
