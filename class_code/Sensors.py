@@ -3,7 +3,37 @@ Sensors.py
 
 A class for handling sensor data
 
-Author: redd
+This includes camera, IMU, GPS, YOLO3...
+
+Functions & parameters:
+init()
+get_all_data()
+
+# Functions to access camera/IMU data
+get_depth_data()
+get_rgb_data()
+get_gyro_data()
+get_accel_data()
+
+# Functions for GPS
+get_region()
+
+# Functions to access yolo data
+get_class_id()
+get_score()
+get_bb()
+
+# Functions for accessing IMU data
+gyro_data(gyro)
+accel_data(accel)
+update_sensors()
+
+# Functions for GPS
+get_gps_region()
+get_gps_coord(color)
+
+
+Author: KAB'B
 """
 
 import pyrealsense2 as rs
@@ -43,6 +73,7 @@ class Sensors():
         # Start streaming
         self.pipeline.start(self.config)
 
+    # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
         """
         Returns all data as a list
@@ -60,7 +91,7 @@ class Sensors():
     def get_depth_data(self):
         return time.time(), self.current_depth
 
-    def get_rgb_data(self):
+    def get_rgb_data(self): # gives a picture frame
         return time.time(), self.current_rgb
 
     def get_gyro_data(self):
@@ -80,7 +111,7 @@ class Sensors():
     def get_score(self):
         return time.time(), self.current_score
 
-    def get_bb(self):
+    def get_bb(self): # bounding box for YOLO3
         return time.time(), self.current_bb
 
     # Functions for accessing IMU data
@@ -110,7 +141,7 @@ class Sensors():
         # GPS data
         self.region = self.get_gps_region()
 
-        # Implement YOLOv3MXNet
+        #### Implement YOLOv3MXNet ####
         #net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)
 
         # from gluoncv import data
@@ -157,6 +188,7 @@ class Sensors():
         x,y = self.get_gps_coord("Blue")  # outputs coordinates (x,y)
 
         # arbitrary values, need to test when have testing space
+        # we only care about the horizontal axis (y) for turning purposes
         if y > 1200 :
             region = 'north'
             # should go left
@@ -174,7 +206,7 @@ class Sensors():
             # can go any direction
         return region
 
-    # retrieves the coordinates of a car
+    # retrieves the coordinates of a car (provided in class code)
     # car color options are: "Green", "Red", "Purple", "Blue", "Yellow"
     # my advice: pick "Blue" -ABT
     def get_gps_coord(self, color):
