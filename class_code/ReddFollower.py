@@ -166,7 +166,7 @@ class ReddFollower:
         theta_deg_left = left_parameters[1]*(180/np.pi)
         theta_deg_right = right_parameters[1]*(180/np.pi)
 
-        print(theta_deg_left, theta_deg_right)
+        # print(theta_deg_left, theta_deg_right)
         # Show lines on images if desired
         if left_lane_found:
             self.steering_control(left_parameters)
@@ -263,10 +263,11 @@ class ReddFollower:
 
         control_values = (self.car_control_speed, self.car_control_steering_angle, self.steering_state, limit_found)
 
-        if show_images:
-            if limit_found:  # if a limit line is found
-                self.get_line_coordinates(frame, limit_parameters[0], limit_parameters[1],
-                                        offset=offset, showImg=True)  # draw it on the image
+        # if show_images:
+        if True:
+            # if limit_found:  # if a limit line is found
+            #     self.get_line_coordinates(frame, limit_parameters[0], limit_parameters[1],
+            #                             offset=offset, showImg=True)  # draw it on the image
 
             if right_lane_found:  # if a right line is found
                 self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
@@ -275,12 +276,13 @@ class ReddFollower:
             if left_lane_found:  # if a right line is found
                 self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset, showImg=True)  # draw it on the image
-            cv2.imshow('frame', frame)
-            cv2.imshow('misc', white_edges)
-            cv2.imshow('yellow', yellow_edges)
-            cv2.imshow('birdseye', birdseye_frame)
+            #cv2.imshow('frame', frame)
+            #cv2.imshow('misc', white_edges)
+            #cv2.imshow('yellow', yellow_edges)
+            # cv2.imshow('birdseye', birdseye_frame)
 
-        return frame, control_values  # return these images for plotting
+        # return frame, control_values  # return these images for plotting
+        return birdseye_frame, control_values
 
     def get_line_coordinates(self, img, r, theta, offset=0, showImg=False):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
