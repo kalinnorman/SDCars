@@ -92,7 +92,7 @@ class ReddFollower:
             black = np.zeros((white_edges.shape[0], width), "uint8")
             white_edges[:, 0:width] = black
             rightlines = cv2.HoughLines(white_edges, 1, np.pi/180, 40,
-                                        min_theta=-45*np.pi/180, max_theta=45*np.pi/180)
+                                        min_theta=-35*np.pi/180, max_theta=35*np.pi/180)
             rightline = np.mean(rightlines, 0)  # takes average of all lines found
             rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
@@ -117,7 +117,7 @@ class ReddFollower:
             white_edges_bottom_fourth = frame[low:high, :]
 
             leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 15,
-                                        min_theta=-45 * np.pi / 180, max_theta =70 * np.pi / 180)
+                                        min_theta=-35 * np.pi / 180, max_theta =30 * np.pi / 180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
 
@@ -204,7 +204,7 @@ class ReddFollower:
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
                 else:
-                    self.car_control_steering_angle = 5
+                    self.car_control_steering_angle = 3
         elif left_lane_found:
             # print('left lane')
             self.counts[1] += 1
@@ -217,7 +217,7 @@ class ReddFollower:
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
                 else:
-                    self.car_control_steering_angle = 5
+                    self.car_control_steering_angle = 3
         elif right_lane_found:
             # print('right lane')
             self.counts[2] += 1
@@ -232,9 +232,9 @@ class ReddFollower:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = 17
                 elif abs(theta_deg_right) > 4.0:
-                    self.car_control_steering_angle = 4
+                    self.car_control_steering_angle = 2
                 else:
-                    self.car_control_steering_angle = -3
+                    self.car_control_steering_angle = -4
         # else:
             # print('NO LANES FOUND!!!')
             
