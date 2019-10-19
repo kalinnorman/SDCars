@@ -90,7 +90,7 @@ class ReddFollower:
         try:
 
             # Blank out the left side of the image
-            percentage_crop = .4
+            percentage_crop = .5
             width = int(frame.shape[1] * percentage_crop)
             black = np.zeros((frame.shape[0], width), "uint8")
             frame[:, 0:width] = black
