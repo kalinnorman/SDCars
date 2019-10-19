@@ -178,8 +178,8 @@ class ReddFollower:
 
         # print(theta_deg_left, theta_deg_right)
         # Show lines on images if desired
-        if left_lane_found:
-            self.steering_control(left_parameters)
+        # if left_lane_found:
+        #     self.steering_control(left_parameters)
 
         if right_lane_found:  # if a right line is found
             rx1, ry1, rx2, ry2 = self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
@@ -190,42 +190,37 @@ class ReddFollower:
             lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset)  # get line coords
 
-
-        # if right_lane_found and left_lane_found:
-        #     # print('both lanes')
-        #     self.counts[0] += 1
-        #     if self.steering_state == '<':
-        #         if abs(theta_deg_left) > 10.0:
-        #             self.car_control_steering_angle = -19
-        #         # elif abs(theta_deg_left) > 7.0:
-        #         #     self.car_control_steering_angle = -11
-        #         else:
-        #             self.car_control_steering_angle = -5
-        #     elif self.steering_state == '>':
-        #         if abs(theta_deg_left) > 10.0:
-        #             self.car_control_steering_angle = 19
-        #         elif abs(theta_deg_left) > 7.0:
-        #             self.car_control_steering_angle = 11
-        #         else:
-        #             self.car_control_steering_angle = 3
-        # elif left_lane_found:
-        #     # print('left lane')
-        #     self.counts[1] += 1
-        #     if self.steering_state == '<':
-        #         if abs(theta_deg_left) > 10.0:
-        #             self.car_control_steering_angle = -19
-        #         elif abs(theta_deg_left) > 7.0:
-        #             self.car_control_steering_angle = -11
-        #         else:
-        #             self.car_control_steering_angle = -5
-        #     elif self.steering_state == '>':
-        #         if abs(theta_deg_left) > 10.0:
-        #             self.car_control_steering_angle = 19
-        #         elif abs(theta_deg_left) > 7.0:
-        #             self.car_control_steering_angle = 11
-        #         else:
-        #             self.car_control_steering_angle = 3
-        # elif right_lane_found:
+        if right_lane_found and left_lane_found:
+            self.counts[0] += 1
+            if theta_deg_right < self.theta_right_base: # If the angle is to the left and we need to then turn left
+                if abs(theta_deg_right) > 10.0:
+                    self.car_control_steering_angle = -19
+                elif abs(theta_deg_right) > 7.0:
+                    self.car_control_steering_angle = -11
+                else:
+                    self.car_control_steering_angle = -5
+            elif theta_deg_right >= self.theta_right_base:
+                if abs(theta_deg_right) > 10.0 and x_intercept > 110:
+                    self.car_control_steering_angle = 19
+                elif abs(theta_deg_right) > 10.0 and left_lane_found: # Give control to left lane detection
+                    if theta_deg_left < self.theta_left_base:
+                        if abs(theta_deg_left) > 10.0:
+                            self.car_control_steering_angle = -19
+                        elif abs(theta_deg_left) > 7.0:
+                            self.car_control_steering_angle = -11
+                        else:
+                            self.car_control_steering_angle = -5
+                    elif theta_deg_left >= self.theta_left_base:
+                        if abs(theta_deg_left) > 10.0:
+                            self.car_control_steering_angle = 19
+                        elif abs(theta_deg_left) > 7.0:
+                            self.car_control_steering_angle = 11
+                        else:
+                            self.car_control_steering_angle = 3
+                elif abs(theta_deg_right) > 7.0 and x_intercept > 95:
+                    self.car_control_steering_angle = 11
+                else:
+                    self.car_control_steering_angle = 5
         if right_lane_found:
             # print('right lane')
             self.counts[2] += 1
@@ -245,14 +240,16 @@ class ReddFollower:
                     self.car_control_steering_angle = 5
         elif left_lane_found:
             self.counts[1] += 1
-            if self.steering_state == '<':
+            # if self.steering_state == '<':
+            if theta_deg_left < self.theta_left_base:
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_left) > 7.0:
                     self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
-            elif self.steering_state == '>':
+            # elif self.steering_state == '>':
+            elif theta_deg_left >= self.theta_left_base:
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
                 elif abs(theta_deg_left) > 7.0:
