@@ -13,6 +13,8 @@ class ReddFollower:
         self.car_control_speed = 0.4
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix.npy')
+        self.theta_left_base = 0.0
+        self.theta_right_base = 0.0
 
     def filter_bright(self, frame):
         """
@@ -164,7 +166,7 @@ class ReddFollower:
         theta_deg_left = left_parameters[1]*(180/np.pi)
         theta_deg_right = right_parameters[1]*(180/np.pi)
 
-        # print(theta_deg_left, theta_deg_right)
+        print(theta_deg_left, theta_deg_right)
         # Show lines on images if desired
         if left_lane_found:
             self.steering_control(left_parameters)
