@@ -37,8 +37,6 @@ class CarControl:
         :param speed: -2.0 to 2.0
         :return: nothing
         """
-        # drive_command = "!speed" + str(speed) + "\n"
-        # self.ser.write(drive_command.encode())
         self._send_command("!speed" + str(speed) + "\n")
 
     def steer(self, degree):
@@ -93,3 +91,4 @@ class CarControl:
         print("Initialization Completed")
         
 
+        
