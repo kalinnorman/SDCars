@@ -12,7 +12,8 @@ class ReddFollower:
         self.steering_state = '.'  # '.' means don't turn, '<' means turn left, '>' means turn right
         self.car_control_speed = 0.4
         self.car_control_steering_angle = 0.0
-        self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
+        # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
+        self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range_warp.npy')
         self.theta_left_base = -0.5
         self.theta_right_base = -0.4
         self.counts = [0,0,0]
@@ -198,14 +199,14 @@ class ReddFollower:
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
-                elif abs(theta_deg_left) > 5.0:
+                elif abs(theta_deg_left) > 7.0:
                     self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
-                elif abs(theta_deg_left) > 6.0:
+                elif abs(theta_deg_left) > 7.0:
                     self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 3
@@ -215,14 +216,14 @@ class ReddFollower:
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
-                elif abs(theta_deg_left) > 5.0:
+                elif abs(theta_deg_left) > 7.0:
                     self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
-                elif abs(theta_deg_left) > 6.0:
+                elif abs(theta_deg_left) > 7.0:
                     self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 3
