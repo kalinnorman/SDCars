@@ -184,7 +184,7 @@ class ReddFollower:
         if right_lane_found:  # if a right line is found
             rx1, ry1, rx2, ry2 = self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
                                         offset=right_offset)  # get line coords
-            x_intercept = get_x_intercept_bottom(rx1, ry1, rx2, ry2)
+            x_intercept = self.get_x_intercept_bottom(rx1, ry1, rx2, ry2)
 
         if left_lane_found:  # if a left line is found
             lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
