@@ -53,7 +53,7 @@ if __name__ == '__main__':
             #depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
             #depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
-            frame, commands = cc.rf.find_lanes(rgb)
+            frame, commands = cc.rf.find_lanes(rgb, show_images=True)
             # print(commands) #ADDED BY KALIN TO SEE OUTPUT
             speed = commands[0]
             angle = commands[1]
@@ -65,11 +65,11 @@ if __name__ == '__main__':
                 lastSteerAngle = nextSteerAngle
 
             if limit_found and count > 25:
-                cc.action.turn_right_while_moving()
+                cc.drive(0.0)
                 print("I found the limit line!")
                 count = 0
 
-            time.sleep(1/30)  # for 30 ish fps
+            time.sleep(0.005)  # for 30 ish fps
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car

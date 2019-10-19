@@ -89,7 +89,7 @@ class ReddFollower:
             black = np.zeros((white_edges.shape[0], width), "uint8")
             white_edges[:, 0:width] = black
             rightlines = cv2.HoughLines(white_edges, 1, np.pi/180, 40,
-                                        min_theta=-60*np.pi/180, max_theta=60*np.pi/180)
+                                        min_theta=-45*np.pi/180, max_theta=45*np.pi/180)
             rightline = np.mean(rightlines, 0)  # takes average of all lines found
             rightline = np.mean(rightline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
@@ -114,7 +114,7 @@ class ReddFollower:
             white_edges_bottom_fourth = frame[low:high, :]
 
             leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 20,
-                                        min_theta=-60*np.pi/180, max_theta=60*np.pi/180)
+                                        min_theta=-45*np.pi/180, max_theta=45*np.pi/180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # rightline is a list in a list, so this gets rid of the outer list
 
@@ -191,10 +191,12 @@ class ReddFollower:
             if left_lane_found:  # if a right line is found
                 self.show_line_on_image(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset)  # draw it on the image
-            cv2.imshow('frame', frame)
-            cv2.imshow('misc', white_edges)
-            cv2.imshow('yellow', yellow_edges)
-            cv2.imshow('birdseye', birdseye_frame)
+            #cv2.imshow('frame', frame)
+            #cv2.imshow('misc', white_edges)
+            #cv2.imshow('yellow', yellow_edges)
+            #cv2.imshow('birdseye', birdseye_frame)
+            birdseye_gray = cv2.cvtColor(birdseye_frame, cv2.COLOR_BGR2GRAY)
+            cv2.imshow('birdseye', birdseye_gray)
 
         return frame, control_values  # return these images for plotting
 
