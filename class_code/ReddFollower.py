@@ -198,11 +198,15 @@ class ReddFollower:
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
+                elif abs(theta_deg_left) > 5.0:
+                    self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
+                elif abs(theta_deg_left) > 6.0:
+                    self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 3
         elif left_lane_found:
@@ -211,11 +215,15 @@ class ReddFollower:
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
+                elif abs(theta_deg_left) > 5.0:
+                    self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 19
+                elif abs(theta_deg_left) > 6.0:
+                    self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 3
         elif right_lane_found:
