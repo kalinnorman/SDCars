@@ -40,9 +40,9 @@ if __name__ == '__main__':
     try:
         time.sleep(1)
         print("Beginning loop")
-        cc.drive(0.5)
         cc.steer(0)
         lastSteerAngle = 0
+        cc.drive(0.6)
         time.sleep(0.5)
         cc.drive(0.3)
         
