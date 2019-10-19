@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 count = 0
             cv2.imshow('birds',frame)
             # time.sleep(0.005)
-            time.sleep(1)
+            key = cv2.waitKey(25) & 0xFF
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car
