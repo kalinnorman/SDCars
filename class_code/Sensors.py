@@ -11,6 +11,8 @@ import time
 import cv2
 import numpy as np
 import gc
+import requests # needed to for getCoor()
+
 
 
 class Sensors():
@@ -143,3 +145,19 @@ class Sensors():
 
         gc.collect()  # collect garbage
 
+    # retrieves the coordinates of a car
+    # car color options are: "Green", "Red", "Purple", "Blue", "Yellow"
+    # my advice: pick "Blue" -ABT
+    def getCoor(color):
+        # api-endpoint
+        URL = "http://192.168.1.8:8080/%s" % color
+
+        # sending get request and saving the response as response object
+        r = requests.get(url = URL)
+
+        # extracting data
+        coorString = r.text
+        coordinates = coorString.split()
+        latitude = float(coordinates[0])
+        longitude = float(coordinates[1])
+        return (latitude, longitude)
