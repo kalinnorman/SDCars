@@ -189,9 +189,11 @@ class ReddFollower:
         if left_lane_found:  # if a left line is found
             lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset)  # get line coords
+            x_intercept_l = self.get_x_intercept_bottom(lx1, ly1, lx2, ly2)
 
         if right_lane_found and left_lane_found:
             self.counts[0] += 1
+
             if theta_deg_right < self.theta_right_base: # If the angle is to the left and we need to then turn left
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -19
@@ -203,7 +205,9 @@ class ReddFollower:
                 if abs(theta_deg_right) > 10.0 and x_intercept > 110:
                     self.car_control_steering_angle = 19
                 elif abs(theta_deg_right) > 10.0 and left_lane_found: # Give control to left lane detection
-                    if theta_deg_left < self.theta_left_base:
+                    if x_intercept_l > 120:
+                        self.car_control_steering_angle = 7
+                    elif theta_deg_left < self.theta_left_base:
                         if abs(theta_deg_left) > 10.0:
                             self.car_control_steering_angle = -19
                         elif abs(theta_deg_left) > 7.0:
