@@ -81,18 +81,15 @@ class CarControl:
         """
 
         print("Initializing Car")
-        print("Sending Start Command")
-        self._send_command("!start1590\n")
-        # time.sleep(1)
-
+        self._send_command("!straight1430\n")
         self._send_command("!kp0.01\n")
         self._send_command("!kd0.01\n")
-        self._send_command("!straight1430\n")
         if pid_flag:
             self._send_command("!pid1\n")
         else:
             self._send_command("!pid0\n")
-
-        print("Stopping Car")
+        self._send_command("!start1590\n")
         self.drive(0.0)
+        print("Initialization Completed")
+        
 
