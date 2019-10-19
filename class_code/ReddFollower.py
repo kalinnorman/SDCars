@@ -230,8 +230,10 @@ class ReddFollower:
             elif theta_deg_right >= self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = 13
+                elif abs(theta_deg_right) > 4.0:
+                    self.car_control_steering_angle = 4
                 else:
-                    self.car_control_steering_angle = 3
+                    self.car_control_steering_angle = -1
         else:
             print('NO LANES FOUND!!!')
         # if abs(left_parameters[1]) > 0:
