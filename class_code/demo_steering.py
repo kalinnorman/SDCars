@@ -68,6 +68,7 @@ if __name__ == '__main__':
             if limit_found and count > 25:
                 cc.action.turn_right_while_moving()
                 print("I found the limit line!")
+                cc.drive(0.2)
                 count = 0
             time.sleep(0.005)
 
