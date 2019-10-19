@@ -11,7 +11,7 @@ import time
 import cv2
 import numpy as np
 import gc
-import requests # needed to for getCoor()
+import requests # needed to for get_gps_coord()
 
 
 
@@ -148,7 +148,7 @@ class Sensors():
     # retrieves the coordinates of a car
     # car color options are: "Green", "Red", "Purple", "Blue", "Yellow"
     # my advice: pick "Blue" -ABT
-    def getCoor(color):
+    def get_gps_coord(self, color):
         # api-endpoint
         URL = "http://192.168.1.8:8080/%s" % color
 
