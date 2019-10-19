@@ -42,9 +42,9 @@ if __name__ == '__main__':
         print("Beginning loop")
         cc.steer(0)
         lastSteerAngle = 0
-        cc.drive(0.6)
+        cc.drive(0.7)
         time.sleep(0.5)
-        cc.drive(0.2)
+        cc.drive(0.3)
         
         count = 0
         while True:
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             if limit_found and count > 25:
                 # cc.action.turn_right_while_moving()
                 print("I found the limit line!")
-                cc.drive(0.2)
+                cc.drive(0.3)
                 count = 0
             cv2.imshow('birds',frame)
             # time.sleep(0.005)
