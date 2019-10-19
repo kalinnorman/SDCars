@@ -14,7 +14,7 @@ class ReddFollower:
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
         self.theta_left_base = -0.5
-        self.theta_right_base = 0.5
+        self.theta_right_base = -0.4
         self.counts = [0,0,0]
 
     def filter_bright(self, frame):
