@@ -14,7 +14,8 @@ class ReddFollower:
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
         self.theta_left_base = -0.5
-        self.theta_right_base = 0.0
+        self.theta_right_base = 0.5
+        self.counts = [0,0,0]
 
     def filter_bright(self, frame):
         """
@@ -181,8 +182,8 @@ class ReddFollower:
 
 
         if right_lane_found and left_lane_found:
-            print('both lanes')
-            lastView = "both"
+            # print('both lanes')
+            self.counts[0] += 1
             # if theta_deg_left > 10.0:
             #     self.car_control_steering_angle = 14
             # elif theta_deg_left < -10.0:
@@ -205,8 +206,8 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = 5
         elif left_lane_found:
-            print('left lane')
-            lastView = "left"
+            # print('left lane')
+            self.counts[1] += 1
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
@@ -218,8 +219,8 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = 5
         elif right_lane_found:
-            print('right lane')
-            lastView = "right"
+            # print('right lane')
+            self.counts[2] += 1
             if theta_deg_right < self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -19
@@ -235,7 +236,7 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = -3
         else:
-            print('NO LANES FOUND!!!')
+            # print('NO LANES FOUND!!!')
         # if abs(left_parameters[1]) > 0:
         #     if self.steering_state == '<':
         #         if theta_deg_left < -10.0:
@@ -303,4 +304,7 @@ class ReddFollower:
             cv2.line(img, (x1, y1 + offset), (x2, y2 + offset), (0, 0, 255), 2)
 
         return x1, y1+offset, x2, y2+offset
+
+    def get_counts(self)
+        return self.counts
 

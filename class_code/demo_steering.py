@@ -64,6 +64,7 @@ if __name__ == '__main__':
             if nextSteerAngle != lastSteerAngle:
                 cc.steer(angle)
                 lastSteerAngle = nextSteerAngle
+            
 
             if limit_found and count > 25:
                 # cc.action.turn_right_while_moving()
@@ -77,5 +78,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
+        print(cc.rf.get_counts())
         print("\nUser stopped the script. (KeyboardInterrupt)")
 
