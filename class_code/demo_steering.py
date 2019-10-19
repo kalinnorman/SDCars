@@ -56,7 +56,6 @@ if __name__ == '__main__':
             #depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
             frame, commands = cc.rf.find_lanes(rgb)
-            # print(commands) #ADDED BY KALIN TO SEE OUTPUT
             speed = commands[0]
             angle = commands[1]
             steering_state = commands[2]
@@ -65,15 +64,6 @@ if __name__ == '__main__':
             if nextSteerAngle != lastSteerAngle:
                 cc.steer(angle)
                 lastSteerAngle = nextSteerAngle
-
-
-            #print((speed, angle*2))
-            #if count == 5:
-            #    cc.steer(angle*2)
-            #    count = 0
-            #else:
-            #    count = count + 1
-            #steering_commands()
 
             if limit_found and count > 25:
                 cc.action.turn_right_while_moving()

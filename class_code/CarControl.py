@@ -47,6 +47,7 @@ class CarControl:
         :param degree: -30.0 to 30.0
         :return: nothing
         """
+        degree = degree - 3
         self._send_command("!steering" + str(degree) + "\n")
 
     def _initialize_serial_communication(self):

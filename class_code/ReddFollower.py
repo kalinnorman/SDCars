@@ -172,45 +172,41 @@ class ReddFollower:
 
         if right_lane_found and left_lane_found:
             print('both lanes')
-            print(abs(theta_deg_left) - abs(theta_deg_right))
-            if abs(theta_deg_right) > abs(theta_deg_left):
-                self.car_control_steering_angle = -7
-            elif abs(theta_deg_left) > abs(theta_deg_right):
-                self.car_control_steering_angle = 1
+            if theta_deg_left > 10.0:
+                self.car_control_steering_angle = 20
+            elif theta_deg_left < -10.0:
+                self.car_control_steering_angle = -20
             else:
-                self.car_control_steering_angle = -3
+                if abs(theta_deg_right) > abs(theta_deg_left):
+                    self.car_control_steering_angle = -5
+                elif abs(theta_deg_left) > abs(theta_deg_right):
+                    self.car_control_steering_angle = 5
+                else:
+                    self.car_control_steering_angle = 0
         elif left_lane_found:
             print('left lane')
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = -19
-                elif abs(theta_deg_left) > 7.0:
-                    self.car_control_steering_angle = -14
+                    self.car_control_steering_angle = -20
                 else:
-                    self.car_control_steering_angle = -7
+                    self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = 13
-                elif abs(theta_deg_left) > 7.0:
-                    self.car_control_steering_angle = 8
+                    self.car_control_steering_angle = 20
                 else:
-                    self.car_control_steering_angle = 1
+                    self.car_control_steering_angle = 5
         elif right_lane_found:
             print('right lane')
             if theta_deg_right < 0.0:
                 if abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = -19
-                elif abs(theta_deg_right) > 7.0:
-                    self.car_control_steering_angle = -14
+                    self.car_control_steering_angle = -20
                 else:
-                    self.car_control_steering_angle = -7
+                    self.car_control_steering_angle = -5
             elif theta_deg_right >= 0.0:
                 if abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = 13
-                elif abs(theta_deg_right) > 7.0:
-                    self.car_control_steering_angle = 8
+                    self.car_control_steering_angle = 20
                 else:
-                    self.car_control_steering_angle = 1
+                    self.car_control_steering_angle = 5
         else:
             print('NO LANES FOUND!!!')
         # if abs(left_parameters[1]) > 0:
