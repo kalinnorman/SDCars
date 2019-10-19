@@ -1,5 +1,5 @@
 """
-Lane detection and following algorithm
+Lane detection and following algorithm.
 """
 import cv2
 import numpy as np
