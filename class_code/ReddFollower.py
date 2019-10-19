@@ -14,7 +14,7 @@ class ReddFollower:
         self.car_control_steering_angle = 0.0
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range.npy')
         self.theta_left_base = -0.5
-        self.theta_right_base = -0.4
+        self.theta_right_base = 0.0
 
     def filter_bright(self, frame):
         """
@@ -115,7 +115,7 @@ class ReddFollower:
             low = int(1/3*high)
             white_edges_bottom_fourth = frame[low:high, :]
 
-            leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 20,
+            leftlines = cv2.HoughLines(white_edges_bottom_fourth, 1, np.pi / 180, 15,
                                         min_theta=-45 * np.pi / 180, max_theta =70 * np.pi / 180)
             leftline = np.mean(leftlines, 0)  # takes average of all lines found
             leftline = np.mean(leftline, 0)  # leftline is a list in a list, so this gets rid of the outer list
@@ -223,6 +223,8 @@ class ReddFollower:
             if theta_deg_right < self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -15
+                elif abs(theta_deg_right) > 5.0:
+                    self.car_control_steering_angle = -9
                 else:
                     self.car_control_steering_angle = -5
             elif theta_deg_right >= self.theta_right_base:
