@@ -44,7 +44,7 @@ if __name__ == '__main__':
         cc.steer(-3)
         lastSteerAngle = -3
         time.sleep(0.5)
-        cc.drive(0.3)
+        cc.drive(0.2)
         
         count = 0
         while True:
