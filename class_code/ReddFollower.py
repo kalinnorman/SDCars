@@ -245,7 +245,9 @@ class ReddFollower:
         elif left_lane_found:
             self.counts[1] += 1
             # if self.steering_state == '<':
-            if theta_deg_left < self.theta_left_base:
+            if x_intercept_l > 120:
+                self.car_control_steering_angle = 6
+            elif theta_deg_left < self.theta_left_base:
                 if abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_left) > 7.0:
