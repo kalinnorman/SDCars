@@ -40,7 +40,7 @@ if __name__ == '__main__':
     try:
         time.sleep(1)
         print("Beginning loop")
-        cc.drive(0.5)
+        # cc.drive(0.5)
         cc.steer(0)
         lastSteerAngle = 0
         time.sleep(0.5)
@@ -71,7 +71,8 @@ if __name__ == '__main__':
                 # cc.drive(0.4)
                 count = 0
             cv2.imshow('birds',frame)
-            time.sleep(0.005)
+            # time.sleep(0.005)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         cc.drive(0.0)  # stop the car
