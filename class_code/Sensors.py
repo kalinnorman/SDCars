@@ -28,9 +28,6 @@ class Sensors():
         self.current_bb = None
         self.region = None
 
-        # GPS region code
-        self.turn_chooser = ChooseTurn()
-
         # initialize the video stream, pointer to output video file, and
         # frame dimensions
         self.vs = cv2.VideoCapture("/dev/video2", cv2.CAP_V4L)  # ls -ltr /dev/video*
@@ -155,6 +152,28 @@ class Sensors():
                 self.current_rgb = frame
 
         gc.collect()  # collect garbage
+
+    # call this when car has reached an intersection
+    def get_gps_region(self):
+        x,y = self.get_gps_coord("Blue")  # outputs coordinates (x,y)
+
+        # arbitrary values, need to test when have testing space
+        if y > 1200 :
+            region = 'north'
+            # should go left
+        elif y > 900 :
+            region = 'middle north'
+            # should go right
+        elif y < 100 :
+            region = 'south'
+            # should go left
+        elif y < 300 :
+            region = 'middle south'
+            # should go right
+        else :
+            region = 'middle'
+            # can go any direction
+        return region
 
     # retrieves the coordinates of a car
     # car color options are: "Green", "Red", "Purple", "Blue", "Yellow"

@@ -67,19 +67,19 @@ if __name__ == '__main__':
 
             if limit_found and count > 25:
                 print("I found the limit line!")
-                current_region = cc.sensor.turn_chooser.getCoordinates()
+                current_region = cc.sensor.get_gps_region()
                 if current_region == 'south':
                     print("I'm turning left at the southern stop sign.")
                     cc.action.turn_left_while_moving()
-                elif current_region == 'middleSouth':
+                elif current_region == 'middle south':
                     print("I'm turning right at the southern stop sign.")
                     cc.action.turn_right_while_moving()
-                elif current_region == 'middleNorth':
+                elif current_region == 'middle north':
                     print("I'm turning right at the northern stop sign.")
                     cc.action.turn_right_while_moving()
                 elif current_region == 'north':
                     print("I'm turning left at the northern stop sign.")
-                else:
+                elif current_region == 'middle':
                     print("I'm at the intersection.")
                     if (count % 3) == 0:
                         print("I decided to go straight.")
@@ -90,6 +90,8 @@ if __name__ == '__main__':
                     else:
                         print("I decided to turn left.")
                         cc.action.turn_left_while_moving()
+                else:
+                    print("I haven't a clue where I am.")
 
                 count = 0
             cv2.imshow('birds', frame)
