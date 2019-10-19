@@ -171,9 +171,18 @@ class ReddFollower:
         if left_lane_found:
             self.steering_control(left_parameters)
 
+        if right_lane_found:  # if a right line is found
+            rx1, ry1, rx2, ry2 = self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
+                                        offset=right_offset)  # get line coords
+
+        if left_lane_found:  # if a left line is found
+            lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
+                                        offset=left_offset)  # get line coords
+
 
         if right_lane_found and left_lane_found:
             print('both lanes')
+            lastView = "both"
             # if theta_deg_left > 10.0:
             #     self.car_control_steering_angle = 14
             # elif theta_deg_left < -10.0:
@@ -187,36 +196,38 @@ class ReddFollower:
             #         self.car_control_steering_angle = 0
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = -16
+                    self.car_control_steering_angle = -15
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = 16
+                    self.car_control_steering_angle = 15
                 else:
                     self.car_control_steering_angle = 5
         elif left_lane_found:
             print('left lane')
+            lastView = "left"
             if self.steering_state == '<':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = -16
+                    self.car_control_steering_angle = -15
                 else:
                     self.car_control_steering_angle = -5
             elif self.steering_state == '>':
                 if abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = 16
+                    self.car_control_steering_angle = 15
                 else:
                     self.car_control_steering_angle = 5
         elif right_lane_found:
             print('right lane')
+            lastView = "right"
             if theta_deg_right < self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = -16
+                    self.car_control_steering_angle = -15
                 else:
                     self.car_control_steering_angle = -5
             elif theta_deg_right >= self.theta_right_base:
                 if abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = 16
+                    self.car_control_steering_angle = 15
                 else:
                     self.car_control_steering_angle = 5
         else:
@@ -254,16 +265,16 @@ class ReddFollower:
 
         if show_images:
             if limit_found:  # if a limit line is found
-                self.show_line_on_image(frame, limit_parameters[0], limit_parameters[1],
-                                        offset=offset)  # draw it on the image
+                self.get_line_coordinates(frame, limit_parameters[0], limit_parameters[1],
+                                        offset=offset, True)  # draw it on the image
 
             if right_lane_found:  # if a right line is found
-                self.show_line_on_image(birdseye_frame, right_parameters[0], right_parameters[1],
-                                        offset=right_offset)  # draw it on the image
+                self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
+                                        offset=right_offset, True)  # draw it on the image
 
             if left_lane_found:  # if a right line is found
-                self.show_line_on_image(birdseye_frame, left_parameters[0], left_parameters[1],
-                                        offset=left_offset)  # draw it on the image
+                self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
+                                        offset=left_offset, True)  # draw it on the image
             cv2.imshow('frame', frame)
             cv2.imshow('misc', white_edges)
             cv2.imshow('yellow', yellow_edges)
@@ -271,7 +282,7 @@ class ReddFollower:
 
         return frame, control_values  # return these images for plotting
 
-    def show_line_on_image(self, img, r, theta, offset=0):
+    def get_line_coordinates(self, img, r, theta, offset=0, showImg=False):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
         b = np.sin(theta)  # Stores the value of sin(theta) in b
         x0 = a * r  # x0 stores the value rcos(theta)
@@ -282,5 +293,8 @@ class ReddFollower:
         y2 = int(y0 - 1000 * (a))  # y2 stores the rounded off value of (rsin(theta)-1000cos(theta))
 
         # cv2.line draws a line in img from the point(x1,y1) to (x2,y2).
-        cv2.line(img, (x1, y1 + offset), (x2, y2 + offset), (0, 0, 255), 2)
+        if showImg:
+            cv2.line(img, (x1, y1 + offset), (x2, y2 + offset), (0, 0, 255), 2)
+
+        return x1, y1+offset, x2, y2+offset
 
