@@ -266,15 +266,15 @@ class ReddFollower:
         if show_images:
             if limit_found:  # if a limit line is found
                 self.get_line_coordinates(frame, limit_parameters[0], limit_parameters[1],
-                                        offset=offset, True)  # draw it on the image
+                                        offset=offset, showImg=True)  # draw it on the image
 
             if right_lane_found:  # if a right line is found
                 self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
-                                        offset=right_offset, True)  # draw it on the image
+                                        offset=right_offset, showImg=True)  # draw it on the image
 
             if left_lane_found:  # if a right line is found
                 self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
-                                        offset=left_offset, True)  # draw it on the image
+                                        offset=left_offset, showImg=True)  # draw it on the image
             cv2.imshow('frame', frame)
             cv2.imshow('misc', white_edges)
             cv2.imshow('yellow', yellow_edges)
