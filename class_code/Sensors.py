@@ -108,7 +108,7 @@ class Sensors():
         rsframes = self.pipeline.wait_for_frames()
 
         # GPS data
-        self.region = self.turn_chooser.getCoordinates()
+        self.region = self.get_gps_region()
 
         # Implement YOLOv3MXNet
         #net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)

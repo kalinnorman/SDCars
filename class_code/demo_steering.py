@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
             if limit_found and count > 25:
                 print("I found the limit line!")
-                current_region = cc.sensor.get_gps_region()
+                current_region = cc.sensor.region
                 if current_region == 'south':
                     print("I'm turning left at the southern stop sign.")
                     cc.action.turn_left_while_moving()
