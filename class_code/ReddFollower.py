@@ -19,6 +19,7 @@ class ReddFollower:
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')  # this matrix accounts for the camera being consistently tilted
         self.theta_left_base = -0.5
         self.theta_right_base = -0.5
+        self.car_center_pixel = 103
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
     def filter_bright(self, frame):
@@ -227,6 +228,11 @@ class ReddFollower:
                     self.car_control_steering_angle = 8
                 else:
                     self.car_control_steering_angle = 3
+            car_location = round((x_intercept + x_intercept_l) / 2)
+            if car_location < self.car_center_pixel-1:
+                self.car_control_steering_angle = self.car_control_steering_angle + 4
+            elif car_location > self.car_center_pixel+1:
+                self.car_control_steering_angle = self.car_control_steering_angle - 4
         if right_lane_found:
             # print('right lane')
             self.counts[2] += 1
@@ -237,6 +243,8 @@ class ReddFollower:
                     self.car_control_steering_angle = -14
                 elif abs(theta_deg_right) > 7.0:
                     self.car_control_steering_angle = -8
+                elif x_intercept < self.car_center_pixel + 7:
+                    self.car_control_steering_angle = -4
                 else:
                     self.car_control_steering_angle = -3
             elif theta_deg_right >= self.theta_right_base: # Right Turn
