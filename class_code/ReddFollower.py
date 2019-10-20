@@ -189,14 +189,16 @@ class ReddFollower:
             self.counts[0] += 1
 
             if theta_deg_right < self.theta_right_base: # If the angle is to the left and we need to then turn left
-                if abs(theta_deg_right) > 10.0:
+                if abs(theta_deg_right) > 15.0:
                     self.car_control_steering_angle = -19
+                elif abs(theta_deg_right) > 10.0:
+                    self.car_control_steering_angle = -15
                 elif abs(theta_deg_right) > 7.0:
                     self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif theta_deg_right >= self.theta_right_base:
-                if abs(theta_deg_right) > 10.0 and x_intercept > 110:
+                if abs(theta_deg_right) > 15.0 and x_intercept > 110:
                     self.car_control_steering_angle = 19
                 elif abs(theta_deg_right) > 10.0 and left_lane_found: # Give control to left lane detection
                     if x_intercept_l > 120:
@@ -215,7 +217,9 @@ class ReddFollower:
                             self.car_control_steering_angle = 11
                         else:
                             self.car_control_steering_angle = 3
-                elif abs(theta_deg_right) > 7.0 and x_intercept > 95:
+                elif abs(theta_deg_right) > 10.0) and x_intercept > 110:
+                    self.car_control_steering_angle = 15
+                elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
                     self.car_control_steering_angle = 11
                 else:
                     self.car_control_steering_angle = 5
@@ -223,15 +227,19 @@ class ReddFollower:
             # print('right lane')
             self.counts[2] += 1
             if theta_deg_right < self.theta_right_base: # Left Turn
-                if abs(theta_deg_right) > 10.0:
+                if abs(theta_deg_right) > 15.0:
                     self.car_control_steering_angle = -19
+                elif abs(theta_deg_right) > 10.0:
+                    self.car_control_steering_angle = -15
                 elif abs(theta_deg_right) > 7.0:
                     self.car_control_steering_angle = -11
                 else:
                     self.car_control_steering_angle = -5
             elif theta_deg_right >= self.theta_right_base: # Right Turn
-                if abs(theta_deg_right) > 10.0 and x_intercept > 110:
+                if abs(theta_deg_right) > 15.0 and x_intercept > 110:
                     self.car_control_steering_angle = 19
+                elif abs(theta_deg_right) > 10.0) and x_intercept > 110:
+                    self.car_control_steering_angle = 15
                 elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
                     self.car_control_steering_angle = 11
                 else:
