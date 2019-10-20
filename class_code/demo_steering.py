@@ -1,70 +1,48 @@
 """
 demo_steering.py
-
-Author: redd
-
-This is a demo function for controlling the car.
-If this script this run as the main, this will initialize the car and tell it to turn the wheels and drive.
+For testing our lane following algorithm.
 """
 
 from CarControl import CarControl
 import time
 import cv2
-import numpy as np
 
-def steering_commands():
-    """
-    Demo steering commands.
-    :return:
-    """
-    print("right")
-    cc.steer(15)
-    time.sleep(2)
-    print("left")
-    cc.steer(-15.0)
-    time.sleep(2)
-    print("go")
-    cc.drive(0.6)
-    time.sleep(2)
-    print("stop")
-    cc.drive(0)
-    time.sleep(2)
-    
 
 if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
-    count = 0
+    count = 0  # debouncer for finding limit lines
 
     # run the loop, waiting for a keyboard interrupt
     try:
-        time.sleep(1)
         print("Beginning loop")
-        cc.steer(0)
-        lastSteerAngle = 0
-        cc.drive(0.7)
-        time.sleep(0.5)
-        cc.drive(0.25)
+        cc.steer(0)  # straighten steering
+        lastSteerAngle = 0  # to keep track of steering value
+        cc.drive(0.7)  # drive fast to get the car going
+        time.sleep(0.5)  # get it up to speed
+        cc.drive(0.25)  # slow down to a slower speed
         
         count = 0
         while True:
             count += 1
-            cc.update_sensors()
+            cc.update_sensors()  # update the sensors every loop
             t, rgb = cc.sensor.get_rgb_data()  # get color image
-            #t, depth = cc.sensor.get_depth_data()  # get depth data
-            #depth_scaled = ((depth / np.median(depth)) * 128).astype(dtype='uint8')  # depth is super finicky
-            #depth_scaled = cv2.applyColorMap(depth_scaled, cv2.COLORMAP_AUTUMN)  # apply color map for pretty colors
 
-            frame, commands = cc.rf.find_lanes(rgb, show_images=True)
+            frame, commands = cc.rf.find_lanes(rgb, show_images=True)  # find lines in image
+
+            # Parse outputs
             speed = commands[0]
             angle = commands[1]
             steering_state = commands[2]
             limit_found = commands[3]
             nextSteerAngle = angle
-            if nextSteerAngle != lastSteerAngle:
-                cc.steer(angle)
-                lastSteerAngle = nextSteerAngle
 
+            # Update steering angle
+            if nextSteerAngle != lastSteerAngle:  # if the angle has changed
+                cc.steer(angle)  # send the command
+                lastSteerAngle = nextSteerAngle  # update the old value
+
+            # Handling intersection
             if limit_found and count > 25:
                 print("I found the limit line!")
                 current_region = cc.sensor.region
@@ -94,13 +72,18 @@ if __name__ == '__main__':
                     print("I haven't a clue where I am.")
 
                 count = 0
-            cv2.imshow('birds', frame)
-            # time.sleep(0.005)
-            key = cv2.waitKey(25) & 0xFF
 
-    except KeyboardInterrupt:
+            # Show image
+            cv2.imshow('birds', frame)  # show the birdseye view
+
+            # Wait
+            key = cv2.waitKey(25) & 0xFF  # wait a titch before the next loop
+
+    except KeyboardInterrupt:  # when the user ctrl-C's the script
         cc.drive(0.0)  # stop the car
         cc.steer(0.0)  # return wheels to normal
-        print(cc.rf.get_counts())
+        print(cc.rf.get_counts())  # report the lane stats
         print("\nUser stopped the script. (KeyboardInterrupt)")
 
+# We're done!
+# Great job, car!
