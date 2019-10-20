@@ -74,7 +74,7 @@ if __name__ == '__main__':
                 count = 0
 
             # Show image
-            cv2.imshow('birds', frame)  # show the birdseye view
+            # cv2.imshow('birds', frame)  # show the birdseye view
 
             # Wait
             key = cv2.waitKey(25) & 0xFF  # wait a titch before the next loop

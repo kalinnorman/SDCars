@@ -276,7 +276,7 @@ class ReddFollower:
                                         offset=left_offset, showImg=True)  # draw it on the image
             #cv2.imshow('frame', frame)
             #cv2.imshow('misc', white_edges)
-            cv2.imshow('yellow', yellow_edges)
+            # cv2.imshow('yellow', yellow_edges)
             #cv2.imshow('birdseye', birdseye_frame)
 
         # return frame, control_values  # returns original frame and commands
