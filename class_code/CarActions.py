@@ -62,13 +62,13 @@ class CarActions:
         #self.cc.drive(0.6) # FIXME must be deleted for actual implementation
         #time.sleep(2.3) # FIXME must be deleted for actual implementation
         #End of driving up
-        print('waiting')
+        # print('waiting')
         time.sleep(1)
-        print('turn')
+        # print('turn')
         self.cc.steer(30)
-        print('waiting')
-        time.sleep(2.2)
-        print('done')
+        # print('waiting')
+        time.sleep(2.5)
+        # print('done')
         # self.cc.drive(0) # FIXME must be deleted for implementation
         self.cc.steer(0)
 

@@ -217,7 +217,7 @@ class ReddFollower:
                             self.car_control_steering_angle = 11
                         else:
                             self.car_control_steering_angle = 3
-                elif abs(theta_deg_right) > 10.0) and x_intercept > 110:
+                elif abs(theta_deg_right) > 10.0 and x_intercept > 110:
                     self.car_control_steering_angle = 15
                 elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
                     self.car_control_steering_angle = 11
@@ -238,7 +238,7 @@ class ReddFollower:
             elif theta_deg_right >= self.theta_right_base: # Right Turn
                 if abs(theta_deg_right) > 15.0 and x_intercept > 110:
                     self.car_control_steering_angle = 19
-                elif abs(theta_deg_right) > 10.0) and x_intercept > 110:
+                elif abs(theta_deg_right) > 10.0 and x_intercept > 110:
                     self.car_control_steering_angle = 15
                 elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
                     self.car_control_steering_angle = 11
