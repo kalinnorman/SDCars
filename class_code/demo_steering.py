@@ -47,7 +47,7 @@ if __name__ == '__main__':
             if limit_found and count > 25:
                 print("I found the limit line!")
                 time.sleep(0.01)
-                cc.action.turn_right_while_moving()
+                cc.action.turn_right_while_moving() # need to make significant changes here FIXME
                 # current_region = cc.sensor.region
                 # if current_region == 'south':
                 #     current_region = 'middle'
