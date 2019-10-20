@@ -18,7 +18,7 @@ class ReddFollower:
         # self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_short_range_warp.npy')  # this matrix doesn't look as far forward
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')  # this matrix accounts for the camera being consistently tilted
         self.theta_left_base = -0.5
-        self.theta_right_base = 0.0
+        self.theta_right_base = -0.5
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
     def filter_bright(self, frame):
