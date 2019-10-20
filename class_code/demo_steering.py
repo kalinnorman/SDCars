@@ -20,7 +20,7 @@ if __name__ == '__main__':
         lastSteerAngle = 0  # to keep track of steering value
         cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(0.37)  # slow down to a slower speed
+        cc.drive(0.35)  # slow down to a slower speed
         
         intersection_counter = 0
         count = 0
