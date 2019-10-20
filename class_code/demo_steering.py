@@ -18,9 +18,9 @@ if __name__ == '__main__':
         print("Beginning loop")
         cc.steer(0)  # straighten steering
         lastSteerAngle = 0  # to keep track of steering value
-        cc.drive(0.7)  # drive fast to get the car going
+        cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(0.25)  # slow down to a slower speed
+        cc.drive(0.35)  # slow down to a slower speed
         
         count = 0
         while True:
