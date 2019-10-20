@@ -11,7 +11,7 @@ class CarActions:
     def drive_straight(self):
         self.cc.steer(0)
         # self.cc.drive(0.5)
-        time.sleep(3.5)
+        time.sleep(5)
         # self.cc.drive(0)
 
     def turn_left_from_stop_at_corner(self):
@@ -35,9 +35,9 @@ class CarActions:
         # self.cc.drive(0.6) # FIXME must be deleted for actual implementation
         # time.sleep(3) # FIXME must be deleted for actual implementation
         #Done Simulating Driving up to the turn
-        time.sleep(0.4)
-        self.cc.steer(-13)
-        time.sleep(1.6)
+        time.sleep(2)
+        self.cc.steer(-17)
+        time.sleep(2.5)
         # self.cc.drive(0) # FIXME must be deleted for actual implementation
         self.cc.steer(0)
 
@@ -62,11 +62,11 @@ class CarActions:
         #self.cc.drive(0.6) # FIXME must be deleted for actual implementation
         #time.sleep(2.3) # FIXME must be deleted for actual implementation
         #End of driving up
-        time.sleep(1)
-        self.cc.steer(33)
-        time.sleep(2)
+        time.sleep(2.5)
+        self.cc.steer(30)
+        time.sleep(3)
         # self.cc.drive(0) # FIXME must be deleted for implementation
-        self.cc.steer(-3)
+        self.cc.steer(0)
 
     def turn_right_out_of_parking_spot(self):
         self.cc.steer(30)
