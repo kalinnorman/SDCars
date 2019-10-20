@@ -1,5 +1,19 @@
 """
 CarControl.py
+
+Holds functions that send commands to the car.
+
+Functions and Parameters:
+
+__init__()
+update_sensors()
+drive(speed)
+steer(degree)
+_initialize_serial_communication()
+_send_command(command, addnewline=False)
+_initialize_car(pid_flag=True)
+
+
 Author: redd
 """
 
@@ -18,8 +32,11 @@ class CarControl:
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
+
+        # first few frames of camera feed are low quality
         for i in range(0, 10):
             self.update_sensors()
+
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
         self.rf = ReddFollower()
 
@@ -88,6 +105,3 @@ class CarControl:
         self._send_command("!start1590\n")
         self.drive(0.0)
         print("Initialization Completed")
-        
-
-        
