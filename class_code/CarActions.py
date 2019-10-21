@@ -17,6 +17,7 @@ class CarActions:
         self.cc.steer(-20)
 #        self.cc.drive(0.4)
         time.sleep(2)
+        # cv2.waitKey(2000)
         # self.cc.steer(0)
 
     def turn_right_while_moving(self):
