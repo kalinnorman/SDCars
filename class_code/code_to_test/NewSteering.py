@@ -7,6 +7,8 @@ from NewCarControl import CarControl
 import time
 import cv2
 
+def wait_for_lanes(self):
+    l_found = self.cc.rf.find_left_lane()
 
 if __name__ == '__main__':
 
@@ -77,6 +79,12 @@ if __name__ == '__main__':
             if limit_found and count > 75:
                 print("I found the limit line!")
                 cc.action.turn_right_while_moving()
+                cc.rf.set_l_found(False)
+                while not cc.rf.get_l_found:
+                    cc.update_sensors()  # update the sensors every loop
+                    t, rgb = cc.sensor.get_rgb_data()  # get color image
+                    frame, commands = cc.rf.find_lanes(rgb)  # find lines in image
+                print('I found the yellow line and am done turning')
             
             # # For testing left turns only
             # if limit_found and count > 75:

@@ -23,6 +23,7 @@ class ReddFollower:
         self.right_desired_pixel = 113
         self.left_desired_pixel = 89
         self.steer_factor = 4.0/3.0
+        self.l_found = False
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
     def filter_bright(self, frame):
@@ -171,6 +172,8 @@ class ReddFollower:
         right_lane_found, right_parameters, right_offset = self.find_right_lane(white_edges)  # looks for right lane
         left_lane_found, left_parameters, left_offset = self.find_left_lane(yellow_edges)  # looks for right lane
 
+        self.l_found = left_lane_found
+
         theta_deg_left = left_parameters[1]*(180/np.pi)
         theta_deg_right = right_parameters[1]*(180/np.pi)
 
@@ -192,6 +195,7 @@ class ReddFollower:
         if right_lane_found and left_lane_found:
             self.counts[0] += 1
             angle, centered = self.center_car_given_both_lanes(x_r, x_l)
+            centered = True
             if centered:
                 self.car_control_steering_angle = self.follow_both_lanes(theta_deg_right, theta_deg_left)
             else:
@@ -199,6 +203,7 @@ class ReddFollower:
         if right_lane_found:
             self.counts[2] += 1
             angle, centered = self.center_car_given_right_lane(x_r)
+            centered = True
             if centered:
                 self.car_control_steering_angle = self.follow_right_lane(theta_deg_right)
             else:
@@ -207,10 +212,16 @@ class ReddFollower:
         elif left_lane_found:
             self.counts[1] += 1
             angle, centered = self.center_car_given_left_lane(x_l)
+            centered = True
             if centered:
                 self.car_control_steering_angle = self.follow_left_lane(theta_deg_left)
             else:
                 self.car_control_steering_angle = angle
+
+        if self.car_control_steering_angle > 30:
+            self.car_control_steering_angle = 30
+        elif self.car_control_steering_angle < -30
+            self.car_control_steering_angle = -30
             
 
         # IMPORTANT
@@ -313,3 +324,8 @@ class ReddFollower:
         angle_to_steer = round(self.steer_factor*theta)
         return angle_to_steer
 
+    def get_l_found(self):
+        return self.l_found
+    
+    def set_l_found(self, val):
+        self.l_found = val
