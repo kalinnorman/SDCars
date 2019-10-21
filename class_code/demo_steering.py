@@ -20,7 +20,7 @@ if __name__ == '__main__':
         lastSteerAngle = 0  # to keep track of steering value
         cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(0.27)  # slow down to a slower speed
+        cc.drive(0.33)  # slow down to a slower speed
         
         intersection_counter = 0
         count = 0
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
             # Handling intersection
             if limit_found and count > 25:
-                print("I found the limit line!")
+#                print("I found the limit line!")
                 time.sleep(0.01)
                 cc.action.turn_right_while_moving() # need to make significant changes here FIXME
                 # current_region = cc.sensor.region

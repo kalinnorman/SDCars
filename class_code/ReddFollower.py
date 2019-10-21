@@ -190,7 +190,9 @@ class ReddFollower:
             self.counts[0] += 1
 
             if theta_deg_right < self.theta_right_base: # If the angle is to the left and we need to then turn left
-                if abs(theta_deg_right) > 15.0:
+                if abs(theta_deg_right) > 22.0:
+                    self.car_control_steering_angle = -25
+                elif abs(theta_deg_right) > 15.0:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -14
@@ -205,7 +207,9 @@ class ReddFollower:
                     if x_intercept_l > 120:
                         self.car_control_steering_angle = 8
                     elif theta_deg_left < self.theta_left_base:
-                        if abs(theta_deg_left) > 15.0:
+                        if abs(theta_deg_left) > 22.0:
+                            self.car_control_steering_angle = -25
+                        elif abs(theta_deg_left) > 15.0:
                             self.car_control_steering_angle = -19
                         elif abs(theta_deg_left) > 10.0:
                             self.car_control_steering_angle = -14
@@ -214,7 +218,9 @@ class ReddFollower:
                         else:
                             self.car_control_steering_angle = -3
                     elif theta_deg_left >= self.theta_left_base:
-                        if abs(theta_deg_left) > 15.0:
+                        if abs(theta_deg_left) > 22.0:
+                            self.car_control_steering_angle = 25
+                        elif abs(theta_deg_left) > 15.0:
                             self.car_control_steering_angle = 19
                         elif abs(theta_deg_left) > 10.0:
                             self.car_control_steering_angle = 14
@@ -230,14 +236,16 @@ class ReddFollower:
                     self.car_control_steering_angle = 3
             car_location = round((x_intercept + x_intercept_l) / 2)
             if car_location < self.car_center_pixel-1:
-                self.car_control_steering_angle = self.car_control_steering_angle + 4
+                self.car_control_steering_angle = self.car_control_steering_angle + round((self.car_center_pixel-car_location)*2.0) # + 4
             elif car_location > self.car_center_pixel+1:
-                self.car_control_steering_angle = self.car_control_steering_angle - 4
+                self.car_control_steering_angle = self.car_control_steering_angle - round((car_location - self.car_center_pixel)*2.0) # - 4
         if right_lane_found:
             # print('right lane')
             self.counts[2] += 1
             if theta_deg_right < self.theta_right_base: # Left Turn
-                if abs(theta_deg_right) > 15.0:
+                if abs(theta_deg_right) > 22.0:
+                    self.car_control_steering_angle = -25
+                elif abs(theta_deg_right) > 15.0:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_right) > 10.0:
                     self.car_control_steering_angle = -14
@@ -248,7 +256,9 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = -3
             elif theta_deg_right >= self.theta_right_base: # Right Turn
-                if abs(theta_deg_right) > 15.0 and x_intercept > 110:
+                if abs(theta_deg_right) > 22.0 and x_intercept > 110:
+                    self.car_control_steering_angle = 25
+                elif abs(theta_deg_right) > 15.0 and x_intercept > 110:
                     self.car_control_steering_angle = 19
                 elif abs(theta_deg_right) > 10.0 and x_intercept > 110:
                     self.car_control_steering_angle = 14
@@ -258,6 +268,8 @@ class ReddFollower:
                     self.car_control_steering_angle = -4
                 else:
                     self.car_control_steering_angle = 3
+#            dist_from_right_lane = x_intercept - self.car_center_pixel
+#            self.car_control_steering_angle = self.car_control_steering_angle + round((dist_from_right_lane - 6))# - 6 because we want to be 6 pixels left of the right lane
         elif left_lane_found:
             self.counts[1] += 1
             if x_intercept_l > 105:
@@ -265,7 +277,9 @@ class ReddFollower:
             elif x_intercept_l > 115:
                 self.car_control_steering_angle = 13
             elif theta_deg_left < self.theta_left_base:
-                if abs(theta_deg_left) > 15.0:
+                if abs(theta_deg_left) > 22.0:
+                    self.car_control_steering_angle = -25
+                elif abs(theta_deg_left) > 15.0:
                     self.car_control_steering_angle = -19
                 elif abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = -14
@@ -276,7 +290,9 @@ class ReddFollower:
                 else:
                     self.car_control_steering_angle = -3
             elif theta_deg_left >= self.theta_left_base:
-                if abs(theta_deg_left) > 15.0:
+                if abs(theta_deg_left) > 22:
+                    self.car_control_steering_angle = 25
+                elif abs(theta_deg_left) > 15.0:
                     self.car_control_steering_angle = 19
                 elif abs(theta_deg_left) > 10.0:
                     self.car_control_steering_angle = 14
