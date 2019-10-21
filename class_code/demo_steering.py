@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.35
+    speed = 0.3
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -74,23 +74,23 @@ if __name__ == '__main__':
             #             cc.action.turn_right_while_moving()
             #     count = 0
 
-            # For testing right turns only
+           # For testing right turns only
             if limit_found and count > 75:
                 print("I found the limit line!")
-                cc.action.turn_right_while_moving()
+                cc.action.turn_left_while_moving()
                 cc.rf.set_l_found(False)
                 count = 0
                 while not cc.rf.get_l_found():
                     cc.update_sensors()  # update the sensors every loop
                     t, rgb = cc.sensor.get_rgb_data()  # get color image
                     frame, commands = cc.rf.find_lanes(rgb)  # find lines in image
-                cc.drive(speed)
+#                cc.drive(speed)
                 print('I found the yellow line and am done turning')
             
             # # For testing left turns only
             # if limit_found and count > 75:
             #     print("I found the limit line!")
-            #     cc.action.turn_left_while_moving()
+           # #     cc.action.turn_left_while_moving()
             
             # # For testing only going straight through the intersection
             # if limit_found and count > 75:
