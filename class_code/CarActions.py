@@ -15,13 +15,15 @@ class CarActions:
     def turn_left_while_moving(self):
         time.sleep(2)
         self.cc.steer(-17)
-        time.sleep(2.5)
+        self.cc.drie(0.5)
+        time.sleep(2)
         # self.cc.steer(0)
 
     def turn_right_while_moving(self):
         time.sleep(1)
         self.cc.steer(30)
-        time.sleep(2)
+        self.cc.drive(0.5)
+        time.sleep(1)
         # self.cc.steer(0)
 
     def turn_right_out_of_parking_spot(self):

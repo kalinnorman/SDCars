@@ -12,6 +12,7 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
+    speed = 0.35
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -20,7 +21,7 @@ if __name__ == '__main__':
         lastSteerAngle = 0  # to keep track of steering value
         cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(0.35)  # slow down to a slower speed
+        cc.drive(speed)  # slow down to a slower speed
         
         intersection_counter = 0
         corner_turn = 'r'
@@ -78,10 +79,12 @@ if __name__ == '__main__':
                 print("I found the limit line!")
                 cc.action.turn_right_while_moving()
                 cc.rf.set_l_found(False)
+                count = 0
                 while not cc.rf.get_l_found():
                     cc.update_sensors()  # update the sensors every loop
                     t, rgb = cc.sensor.get_rgb_data()  # get color image
                     frame, commands = cc.rf.find_lanes(rgb)  # find lines in image
+                cc.drive(speed)
                 print('I found the yellow line and am done turning')
             
             # # For testing left turns only
