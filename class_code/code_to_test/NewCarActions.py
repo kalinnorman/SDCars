@@ -24,8 +24,8 @@ class CarActions:
     def turn_right_while_moving(self):
         time.sleep(1)
         self.cc.steer(30)
-        time.sleep(2.5)
-        self.cc.steer(0)
+        # time.sleep(1)
+        # self.cc.steer(0)
 
     def turn_right_out_of_parking_spot(self):
         self.cc.steer(30)

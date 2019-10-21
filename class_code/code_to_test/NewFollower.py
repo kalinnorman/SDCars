@@ -22,7 +22,8 @@ class ReddFollower:
         self.center_pixel = 100
         self.right_desired_pixel = 113
         self.left_desired_pixel = 89
-        self.steer_factor = 4.0/3.0
+        # self.steer_factor = 4.0/3.0
+        self.steer_factor = 1.0
         self.l_found = False
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
@@ -220,7 +221,7 @@ class ReddFollower:
 
         if self.car_control_steering_angle > 30:
             self.car_control_steering_angle = 30
-        elif self.car_control_steering_angle < -30
+        elif self.car_control_steering_angle < -30:
             self.car_control_steering_angle = -30
             
 
