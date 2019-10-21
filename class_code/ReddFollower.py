@@ -20,6 +20,7 @@ class ReddFollower:
         self.theta_left_base = -0.5
         self.theta_right_base = -0.5
         self.car_center_pixel = 100
+        self.l_found = False
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
     def filter_bright(self, frame):
@@ -167,6 +168,8 @@ class ReddFollower:
 
         right_lane_found, right_parameters, right_offset = self.find_right_lane(white_edges)  # looks for right lane
         left_lane_found, left_parameters, left_offset = self.find_left_lane(yellow_edges)  # looks for right lane
+
+        self.l_found = left_lane_found
 
         theta_deg_left = left_parameters[1]*(180/np.pi)
         theta_deg_right = right_parameters[1]*(180/np.pi)
@@ -352,4 +355,10 @@ class ReddFollower:
         Returns the counts for the number of frames that contained both lanes, just the right, and just the left.
         """
         return self.counts
+
+    def get_l_found(self):
+        return self.l_found
+    
+    def set_l_found(self, val):
+        self.l_found = val
 
