@@ -56,8 +56,8 @@ if __name__ == '__main__':
             if limit_found and count > 75:
                 print("I found the limit line!")
                 count = 0
+                intersection_counter += 1
                 if type_of_turn == 'i':
-                    intersection_counter += 1
                     if intersection_counter % 3 == 1:
                         print('going straight through the intersection')
                         cc.action.drive_straight()
