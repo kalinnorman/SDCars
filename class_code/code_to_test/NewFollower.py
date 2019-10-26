@@ -19,7 +19,11 @@ class ReddFollower:
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')  # this matrix accounts for the camera being consistently tilted
         self.theta_left_base = -0.5
         self.theta_right_base = -0.5
-        self.car_center_pixel = 100
+        self.center_pixel = 100
+        self.right_desired_pixel = 113
+        self.left_desired_pixel = 89
+        # self.steer_factor = 4.0/3.0
+        self.steer_factor = 1.0
         self.l_found = False
         self.counts = [0, 0, 0]  # for keeping track of number of frames where both lines, just the right, and just the left line are found.
 
@@ -182,129 +186,44 @@ class ReddFollower:
         if right_lane_found:  # if a right line is found
             rx1, ry1, rx2, ry2 = self.get_line_coordinates(birdseye_frame, right_parameters[0], right_parameters[1],
                                         offset=right_offset)  # get line coords
-            x_intercept = self.get_x_intercept_bottom(rx1, ry1, rx2, ry2)
+            x_r = self.get_x_intercept_bottom(rx1, ry1, rx2, ry2)
 
         if left_lane_found:  # if a left line is found
             lx1, ly1, lx2, ly2 = self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset)  # get line coords
-            x_intercept_l = self.get_x_intercept_bottom(lx1, ly1, lx2, ly2)
+            x_l = self.get_x_intercept_bottom(lx1, ly1, lx2, ly2)
 
         if right_lane_found and left_lane_found:
             self.counts[0] += 1
-
-            if theta_deg_right < self.theta_right_base: # If the angle is to the left and we need to then turn left
-                if abs(theta_deg_right) > 22.0:
-                    self.car_control_steering_angle = -25
-                elif abs(theta_deg_right) > 15.0:
-                    self.car_control_steering_angle = -19
-                elif abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = -14
-                elif abs(theta_deg_right) > 7.0:
-                    self.car_control_steering_angle = -8
-                else:
-                    self.car_control_steering_angle = -3
-            elif theta_deg_right >= self.theta_right_base:
-                if abs(theta_deg_right) > 15.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 19
-                elif abs(theta_deg_right) > 10.0 and left_lane_found: # Give control to left lane detection
-                    if x_intercept_l > 120:
-                        self.car_control_steering_angle = 8
-                    elif theta_deg_left < self.theta_left_base:
-                        if abs(theta_deg_left) > 22.0:
-                            self.car_control_steering_angle = -25
-                        elif abs(theta_deg_left) > 15.0:
-                            self.car_control_steering_angle = -19
-                        elif abs(theta_deg_left) > 10.0:
-                            self.car_control_steering_angle = -14
-                        elif abs(theta_deg_left) > 6.0:
-                            self.car_control_steering_angle = -8
-                        else:
-                            self.car_control_steering_angle = -3
-                    elif theta_deg_left >= self.theta_left_base:
-                        if abs(theta_deg_left) > 22.0:
-                            self.car_control_steering_angle = 25
-                        elif abs(theta_deg_left) > 15.0:
-                            self.car_control_steering_angle = 19
-                        elif abs(theta_deg_left) > 10.0:
-                            self.car_control_steering_angle = 14
-                        elif abs(theta_deg_left) > 6.0:
-                            self.car_control_steering_angle = 8
-                        else:
-                            self.car_control_steering_angle = 3
-                elif abs(theta_deg_right) > 10.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 14
-                elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 8
-                else:
-                    self.car_control_steering_angle = 3
-            car_location = round((x_intercept + x_intercept_l) / 2)
-            if car_location < self.car_center_pixel-1:
-                self.car_control_steering_angle = self.car_control_steering_angle + round((self.car_center_pixel-car_location)*2.0) # + 4
-            elif car_location > self.car_center_pixel+1:
-                self.car_control_steering_angle = self.car_control_steering_angle - round((car_location - self.car_center_pixel)*2.0) # - 4
+            angle, centered = self.center_car_given_both_lanes(x_r, x_l)
+            centered = True
+            if centered:
+                self.car_control_steering_angle = self.follow_both_lanes(theta_deg_right, theta_deg_left)
+            else:
+                self.car_control_steering_angle = angle
         if right_lane_found:
-            # print('right lane')
             self.counts[2] += 1
-            if theta_deg_right < self.theta_right_base: # Left Turn
-                if abs(theta_deg_right) > 22.0:
-                    self.car_control_steering_angle = -25
-                elif abs(theta_deg_right) > 15.0:
-                    self.car_control_steering_angle = -19
-                elif abs(theta_deg_right) > 10.0:
-                    self.car_control_steering_angle = -14
-                elif abs(theta_deg_right) > 7.0:
-                    self.car_control_steering_angle = -8
-                elif x_intercept < self.car_center_pixel + 12:
-                    self.car_control_steering_angle = -4
-                else:
-                    self.car_control_steering_angle = -3
-            elif theta_deg_right >= self.theta_right_base: # Right Turn
-                if abs(theta_deg_right) > 22.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 25
-                elif abs(theta_deg_right) > 15.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 19
-                elif abs(theta_deg_right) > 10.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 14
-                elif abs(theta_deg_right) > 7.0 and x_intercept > 110:
-                    self.car_control_steering_angle = 8
-                elif x_intercept < self.car_center_pixel + 12:
-                    self.car_control_steering_angle = -4
-                else:
-                    self.car_control_steering_angle = 3
-#            dist_from_right_lane = x_intercept - self.car_center_pixel
-#            self.car_control_steering_angle = self.car_control_steering_angle + round((dist_from_right_lane - 6))# - 6 because we want to be 6 pixels left of the right lane
+            angle, centered = self.center_car_given_right_lane(x_r)
+            centered = True
+            if centered:
+                self.car_control_steering_angle = self.follow_right_lane(theta_deg_right)
+            else:
+                self.car_control_steering_angle = angle
+            
         elif left_lane_found:
             self.counts[1] += 1
-            if x_intercept_l > 105:
-                self.car_control_steering_angle = 6
-            elif x_intercept_l > 115:
-                self.car_control_steering_angle = 13
-            elif theta_deg_left < self.theta_left_base:
-                if abs(theta_deg_left) > 22.0:
-                    self.car_control_steering_angle = -25
-                elif abs(theta_deg_left) > 15.0:
-                    self.car_control_steering_angle = -19
-                elif abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = -14
-                elif abs(theta_deg_left) > 6.0:
-                    self.car_control_steering_angle = -8
-                elif x_intercept_l > self.car_center_pixel - 10:
-                    self.car_control_steering_angle = 4
-                else:
-                    self.car_control_steering_angle = -3
-            elif theta_deg_left >= self.theta_left_base:
-                if abs(theta_deg_left) > 22:
-                    self.car_control_steering_angle = 25
-                elif abs(theta_deg_left) > 15.0:
-                    self.car_control_steering_angle = 19
-                elif abs(theta_deg_left) > 10.0:
-                    self.car_control_steering_angle = 14
-                elif abs(theta_deg_left) > 6.0:
-                    self.car_control_steering_angle = 8
-                elif x_intercept_l > self.car_center_pixel - 10:
-                    self.car_control_steering_angle = 4
-                else:
-                    self.car_control_steering_angle = 3
+            angle, centered = self.center_car_given_left_lane(x_l)
+            centered = True
+            if centered:
+                self.car_control_steering_angle = self.follow_left_lane(theta_deg_left)
+            else:
+                self.car_control_steering_angle = angle
+
+        if self.car_control_steering_angle > 30:
+            self.car_control_steering_angle = 30
+        elif self.car_control_steering_angle < -30:
+            self.car_control_steering_angle = -30
+            
 
         # IMPORTANT
         # If a limit line is found, demo_steering.py will override the decisions made above
@@ -356,9 +275,58 @@ class ReddFollower:
         """
         return self.counts
 
+    def center_car_given_both_lanes(self, x_r, x_l, slope_r=999, slope_l=999):
+        lane_center = round((x_r+x_l)/2.0)
+        avg_slope = (slope_r+slope_l)/2.0
+        # The function currently does not weight the turn based off of the slope, but it may be necessary
+        # to change that depending on how well this function works on sharp turns
+        dist_from_center = lane_center - self.center_pixel
+        angle_to_steer = round((2.0/3.0)*dist_from_center)
+        if abs(dist_from_center) <= 1:
+            centered = True
+        else:
+            centered = False
+
+        return angle_to_steer, centered
+
+    def center_car_given_right_lane(self, x, slope=999):
+        # Currently ignores slope, may need to modify behavior based on slope later
+        dist_from_desired = self.right_desired_pixel - x
+        angle_to_steer = round((2.0/3.0)*dist_from_desired)
+        if abs(dist_from_desired) <= 2:
+            centered = True
+        else:
+            centered = False
+
+        return angle_to_steer, centered
+
+
+    def center_car_given_left_lane(self, x, slope=999):
+        # Currently ignores slope, may need to modify behavior based on slope later
+        dist_from_desired = self.left_desired_pixel - x
+        angle_to_steer = round((2.0/3.0)*dist_from_desired)
+        if abs(dist_from_desired) <= 2:
+            centered = True
+        else:
+            centered = False
+
+        return angle_to_steer, centered
+
+    def follow_both_lanes(self, theta_r, theta_l):
+        avg_theta = (theta_r+theta_l)/2.0
+        angle_to_steer = round(self.steer_factor*avg_theta)
+        return angle_to_steer
+
+    def follow_right_lane(self, theta):
+        angle_to_steer = round(self.steer_factor*theta)
+        return angle_to_steer
+
+    def follow_left_lane(self, theta):
+        angle_to_steer = round(self.steer_factor*theta)
+        return angle_to_steer
+
     def get_l_found(self):
         return self.l_found
     
     def set_l_found(self, val):
         self.l_found = val
-

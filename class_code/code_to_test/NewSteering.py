@@ -3,22 +3,17 @@ demo_steering.py
 For testing our lane following algorithm.
 """
 
-from CarControl import CarControl
+from NewCarControl import CarControl
 import time
 import cv2
 
-def wait_for_yellow_lane(cc):
-    cc.rf.set_l_found(False)
-    while not cc.rf.get_l_found():
-        cc.update_sensors()  # update the sensors every loop
-        t, rgb = cc.sensor.get_rgb_data()  # get color image
-        frame, commands = cc.rf.find_lanes(rgb)  # find lines in image
+def wait_for_lanes(self):
+    l_found = self.cc.rf.find_left_lane()
 
 if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.4 # 0.3
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -27,7 +22,7 @@ if __name__ == '__main__':
         lastSteerAngle = 0  # to keep track of steering value
         cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(speed)  # slow down to a slower speed
+        cc.drive(0.35)  # slow down to a slower speed
         
         intersection_counter = 0
         corner_turn = 'r'
@@ -53,46 +48,48 @@ if __name__ == '__main__':
                 lastSteerAngle = nextSteerAngle  # update the old value
 
             # # Handling intersections and corners
+            # if limit_found and count > 75:
+            #     print("I found the limit line!")
+            #     if type_of_turn == 'i':
+            #         intersection_counter += 1
+            #         if intersection_counter % 3 == 1:
+            #             print('going straight through the intersection')
+            #             cc.action.drive_straight()
+            #             if corner_turn == 'l':
+            #                 corner_turn = 'r'
+            #             else:
+            #                 corner_turn = 'l'
+            #         elif intersection_counter % 3 == 2:
+            #             print('going left through the intersection')
+            #             cc.action.turn_left_while_moving()
+            #         else:
+            #             print('going right through the intersection')
+            #             cc.action.turn_right_while_moving()
+            #         type_of_turn = 'c'
+            #     else:
+            #         if corner_turn == 'l':
+            #             print('turning left at a corner')
+            #             cc.action.turn_left_while_moving()
+            #         else:
+            #             print('turning right at a corner')
+            #             cc.action.turn_right_while_moving()
+            #     count = 0
+
+            # For testing right turns only
             if limit_found and count > 75:
                 print("I found the limit line!")
-                count = 0
-                intersection_counter += 1
-                if type_of_turn == 'i':
-                    if intersection_counter % 3 == 1:
-                        print('going straight through the intersection')
-                        cc.action.drive_straight()
-                        if corner_turn == 'l':
-                            corner_turn = 'r'
-                        else:
-                            corner_turn = 'l'
-                    elif intersection_counter % 3 == 2:
-                        print('going left through the intersection')
-                        cc.action.turn_left_while_moving()
-                    else:
-                        print('going right through the intersection')
-                        cc.action.turn_right_while_moving()
-                    type_of_turn = 'c'
-                else:
-                    if corner_turn == 'l':
-                        print('turning left at a corner')
-                        cc.action.turn_left_while_moving()
-                    else:
-                        print('turning right at a corner')
-                        cc.action.turn_right_while_moving()
-                wait_for_yellow_lane(cc)
-
-           # For testing right turns only
-#             if limit_found and count > 75:
-#                 print("I found the limit line!")
-#                 cc.action.turn_left_while_moving()
-#                 count = 0
-# #                cc.drive(speed)
-#                 print('I found the yellow line and am done turning')
+                cc.action.turn_right_while_moving()
+                cc.rf.set_l_found(False)
+                while not cc.rf.get_l_found():
+                    cc.update_sensors()  # update the sensors every loop
+                    t, rgb = cc.sensor.get_rgb_data()  # get color image
+                    frame, commands = cc.rf.find_lanes(rgb)  # find lines in image
+                print('I found the yellow line and am done turning')
             
             # # For testing left turns only
             # if limit_found and count > 75:
             #     print("I found the limit line!")
-           # #     cc.action.turn_left_while_moving()
+            #     cc.action.turn_left_while_moving()
             
             # # For testing only going straight through the intersection
             # if limit_found and count > 75:
