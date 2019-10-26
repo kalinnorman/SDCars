@@ -20,7 +20,7 @@ if __name__ == '__main__':
         lastSteerAngle = 0  # to keep track of steering value
         cc.drive(0.7)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
-        cc.drive(0.25)  # slow down to a slower speed
+        cc.drive(0.31)  # slow down to a slower speed
 
         count = 0
         while True:
@@ -57,6 +57,7 @@ if __name__ == '__main__':
                     cc.action.turn_right_while_moving()
                 elif current_region == 'north':
                     print("I'm turning left at the northern stop sign.")
+                    cc.action.turn_left_while_moving()
                 elif current_region == 'middle':
                     print("I'm at the intersection.")
                     if (count % 3) == 0:

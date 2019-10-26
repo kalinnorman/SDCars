@@ -189,16 +189,16 @@ class Sensors():
 
         # arbitrary values, need to test when have testing space
         # we only care about the horizontal axis (y) for turning purposes
-        if y > 1200 :
+        if y > 1400 :
             region = 'north'
             # should go left
-        elif y > 900 :
+        elif y > 1200 :
             region = 'middle north'
             # should go right
-        elif y < 100 :
+        elif y < 200 :
             region = 'south'
             # should go left
-        elif y < 300 :
+        elif y < 500 :
             region = 'middle south'
             # should go right
         else :
