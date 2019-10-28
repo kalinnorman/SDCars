@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.4 # 0.3
+    speed = 0.35 # 0.3
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -73,6 +73,7 @@ if __name__ == '__main__':
                         cc.action.turn_right_while_moving()
                     type_of_turn = 'c'
                 else:
+                    type_of_turn = 'i'
                     if corner_turn == 'l':
                         print('turning left at a corner')
                         cc.action.turn_left_while_moving()
