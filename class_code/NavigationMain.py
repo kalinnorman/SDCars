@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from LaneFollower import LaneFollower
 import cv2
 import math
-from car_control import carControl
+from carControl import carControl
 
 
 # Hashtag-Defines
