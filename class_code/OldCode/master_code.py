@@ -35,7 +35,7 @@ From yolo
 # -c/--confidence (.0-1.0) (detected objects with a confidence higher than this will be used)
 
 # import the necessary packages
-from car_control import steer, drive
+from CarControl import steer, drive
 from matplotlib import pyplot as plt
 from gluoncv import model_zoo, utils
 import pyrealsense2 as rs
