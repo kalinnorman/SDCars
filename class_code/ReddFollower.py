@@ -329,7 +329,8 @@ class ReddFollower:
             #cv2.imshow('birdseye', birdseye_frame)
 
         # return frame, control_values  # returns original frame and commands
-        return birdseye_frame, control_values  # returns the bird's eye view with lane indications and commands
+        # return birdseye_frame, control_values  # returns the bird's eye view with lane indications and commands
+        return (white | yellow)
 
     def get_line_coordinates(self, img, r, theta, offset=0, showImg=False):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
