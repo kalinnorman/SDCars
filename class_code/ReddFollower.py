@@ -63,7 +63,7 @@ class ReddFollower:
         rightColorMin = np.asarray([1, 10, 160])
         rightColorMax = np.asarray([30, 65, 240])
 
-        frameb = cv2.extractChannel(frame, 0)
+        frameb = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
         white = cv2.inRange(frameb, rightColorMin, rightColorMax)
         yellow = cv2.inRange(framb, leftColorMin, leftColorMax)
         yellow = cv2.bitwise_and(notwhite, notblack)
