@@ -236,6 +236,7 @@ class ReddFollower:
                     self.car_control_steering_angle = 8
                 else:
                     self.car_control_steering_angle = 3
+            self.car_control_steering_angle = theta_deg_right #### ADDED
             car_location = round((x_intercept + x_intercept_l) / 2)
             if car_location < self.car_center_pixel-1:
                 self.car_control_steering_angle = self.car_control_steering_angle + round((self.car_center_pixel-car_location)*2.0) # + 4
@@ -303,7 +304,8 @@ class ReddFollower:
                 elif x_intercept_l > self.car_center_pixel - 10:
                     self.car_control_steering_angle = 4
                 else:
-                    self.car_control_steering_angle = 3
+                    self.car_control_steering_angle = 3    
+            self.car_control_steering_angle = theta_deg_left
 
         # IMPORTANT
         # If a limit line is found, demo_steering.py will override the decisions made above
