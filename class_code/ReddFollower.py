@@ -55,11 +55,25 @@ class ReddFollower:
         Separates white and yellow components of image, kind of.
         That's what it's used for, but it basically white and not white.
         """
+
+        ###### CHANGES ###########
+
+        leftColorMin = np.asarray([85, 240, 175])        # Yellow - Determined by plotting imgHSV and hovering over the colors
+        leftColorMax = np.asarray([105, 255, 220])       # Yellow
+        rightColorMin = np.asarray([1, 10, 160])
+        rightColorMax = np.asarray([30, 65, 240])
+
         frameb = cv2.extractChannel(frame, 0)
-        white = cv2.inRange(frameb, 128, 255)
-        notwhite = cv2.inRange(white, 0, 0)
-        notblack = cv2.inRange(frameb, 1, 255)
+        white = cv2.inRange(frameb, rightColorMin, rightColorMax)
+        yellow = cv2.inRange(framb, leftColorMin, leftColorMax)
         yellow = cv2.bitwise_and(notwhite, notblack)
+        ##########################
+
+        # frameb = cv2.extractChannel(frame, 0)
+        # white = cv2.inRange(frameb, 128, 255)
+        # notwhite = cv2.inRange(white, 0, 0)
+        # notblack = cv2.inRange(frameb, 1, 255)
+        # yellow = cv2.bitwise_and(notwhite, notblack)
 
         return white, yellow  # return the white part of the image and the yellow part of the image
 
@@ -145,7 +159,6 @@ class ReddFollower:
                 self.steering_state = '<'  # tell the car to turn left
                 if print_info:
                     print('turn left')  # inform the user
-
 
     def find_lanes(self, frame, region=None, show_images=False):
         """
@@ -330,7 +343,8 @@ class ReddFollower:
 
         # return frame, control_values  # returns original frame and commands
         # return birdseye_frame, control_values  # returns the bird's eye view with lane indications and commands
-        return (white | yellow)
+        return (white | yellow), control_values
+
 
     def get_line_coordinates(self, img, r, theta, offset=0, showImg=False):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
