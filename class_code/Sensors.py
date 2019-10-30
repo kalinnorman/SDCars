@@ -211,15 +211,21 @@ class Sensors():
     # my advice: pick "Blue" -ABT
     def get_gps_coord(self, color):
         # api-endpoint
-        URL = "http://192.168.1.8:8080/%s" % color
+        success = False
+        while not success:
+            URL = "http://192.168.1.8:8080/%s" % color
 
-        # sending get request and saving the response as response object
-        r = requests.get(url = URL)
+            # sending get request and saving the response as response object
+            r = requests.get(url = URL)
 
-        # extracting data
-        coorString = r.text
-        print(coorString)
-        coordinates = coorString.split()
-        latitude = float(coordinates[0])
-        longitude = float(coordinates[1])
+            # extracting data
+            coorString = r.text
+            try:
+                coordinates = coorString.split()
+                latitude = float(coordinates[0])
+                longitude = float(coordinates[1])
+                success = True
+            except:
+                success = False
+            
         return (latitude, longitude)
