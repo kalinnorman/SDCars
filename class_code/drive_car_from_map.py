@@ -12,7 +12,7 @@ def get_gray_value(coordinates, img):
 
 def get_steer_angle(gray_val):
     desired_gray_val = 205
-    turn_factor = 0.5
+    turn_factor = 0.3
     angle = round((gray_val - desired_gray_val) * turn_factor)
     if angle < -30:
         angle = -30
@@ -29,7 +29,6 @@ cc.drive(0.6)
 time.sleep(0.3)
 cc.drive(speed)
 
-
 try:
     while True:
         car_location = cc.sensor.get_gps_coord("Blue") # ([height],[width]) (0,0) in upper right corner
@@ -39,7 +38,8 @@ try:
             # Gray Val around the center of the lane tends to be around 205
             # Gray val around the center of the road tends to be close to 250
             # Gray val leaving the road tends to be 170 or less (this varies the most)
-            cc.steer(get_steer_angle)
+            angle = get_steer_angle(gray_val)
+            cc.steer(angle)
         
 except KeyboardInterrupt:
     print('Closing program')
