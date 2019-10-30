@@ -14,8 +14,8 @@ cc.steer(0)
 
 try:
     while True:
-        car_location = cc.sensor.get_gps_coord("Blue") # ([height],[width]) (0,0) in upper right corner
-        print(car_location)
+        # car_location = cc.sensor.get_gps_coord("Blue") # ([height],[width]) (0,0) in upper right corner
+        print(cc.sensor.get_gps_coord("Blue"))
         # if 
         # gray_val = get_gray_value(car_location, img))
 
