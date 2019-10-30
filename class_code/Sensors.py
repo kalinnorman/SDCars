@@ -1,38 +1,28 @@
 """
 Sensors.py
-
 A class for handling sensor data
-
 This includes camera, IMU, GPS, YOLO3...
-
 Functions & parameters:
 init()
 get_all_data()
-
 # Functions to access camera/IMU data
 get_depth_data()
 get_rgb_data()
 get_gyro_data()
 get_accel_data()
-
 # Functions for GPS
 get_region()
-
 # Functions to access yolo data
 get_class_id()
 get_score()
 get_bb()
-
 # Functions for accessing IMU data
 gyro_data(gyro)
 accel_data(accel)
 update_sensors()
-
 # Functions for GPS
 get_gps_region()
 get_gps_coord(color)
-
-
 Author: KAB'B
 """
 
