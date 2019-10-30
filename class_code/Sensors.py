@@ -218,6 +218,7 @@ class Sensors():
 
         # extracting data
         coorString = r.text
+        print(coorString)
         coordinates = coorString.split()
         latitude = float(coordinates[0])
         longitude = float(coordinates[1])
