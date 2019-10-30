@@ -28,10 +28,10 @@ if __name__ == '__main__':
         cc.drive(0.6)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
         cc.drive(speed)  # slow down to a slower speed
-        
-        intersection_counter = 0
-        corner_turn = 'r'
-        type_of_turn = 'i'
+
+        # intersection_counter = 0
+        # corner_turn = 'r'
+        # type_of_turn = 'i'
         count = 0
         while True:
             count += 1
@@ -55,31 +55,61 @@ if __name__ == '__main__':
             # # Handling intersections and corners
             if limit_found and count > 75:
                 print("I found the limit line!")
-                count = 0
-                intersection_counter += 1
-                if type_of_turn == 'i':
-                    if intersection_counter % 3 == 1:
-                        print('going straight through the intersection')
+                current_region = cc.sensor.region
+                # this method uses the GPS... it should work pretty well
+                if current_region == 'south':
+                    print("I'm turning left at the southern stop sign.")
+                    cc.action.turn_left_while_moving()
+                elif current_region == 'middle south':
+                    print("I'm turning right at the southern stop sign.")
+                    cc.action.turn_right_while_moving()
+                elif current_region == 'middle north':
+                    print("I'm turning right at the northern stop sign.")
+                    cc.action.turn_right_while_moving()
+                elif current_region == 'north':
+                    print("I'm turning left at the northern stop sign.")
+                    cc.action.turn_left_while_moving()
+                elif current_region == 'middle':
+                    print("I'm at the intersection.")
+                    if (count % 3) == 0:
+                        print("I decided to go straight.")
                         cc.action.drive_straight()
-                        if corner_turn == 'l':
-                            corner_turn = 'r'
-                        else:
-                            corner_turn = 'l'
-                    elif intersection_counter % 3 == 2:
-                        print('going left through the intersection')
-                        cc.action.turn_left_while_moving()
-                    else:
-                        print('going right through the intersection')
+                    elif (count % 3) == 1:
+                        print("I decided to turn right.")
                         cc.action.turn_right_while_moving()
-                    type_of_turn = 'c'
+                    else:
+                        print("I decided to turn left.")
+                        cc.action.turn_left_while_moving()
                 else:
-                    type_of_turn = 'i'
-                    if corner_turn == 'l':
-                        print('turning left at a corner')
-                        cc.action.turn_left_while_moving()
-                    else:
-                        print('turning right at a corner')
-                        cc.action.turn_right_while_moving()
+                    print("I haven't a clue where I am.")
+
+                count = 0
+
+                # count = 0
+                # intersection_counter += 1
+                # if type_of_turn == 'i':
+                #     if intersection_counter % 3 == 1:
+                #         print('going straight through the intersection')
+                #         cc.action.drive_straight()
+                #         if corner_turn == 'l':
+                #             corner_turn = 'r'
+                #         else:
+                #             corner_turn = 'l'
+                #     elif intersection_counter % 3 == 2:
+                #         print('going left through the intersection')
+                #         cc.action.turn_left_while_moving()
+                #     else:
+                #         print('going right through the intersection')
+                #         cc.action.turn_right_while_moving()
+                #     type_of_turn = 'c'
+                # else:
+                #     type_of_turn = 'i'
+                #     if corner_turn == 'l':
+                #         print('turning left at a corner')
+                #         cc.action.turn_left_while_moving()
+                #     else:
+                #         print('turning right at a corner')
+                #         cc.action.turn_right_while_moving()
                 wait_for_yellow_lane(cc)
 
            # For testing right turns only
@@ -89,12 +119,12 @@ if __name__ == '__main__':
 #                 count = 0
 # #                cc.drive(speed)
 #                 print('I found the yellow line and am done turning')
-            
+
             # # For testing left turns only
             # if limit_found and count > 75:
             #     print("I found the limit line!")
            # #     cc.action.turn_left_while_moving()
-            
+
             # # For testing only going straight through the intersection
             # if limit_found and count > 75:
             #     print("I found the limit line!")
