@@ -5,8 +5,8 @@ from CarControl import CarControl
 
 def get_gray_value(coordinates, img):
     imgWidth = img.shape[1]
-    x = coordinates[0]
-    y = imgWidth - coordinates[1]
+    x = round(coordinates[0])
+    y = imgWidth - round(coordinates[1])
     gray_val = img[x,y]
     return gray_val
 
