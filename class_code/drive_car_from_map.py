@@ -16,8 +16,9 @@ try:
     while True:
         car_location = cc.sensor.get_gps_coord("Blue") # ([height],[width]) (0,0) in upper right corner
         # print(cc.sensor.get_gps_coord("Blue"))
-        # if 
-        # gray_val = get_gray_value(car_location, img))
+        if car_location[0] > 0:
+            gray_val = get_gray_value(car_location, img)
+            print(gray_val)
 
         # Make steering decision
         
@@ -28,5 +29,5 @@ def get_gray_value(self, coordinates, img):
     imgWidth = img.shape[1]
     x = coordinates[0]
     y = imgWidth - coordinates[1]
-    gray_val,_,_ = img[x,y]
+    gray_val = img[x,y]
     return gray_val
