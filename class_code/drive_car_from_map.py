@@ -3,6 +3,13 @@ import numpy as np
 import time
 from CarControl import CarControl
 
+def get_gray_value(coordinates, img):
+    imgWidth = img.shape[1]
+    x = coordinates[0]
+    y = imgWidth - coordinates[1]
+    gray_val = img[x,y]
+    return gray_val
+
 cc = CarControl()
 img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -18,6 +25,7 @@ try:
         # print(cc.sensor.get_gps_coord("Blue"))
         if car_location[0] > 0:
             gray_val = get_gray_value(car_location, img)
+            
             print(gray_val)
 
         # Make steering decision
@@ -25,9 +33,3 @@ try:
 except KeyboardInterrupt:
     print('Closing program')
 
-def get_gray_value(self, coordinates, img):
-    imgWidth = img.shape[1]
-    x = coordinates[0]
-    y = imgWidth - coordinates[1]
-    gray_val = img[x,y]
-    return gray_val
