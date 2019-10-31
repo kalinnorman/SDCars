@@ -21,10 +21,12 @@ def get_steer_angle(gray_val):
 def get_steer_angle_straight_region(gray_val):
     desired_gray_val = 205
     angle = round(gray_val - desired_gray_val)
-    if abs(angle) > 15:
-        angle = 3 * np.sign(angle)
+    if abs(angle) > 30:
+        angle = 7 * np.sign(angle)
+    elif abs(angle) > 15:
+        angle = 5 * np.sign(angle)
     elif abs(angle) > 7:
-        angle = 2 * np.sign(angle)
+        angle = 3 * np.sign(angle)
     else:
         angle = 1 * np.sign(angle)
     return angle
@@ -34,7 +36,7 @@ img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) i
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 regions = cv2.imread('straight_regions.bmp')
 regions = cv2.cvtColor(regions, cv2.COLOR_BGR2GRAY)
-speed = 0.3
+speed = 0.4
 cc.steer(0)
 cc.drive(0.6)
 time.sleep(0.3)
