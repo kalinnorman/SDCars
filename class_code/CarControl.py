@@ -21,8 +21,7 @@ import serial
 import time
 from Sensors import Sensors
 from CarActions import CarActions
-# from ReddFollower import ReddFollower
-from NewFollower import NewFollower
+from LaneFollower import LaneFollower
 
 class CarControl:
     """
@@ -39,7 +38,7 @@ class CarControl:
             self.update_sensors()
 
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
-        self.rf = NewFollower()
+        self.rf = LaneFollower()
 
     def update_sensors(self):
         """
