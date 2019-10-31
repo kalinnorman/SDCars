@@ -33,7 +33,7 @@ cc = CarControl()
 img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 regions = cv2.imread('straight_regions.bmp')
-regions = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+regions = cv2.cvtColor(regions, cv2.COLOR_BGR2GRAY)
 speed = 0.3
 cc.steer(0)
 cc.drive(0.6)
