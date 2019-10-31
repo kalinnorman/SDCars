@@ -23,7 +23,9 @@ def get_steer_angle(gray_val):
 cc = CarControl()
 img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-speed = 0.3
+regions = cv2.imread('straight_regions.bmp')
+regions = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+speed = 0.0
 cc.steer(0)
 cc.drive(0.6)
 time.sleep(0.3)
@@ -35,6 +37,8 @@ try:
         # print(cc.sensor.get_gps_coord("Blue"))
         if car_location[0] > 0:
             gray_val = get_gray_value(car_location, img)
+            region_val = get_gray_value(car_location, regions)
+            print(region_val)
             # Gray Val around the center of the lane tends to be around 205
             # Gray val around the center of the road tends to be close to 250
             # Gray val leaving the road tends to be 170 or less (this varies the most)
