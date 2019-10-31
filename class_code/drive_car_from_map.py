@@ -22,7 +22,10 @@ def get_gray_value(coordinates, img):
     return gray_val, x, y
 
 def get_steer_angle(gray_val, prev_gray_val, wr):
-    desired_gray_val = 210
+    print(gray_val, prev_gray_val)
+    desired_gray_val = float(210)
+    gray_val = float(gray_val)
+    prev_gray_val = float(prev_gray_val)
     kp = -0.5
     kd = 1.0
     angle = round(kp * (desired_gray_val - gray_val)) + round(kd * (gray_val - prev_gray_val))
