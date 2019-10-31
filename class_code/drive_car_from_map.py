@@ -22,12 +22,12 @@ def get_gray_value(coordinates, img):
     return gray_val, x, y
 
 def get_steer_angle(gray_val, prev_gray_val, wr):
-    print(gray_val, prev_gray_val)
+    # print(gray_val, prev_gray_val)
     desired_gray_val = float(210)
     gray_val = float(gray_val)
     prev_gray_val = float(prev_gray_val)
     kp = -0.5
-    kd = 1.0
+    kd = 2.0
     angle = round(kp * (desired_gray_val - gray_val)) + round(kd * (gray_val - prev_gray_val))
     wr_str = "Gray Val: "+str(gray_val)+" || Kp Angle: "+str(round(kp*(desired_gray_val-gray_val)))+" || Kd Angle: "+str(round(kd*(gray_val-prev_gray_val)))
     
@@ -56,7 +56,7 @@ raw_img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,
 img = cv2.cvtColor(raw_img, cv2.COLOR_BGR2GRAY)
 # regions = cv2.imread('straight_regions2.bmp')
 # regions = cv2.cvtColor(regions, cv2.COLOR_BGR2GRAY)
-speed = 0.27
+speed = 0.32
 cc.steer(0)
 cc.drive(0.6)
 time.sleep(0.3)
