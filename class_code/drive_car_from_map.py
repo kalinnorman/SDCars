@@ -15,7 +15,9 @@ def get_steer_angle(gray_val):
     turn_factor = 0.5
     angle = round((gray_val - desired_gray_val) * turn_factor)
     if abs(angle) > 30:
-        angle = np.sign(angle)*angle
+        angle = np.sign(angle)*30
+    elif angle == -0.0:
+        angle = 0
     return angle
 
 def get_steer_angle_straight_region(gray_val):
@@ -57,8 +59,8 @@ try:
             else:
                 angle = get_steer_angle(gray_val)
             cc.steer(angle)
-        else:
-            cc.steer(-10)
+        # else:
+        #     cc.steer(-10)
         
 except KeyboardInterrupt:
     print('Closing program')
