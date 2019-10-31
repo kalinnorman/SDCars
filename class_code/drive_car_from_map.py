@@ -47,8 +47,8 @@ def get_steer_angle_straight_region(gray_val):
     return angle
 
 cc = CarControl()
-img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+raw_img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
+img = cv2.cvtColor(raw_img, cv2.COLOR_BGR2GRAY)
 # regions = cv2.imread('straight_regions2.bmp')
 # regions = cv2.cvtColor(regions, cv2.COLOR_BGR2GRAY)
 speed = 0.27
@@ -57,7 +57,7 @@ cc.drive(0.6)
 time.sleep(0.3)
 cc.drive(speed)
 
-filename = str(datetime.now()) + ".txt"
+filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt"
 wr = open("LogFiles/"+filename,"w")
 
 prev_gray_val = 1000
@@ -69,8 +69,8 @@ try:
         # print(cc.sensor.get_gps_coord("Blue"))
         if car_location[0] > 0:
             gray_val, x, y = get_gray_value(car_location, img) # 205, 250, and 170 are center of lane, center of road, and leaving the road
-            img[x,y] = (255,0,0)
-            resize_img(img)
+            raw_img[x,y] = (255,0,0)
+            resize_img(raw_img)
             # region_val = get_gray_value(car_location, regions) # 77, 128, 255 are straight road, intersection, and curved road
 
             # if region_val == 77:
