@@ -194,7 +194,7 @@ class NewFollower:
 
             # P Controller 
             center_of_lane = round((x_intercept + x_intercept_l) / 2.0) # Average of the two intercepts should be the center of the lane
-            self.car_control_steering_angle += round( (center_of_lane - self.car_center_pixel) * 2.0)
+            self.car_control_steering_angle += round( (center_of_lane - self.car_center_pixel) * 1.0)
 
             # if center_of_lane < self.car_center_pixel-1:
             #     self.car_control_steering_angle = self.car_control_steering_angle + round((self.car_center_pixel-car_location)*2.0) # + 4
@@ -206,13 +206,16 @@ class NewFollower:
             self.counts[2] += 1 # Tracks how often right lane only is found? 
             self.car_control_steering_angle = theta_deg_right
             center_of_lane = x_intercept - 6 # APPROXIMATE - hopefully the center of the lane is 6 to the left of the right lane
-            self.car_control_steering_angle += round( (center_of_lane - self.car_center_pixel) * 2.0)
+            self.car_control_steering_angle += round( (center_of_lane - self.car_center_pixel) * 1.0)
                 
         elif left_lane_found:
             self.counts[1] += 1 # Tracks how often only left lane is found 
             self.car_control_steering_angle = theta_deg_left
             center_of_lane = x_intercept_l + 6 # APPROXIMATE - see above
-            self.car_control_steering_angle += round ( (center_of_lane - self.car_center_pixel) * 2.0)
+            self.car_control_steering_angle += round ( (center_of_lane - self.car_center_pixel) * 1.0)
+
+        if abs(self.car_control_steering_angle) > 30:
+            self.car_control_steering_angle = 30  * np.sign(self.car_control_steering_angle)
 
         # IMPORTANT
         # If a limit line is found, demo_steering.py will override the decisions made above -> This means a horizontal line (e.g., intersection)
