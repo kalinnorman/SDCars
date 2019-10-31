@@ -3,6 +3,7 @@ import numpy as np
 import time
 from CarControl import CarControl
 from datetime import datetime
+import queue
 
 def resize_img(img):
     scale = 0.3
@@ -22,15 +23,16 @@ def get_gray_value(coordinates, img):
 
 def get_steer_angle(gray_val, prev_gray_val, wr):
     desired_gray_val = 210
-    kp = -0.2
-    kd = 0.5
+    kp = -0.5
+    kd = 1.0
     angle = round(kp * (desired_gray_val - gray_val)) + round(kd * (gray_val - prev_gray_val))
-    wr_str = "Gray Val: "+str(gray_val)+" || Kp Angle: " str(round(kp*(desired_gray_val-gray_val)))+" || Kd Angle: "+str(round(kd*(gray_val-prev_gray_val)))
-    wr.write(wr_str + "\n")
+    wr_str = "Gray Val: "+str(gray_val)+" || Kp Angle: "+str(round(kp*(desired_gray_val-gray_val)))+" || Kd Angle: "+str(round(kd*(gray_val-prev_gray_val)))
+    
     if abs(angle) > 30:
         angle = np.sign(angle)*30
     elif angle == -0.0:
         angle = 0
+    wr.write(wr_str+" || Commanded Angle: "+str(angle)+"\n")
     return angle
 
 def get_steer_angle_straight_region(gray_val):
@@ -56,12 +58,12 @@ cc.steer(0)
 cc.drive(0.6)
 time.sleep(0.3)
 cc.drive(speed)
+que = queue.Queue(7)
 
 filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt"
 wr = open("LogFiles/"+filename,"w")
 
-prev_gray_val = 1000
-went_outside_gps = False
+gray_val = 0
 
 try:
     while True:
@@ -69,8 +71,8 @@ try:
         # print(cc.sensor.get_gps_coord("Blue"))
         if car_location[0] > 0:
             gray_val, x, y = get_gray_value(car_location, img) # 205, 250, and 170 are center of lane, center of road, and leaving the road
-            raw_img[x,y] = (255,255,0)
-            resize_img(raw_img)
+            # raw_img[x,y] = (255,255,0)
+            # resize_img(raw_img)
             # region_val = get_gray_value(car_location, regions) # 77, 128, 255 are straight road, intersection, and curved road
 
             # if region_val == 77:
@@ -83,16 +85,22 @@ try:
             #     angle = -1 * angle
             #     went_outside_gps = False
             #     # FIXME need some sort of handling to check when it should stop negating the angle value (track grey values, when grey values go from increasing to decreasing, or vice versa?)
-            if prev_gray_val == 1000:
+            if not que.full():
                 prev_gray_val = gray_val
+                que.put(gray_val)
+            else:
+                prev_gray_val = que.get()
+                que.put(gray_val)
             wr.write("GPS: " + str(car_location) + " || ")
             angle = get_steer_angle(gray_val, prev_gray_val, wr)
-            prev_gray_val = gray_val
             cc.steer(angle)
         else:
+            if not que.full():
+                que.put(gray_val)
+            else:
+                rem = que.get()
+                que.put(gray_val)
             wr.write("LOST GPS SIGNAL\n")
-            went_outside_gps = True
-            prev_gray_val = 1000
         
 except KeyboardInterrupt:
     wr.close()
