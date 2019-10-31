@@ -5,7 +5,7 @@ from CarControl import CarControl
 from datetime import datetime
 
 def resize_img(img):
-    scale = 0.5
+    scale = 0.3
     width = int(img.shape[1]*scale)
     height = int(img.shape[0]*scale)
     dim = (width,height)
@@ -24,8 +24,8 @@ def get_steer_angle(gray_val, prev_gray_val, wr):
     desired_gray_val = 210
     kp = -0.2
     kd = 0.5
-    angle = round(kp * (desired_gray_val - gray_val) + kd * (gray_val - prev_gray_val))
-    wr_str = "Kp Angle: " + str(kp * (desired_gray_val - gray_val)) + " || Kd Angle: " + str(kd * (gray_val - prev_gray_val))
+    angle = round(kp * (desired_gray_val - gray_val)) + round(kd * (gray_val - prev_gray_val))
+    wr_str = "Gray Val: "+str(gray_val)+" || Kp Angle: " str(round(kp*(desired_gray_val-gray_val)))+" || Kd Angle: "+str(round(kd*(gray_val-prev_gray_val)))
     wr.write(wr_str + "\n")
     if abs(angle) > 30:
         angle = np.sign(angle)*30
@@ -69,7 +69,7 @@ try:
         # print(cc.sensor.get_gps_coord("Blue"))
         if car_location[0] > 0:
             gray_val, x, y = get_gray_value(car_location, img) # 205, 250, and 170 are center of lane, center of road, and leaving the road
-            raw_img[x,y] = (255,0,0)
+            raw_img[x,y] = (255,255,0)
             resize_img(raw_img)
             # region_val = get_gray_value(car_location, regions) # 77, 128, 255 are straight road, intersection, and curved road
 
@@ -90,6 +90,7 @@ try:
             prev_gray_val = gray_val
             cc.steer(angle)
         else:
+            wr.write("LOST GPS SIGNAL\n")
             went_outside_gps = True
             prev_gray_val = 1000
         
