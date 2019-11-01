@@ -17,9 +17,9 @@ if __name__ == '__main__':
         print("Beginning loop")
         cc.steer(0)  # straighten steering
         lastSteerAngle = 0  # to keep track of steering value
-        cc.drive(0.7)  # drive fast to get the car going
-        time.sleep(0.5)  # get it up to speed
-        cc.drive(0.31)  # slow down to a slower speed
+        # cc.drive(0.7)  # drive fast to get the car going
+        # time.sleep(0.5)  # get it up to speed
+        # cc.drive(0.31)  # slow down to a slower speed
 
         count = 0
         while True:
@@ -74,7 +74,8 @@ if __name__ == '__main__':
                 count = 0
 
             # Show image
-            cv2.imshow('birds', frame)  # show the birdseye view
+            depth_img = cc.sensor.get_depth_data()
+            cv2.imshow('birds', depth_img)  # show the birdseye view
 
             # Wait
             key = cv2.waitKey(25) & 0xFF  # wait a titch before the next loop
