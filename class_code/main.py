@@ -73,8 +73,8 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.35 # 0.3
-    list_of_actions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    speed = 0.3 # 0.3
+    list_of_actions = [0.0, 0.0, 0.0, 0.0, 0.0]
 
     # run the loop, waiting for a keyboard interrupt
     try:
