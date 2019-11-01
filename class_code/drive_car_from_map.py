@@ -52,7 +52,7 @@ def get_steer_angle_straight_region(gray_val):
     return angle
 
 cc = CarControl()
-raw_img = cv2.imread('grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
+raw_img = cv2.imread('Maps/grayscale_blur.bmp') # 1024 X 1600, ([height],[width]) (0,0) in upper left corner
 img = cv2.cvtColor(raw_img, cv2.COLOR_BGR2GRAY)
 # regions = cv2.imread('straight_regions2.bmp')
 # regions = cv2.cvtColor(regions, cv2.COLOR_BGR2GRAY)
