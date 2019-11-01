@@ -73,7 +73,8 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.3 # 0.3
+    speed = 0.35 # 0.3
+    list_of_actions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -96,14 +97,18 @@ if __name__ == '__main__':
             angle = commands[1]
             steering_state = commands[2]
             limit_found = commands[3]
-            nextSteerAngle = angle
+
+            list_of_actions.append(angle)
+            nextSteerAngle = list_of_actions.pop(0)
+
+           
 
             # Update steering angle
             """ FIXME 
             Look into making a queue and having it delay so it doesn't turn early?
             """
             if nextSteerAngle != lastSteerAngle:  # if the angle has changed
-                cc.steer(angle)  # send the command
+                cc.steer(nextSteerAngle)  # send the command
                 lastSteerAngle = nextSteerAngle  # update the old value
 
             # # Handling intersections and corners
@@ -112,6 +117,7 @@ if __name__ == '__main__':
             """
             if limit_found and count > 75:
                turn_handler(cc) 
+               count = 0
 
             # if limit_found and count > 75:
             #     count = 0

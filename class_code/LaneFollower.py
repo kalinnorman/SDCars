@@ -70,7 +70,7 @@ class LaneFollower:
         """
         try:  # try to find lines in the image
             high = white_edges.shape[0]
-            low = int(3*high/4)
+            low = int(7*high/8)                         # ADJUSTED FROM 3/4 ==> 7/8
             white_edges_bottom_fourth = white_edges[low:high, :]
             limitlines = cv2.HoughLines(white_edges_bottom_fourth, 2, np.pi / 180, 200,
                                         min_theta=80 * np.pi / 180, max_theta =100 * np.pi / 180)
@@ -198,7 +198,7 @@ class LaneFollower:
         elif left_lane_found:
             self.counts[1] += 1 # Tracks how often only left lane is found 
             self.car_control_steering_angle = theta_deg_left
-            center_of_lane = x_intercept_l + 6 # APPROXIMATE - see above
+            center_of_lane = x_intercept_l + 7 # APPROXIMATE - see above
         else:
             center_of_lane = self.car_center_pixel
 
@@ -226,12 +226,7 @@ class LaneFollower:
             if left_lane_found:  # if a right line is found
                 self.get_line_coordinates(birdseye_frame, left_parameters[0], left_parameters[1],
                                         offset=left_offset, showImg=True)  # draw it on the image
-            #cv2.imshow('frame', frame)
-            #cv2.imshow('misc', white_edges)
-            #cv2.imshow('yellow', yellow_edges)
-            #cv2.imshow('birdseye', birdseye_frame)
 
-        # return frame, control_values  # returns original frame and commands
         # return birdseye_frame, control_values  # returns the bird's eye view with lane indications and commands
         return (white | yellow), control_values
 
