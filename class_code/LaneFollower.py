@@ -199,6 +199,8 @@ class LaneFollower:
             self.counts[1] += 1 # Tracks how often only left lane is found 
             self.car_control_steering_angle = theta_deg_left
             center_of_lane = x_intercept_l + 6 # APPROXIMATE - see above
+        else:
+            center_of_lane = self.car_center_pixel
 
         self.car_control_steering_angle += round( (center_of_lane - self.car_center_pixel) * 1.0)
         self.car_control_steering_angle = round( self.car_control_steering_angle )
