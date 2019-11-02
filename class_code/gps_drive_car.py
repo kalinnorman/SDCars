@@ -55,7 +55,7 @@ class Drive:
 
     def get_angle(self, current_gray, prev_gray):
         cur = float(current_gray) # Set the values to floats to prevent overflow
-        prev = float(current_gray)
+        prev = float(prev_gray)
         ref = float(self.gray_desired)
         angle = round(self.kp*(ref-cur))+round(self.kd*(cur-prev)) # Calculate the angle
         if abs(angle) > 30: # Cap the angle at -30 and 30
