@@ -124,7 +124,7 @@ class Drive:
 
     def get_region(self, coordinates):
         current_gray_val = self.get_gray_value(coordinates, self.regions_img)
-        return gp.region_values[current_gray_val]
+        return gp.region_dict[gp.region_values[current_gray_val]]
 
     def update_log_file(self):
         if self.cur_region == 0:
