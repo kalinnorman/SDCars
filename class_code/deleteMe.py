@@ -11,14 +11,12 @@ def crop_image(img):
         cropVertices = [(25, 0),                      # Corners of cropped image
                         (75, 163),        # Gets bottom portion
                         (120, 163),
-                        (160, 0)] 
+                        (160, 0) ] 
 
         # Blank matrix that matches the image height/width
         mask = np.zeros_like(img)
 
         match_mask_color = 255 # Set to 255 to account for grayscale
-        # channel_count = img.shape[2] # Number of color channels      -> Same as below
-        # match_mask_color = (255,) * channel_count # Matches color    -> Commented out for grayscale
 
         cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
 
@@ -64,6 +62,7 @@ try:
 
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        
 
         # Stack both images horizontally
         # images = np.hstack((color_image, depth_colormap))
