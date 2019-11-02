@@ -38,7 +38,6 @@ class ObjectDetector:
         """
         Searches through a picture for non-zero values
         """
-        print("starting search range...")
         height = img.shape[0]
         width = img.shape[1]
 
@@ -55,26 +54,19 @@ class ObjectDetector:
         Loads in a depth image, converts to birdseye view, Cannies, and then crops.
 
         """
-        #try:
-        print("Trying to detect...")
-        time, depth_image = self.sensor.get_depth_data()
-        print("Data acquired)")
-        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        try:
+            time, depth_image = self.sensor.get_depth_data()
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
-        print("Color map...")
+            birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transform_matrix, (200, 200))
+            cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
 
-        birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transform_matrix, (200, 200))
 
-        print("warped...")
-        cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
+            cropped_image = self.crop_image(cannied_image)
 
-        print("cannied...")
-
-        cropped_image = self.crop_image(cannied_image)
-
-        object_found = self.search_range(cropped_image)
-        print("Returning ", object_found)
-        return object_found
-        #except:
-        print("Detect Image Failed")
-        return False
+            object_found = self.search_range(cropped_image)
+            
+            return object_found
+        except:
+            print("Detect Image Failed")
+            return False
