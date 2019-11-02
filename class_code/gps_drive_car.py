@@ -161,16 +161,28 @@ class Drive:
                         temp_tuple = (int(x),int(y)) # Create a tuple of the gps coordinates
                         waypoints.append(temp_tuple) # Add the tuple to the list of waypoints
                     except:
-                        1
+                        pass  # don't do anything
             if len(waypoints) == 0:
                 print("ERROR: No valid waypoints in file,",self.waypoints_filename)
                 print("Terminating program")
                 sys.exit()
             return waypoints
         except:
-            print("ERROR: waypoints file:",self.waypoints_filename,"does not exist.")
+            print("ERROR: waypoints file:", self.waypoints_filename, "does not exist.")
             print("Terminating program")
             sys.exit()
+
+    def get_next_coordinates(self):
+        desired_coordinates = waypoints[0]
+        des_x = desired_coordinates[0]
+        des_y = desired_coordinates[1]
+        desired_region = car.get_region(desired_coordinates)  # pass in tuple: (x,y)
+        if desired_region == 0 or desired_region == 5:
+            print("Desired coordinates ", desired_coordinates, " are not located in a valid location")
+            car.out_file.close()
+            sys.exit()
+
+        return desired_coordinates, des_x, des_y, desired_region
 
 
 if __name__ == "__main__":
@@ -192,14 +204,8 @@ if __name__ == "__main__":
         sys.exit()  # terminate the script
 
     waypoints = car.get_waypoints()
-    desired_coordinates = waypoints[0]
-    des_x = desired_coordinates[0]
-    des_y = desired_coordinates[1]
-    desired_region = car.get_region(desired_coordinates) # pass in tuple: (x,y)
-    if desired_region == 0 or desired_region == 5:
-        print("Desired coordinates ", desired_coordinates, " are not located in a valid location")
-        car.out_file.close()
-        sys.exit()
+
+    desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
 
     # Begin Driving
     car.cc.drive(0.6)  # get the car moving
@@ -239,7 +245,18 @@ if __name__ == "__main__":
                         print(dist_from_waypoint)
                         if dist_from_waypoint < 40:
                             print("Waypoint Reached!")
-                            break
+
+                            # get rid of the waypoint
+                            waypoints.pop(0)
+
+                            # check to see if there are more waypoints
+                            if len(waypoints) == 0:  # if there are no more coordinates
+                                print("All waypoints reached!")
+                                break  # we're done!
+                            else:  # if there are more coordinates
+                                desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()  # get the next location and go!
+
+
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
                     # Check if waypoint is reached
@@ -257,7 +274,6 @@ if __name__ == "__main__":
             car.update_log_file()  # update the log file
 
         car.cc.drive(0)  # stop the car
-        print("Reached the desired GPS coordinates")
         print("Terminating Program")
         car.out_file.close()  # close the log file
         
