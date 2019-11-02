@@ -61,13 +61,17 @@ if __name__ == '__main__':
             if (object_detected):
                 cc.drive(0.0)
                 print('Object Detected!')
+
+                restart_car = True
                 continue
-            # else:
-            #     cc.steer(0)  # straighten steering
-            #     lastSteerAngle = 0  # to keep track of steering value
-            #     cc.drive(0.7)  # drive fast to get the car going
-            #     time.sleep(0.5)  # get it up to speed
-            #     cc.drive(speed)  # slow down to a slower speed
+
+            if (restart_car):
+                cc.steer(0)  # straighten steering
+                lastSteerAngle = 0  # to keep track of steering value
+                cc.drive(0.7)  # drive fast to get the car going
+                time.sleep(0.5)  # get it up to speed
+                cc.drive(speed)  # slow down to a slower speed
+                restart_car = False
 
             object_detected = False
 
