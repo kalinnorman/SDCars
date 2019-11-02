@@ -1,4 +1,4 @@
-import pyrealsense as rs 
+import pyrealsense2 as rs 
 import numpy as np 
 import cv2 
 from matplotlib import pyplot as plt 
@@ -41,7 +41,7 @@ class ObjectDetector:
         height = img.shape[0]
         width = img.shape[1]
 
-        for y in range(124, 164):
+        for y in range(100, 164):
             for x in range(25, 160):
                 if img[y][x] != 0:
                     return True
