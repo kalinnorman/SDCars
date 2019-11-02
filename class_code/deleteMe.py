@@ -10,7 +10,7 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 
 # Start streaming
 pipeline.start(config)
-
+count = 0
 try:
     while True:
 
@@ -35,6 +35,10 @@ try:
         cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
         cv2.imshow('RealSense', images)
         cv2.waitKey(1)
+        count += 1
+        if count == 12:
+            cv2.imwrite("Depth.jpg",depth_colormap)
+
 
 finally:
 
