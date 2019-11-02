@@ -33,25 +33,25 @@ class Drive:
         self.one_right = cv2.imread('Maps/intersection_1_right.bmp') # RGB
         self.one_right = cv2.cvtColor(self.one_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.one_straight = cv2.imread('Maps/intersection_1_straight') # RGB
-        self.one_straight = cv2.cvtColor(self.one_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.one_straight = cv2.cvtColor(self.one_straight, cv2.COLOR_BGR2GRAY) # Grayscale
         self.two_left = cv2.imread('Maps/intersection_2_left.bmp') # RGB
         self.two_left = cv2.cvtColor(self.two_left, cv2.COLOR_BGR2GRAY) # Grayscale
         self.two_right = cv2.imread('Maps/intersection_2_right.bmp') # RGB
         self.two_right = cv2.cvtColor(self.two_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.two_straight = cv2.imread('Maps/intersection_2_straight') # RGB
-        self.two_straight = cv2.cvtColor(self.two_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.two_straight = cv2.cvtColor(self.two_straight, cv2.COLOR_BGR2GRAY) # Grayscale
         self.three_left = cv2.imread('Maps/intersection_3_left.bmp') # RGB
         self.three_left = cv2.cvtColor(self.three_left, cv2.COLOR_BGR2GRAY) # Grayscale
         self.three_right = cv2.imread('Maps/intersection_3_right.bmp') # RGB
         self.three_right = cv2.cvtColor(self.three_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.three_straight = cv2.imread('Maps/intersection_3_straight') # RGB
-        self.three_straight = cv2.cvtColor(self.three_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.three_straight = cv2.cvtColor(self.three_straight, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_left = cv2.imread('Maps/intersection_4_left.bmp') # RGB
         self.four_left = cv2.cvtColor(self.four_left, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_right = cv2.imread('Maps/intersection_4_right.bmp') # RGB
         self.four_right = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_straight = cv2.imread('Maps/intersection_4_straight') # RGB
-        self.four_straight = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
 
     def get_angle(self, current_gray, prev_gray):
         cur = float(current_gray) # Set the values to floats to prevent overflow
