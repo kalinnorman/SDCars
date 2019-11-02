@@ -1,9 +1,12 @@
 from CarControl import CarControl
+import GlobalParameters as gp
 from datetime import datetime
 import numpy as np
 import queue
 import time
 import cv2
+import sys
+
 
 class Drive:
     def __init__(self):
@@ -120,25 +123,8 @@ class Drive:
             return self.lane_follow_img, 0
 
     def get_region(self, coordinates):
-        gray_val = self.get_gray_value(coordinates, self.regions_img)
-        # if gray_val == FIXME:
-        #     self.cur_region = 1
-        #     return 1 # Region 1
-        # elif gray_val == FIXME:
-        #     self.cur_region = 2
-        #     return 2 # Region 2
-        # elif gray_val == FIXME:
-        #     self.cur_region = 3 
-        #     return 3 # Region 3
-        # elif gray_val == FIXME:
-        #     self.cur_region = 4
-        #     return 4 # Region 4
-        # elif gray_val == FIXME:
-        #     self.cur_region = 5
-        #     return 5 # In the Intersection
-        # else:
-        #     self.cur_region = 0
-        #     return 0 # Don't know where it is...
+        current_gray_val = self.get_gray_value(coordinates, self.regions_img)
+        return gp.region_values[current_gray_val]
 
     def update_log_file(self):
         if self.cur_region == 0:
@@ -155,20 +141,29 @@ class Drive:
             prev_gray = self.prev_gray_vals.get()
             self.prev_gray_vals.put(gray_val)
         return prev_gray
-        
-if __name__ = "__main__":
-    car = Drive()
-    car.cc.steer(0)
-    car.cc.drive(0.6)
-    time.sleep(0.1)
-    car.cc.drive(speed)
-    cur_img = car.lane_follow_img
-    car_location = cc.sensor.get_gps_coord("Blue")
-    cur_region = car.get_region(car_location)
-    if cur_region == 0 or cur_region == 5:
+
+
+if __name__ == "__main__":
+
+    # Setup
+    car = Drive()  # initialize the car
+    car.cc.steer(0)  # set the steering to straight
+    car.cc.drive(0.6)  # get the car moving
+    time.sleep(0.1)  # ...but only briefly
+    car.cc.drive(car.speed)  # get the car moving again
+
+    # Initialize State information
+    cur_img = car.lane_follow_img  # The map that we are referencing.
+    car_location = car.cc.sensor.get_gps_coord("Blue")  # get the GPS coordinates
+    cur_region = car.get_region(car_location)  # indicate where we are
+    desired_region = gp.region_dict('Region 1')  # indicate where we want to go
+
+    # Check whether car is in valid position
+    if cur_region < 1 or cur_region > 4:  # if the car isn't in region 1-4, stop the script
         print("Car location is not in a valid road, cannot run program")
-        car.out_file.close()
-        return
+        car.out_file.close()  # close the output file
+        sys.exit()  # terminate the script
+
     # FIXME Read in file or desired coordinate somehow and uncomment code below
     # desired_region = car.get_region(desired_coordinates) # pass in tuple: (x,y)
     # if desired_region == 0 or desired_region == 5:
@@ -177,38 +172,51 @@ if __name__ = "__main__":
     #     return
 
     try:
+        # Start driving!
         while True:
-            car_location = cc.sensor.get_gps_coord("Blue") # ([height],[width]) (0,0) in upper right corner
-            if car_location[0] > 0:
-                region = car.get_region(car_location)
-                    # Note: from self.recognize_intersection_img the gray value for entering the intersection is 128                
+
+            # Get GPS coordinates
+            car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
+
+            # Check if GPS found us
+            if car_location[0] > 0:  # if the gps found us
+                region = car.get_region(car_location)  # update the current region
+
+                # Note: from self.recognize_intersection_img the gray value for entering the intersection is 128
                 # Update the regions and control the steering
                 #FIXME either need to change the regions map to have the intersection start at the lines, or include a check with the limits map to transition to the intersection stuff
-                if cur_region != 5 and region == 5: # Entering the intersection
-                    cur_img, next_region = car.get_intersection_map(cur_region, desired_region)
-                    cur_region = 5
-                    gray_val = car.get_gray_value(car_location, cur_img)
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
-                elif cur_region == 5 and region != 5: # Leaving the intersection
-                    cur_img = car.lane_follow_img
-                    cur_region = next_region
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+
+                # Check where we are vs. where we want to be.
+                if cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
+                    cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
+                    cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
+                    gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
+                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))  # ...and steer appropriately
+                elif cur_region == gp.region_dict['Intersection'] and region != gp.region_dict['Intersection']:  # Leaving the intersection
+                    cur_img = car.lane_follow_img  # go back to the default map
+                    cur_region = next_region  # indicate where we ended up
+                    gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
+                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))  # ...and steer appropriately
                 elif region == cur_region: # Car is in the appropriate region
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                    break  # exit the loop
                 # Do nothing if the car is not in the correct region and is not in the intersection
                 # as it should already be correcting itself
-                car.update_log_file()
                 #FIXME check to see if car has reached the desired coordinates, if so, end the program (break from the while loop)
-            else:
-                car.cur_region = 0
-                gray_val = car.get_gray_value((-1*car_location[0],-1*car_location[1]), car.lane_follow_img)
+
+            else:  # if the gps didn't find us
+                car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
+
+                gray_val = car.get_gray_value((-1*car_location[0], -1*car_location[1]), car.lane_follow_img)
                 car.update_queue_and_get_prev_gray_val(gray_val)
-                car.update_log_file()
-        car.cc.drive(0)
+
+            car.update_log_file()  # update the log file
+
+        car.cc.drive(0)  # stop the car
         print("Reached the desired GPS coordinates")
         print("Terminating Program")
-        car.out_file.close()
+        car.out_file.close()  # close the log file
         
-    except KeyboardInterrupt:
-        print('User Terminated Program')
-        car.out_file.close()
+    except KeyboardInterrupt:  # if the user Ctrl+C's us
+        print("User Terminated Program")
+        car.out_file.close()  # close the log file
