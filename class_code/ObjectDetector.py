@@ -55,25 +55,26 @@ class ObjectDetector:
         Loads in a depth image, converts to birdseye view, Cannies, and then crops.
 
         """
-        try:
-            print("Trying to detect...")
-            time, depth_image = sensor.get_depth_data()
-            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        #try:
+        print("Trying to detect...")
+        time, depth_image = sensor.get_depth_data()
+        print("Data acquired)")
+        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
-            print("Color map...")
+        print("Color map...")
 
-            birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transform_matrix, (200, 200))
+        birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transform_matrix, (200, 200))
 
-            print("warped...")
-            cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
+        print("warped...")
+        cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
 
-            print("cannied...")
+        print("cannied...")
 
-            cropped_image = self.crop_image(cannied_image)
+        cropped_image = self.crop_image(cannied_image)
 
-            object_found = self.search_range(cropped_image)
-            print("Returning ", object_found)
-            return object_found
-        except:
-            print("Detect Image Failed")
-            return False
+        object_found = self.search_range(cropped_image)
+        print("Returning ", object_found)
+        return object_found
+        #except:
+        print("Detect Image Failed")
+        return False
