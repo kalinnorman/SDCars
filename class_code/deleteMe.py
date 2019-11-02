@@ -27,6 +27,23 @@ def crop_image(img):
         return masked_image
 
 
+def detect_object(img):
+    height = img.shape[0]
+    width = img.shape[1]
+
+    for y in range(124, 164):
+        for x in range(25, 160):
+            if img[y][x] != 0:
+                objectFound = True
+                break
+
+        if objectFound:
+            break
+        else:
+            objectFound = False
+    
+    return objectFound
+
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
@@ -65,20 +82,16 @@ try:
 
         cropped_image  = crop_image(bCanny)
 
+
+
         # Show images
-        plt.imshow(cropped_image)
-        plt.show()
+        # plt.imshow(cropped_image)
+        # plt.show()
 
-  #      plt.imshow(images2)
-   #     plt.show()
+        objectFound = detect_object(cropped_image)
 
-
-#        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
- #       cv2.imshow('RealSense', images)
-  #      cv2.waitKey(1)
-   #     count += 1
-    #    if count == 12:
-     #       cv2.imwrite("Depth.jpg",depth_colormap)
+        if objectFound:
+            print("Object found!")
 
 
 finally:
