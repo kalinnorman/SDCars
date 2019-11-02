@@ -22,6 +22,7 @@ import time
 from Sensors import Sensors
 from CarActions import CarActions
 from LaneFollower import LaneFollower
+from ObjectDetector import ObjectDetector 
 
 class CarControl:
     """
@@ -29,9 +30,13 @@ class CarControl:
     """
 
     def __init__(self):
+        """
+        Initializes the car
+        """
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
+        self.detector = ObjectDetector(self.sensor)
 
         # first few frames of camera feed are low quality
         for i in range(0, 10):
