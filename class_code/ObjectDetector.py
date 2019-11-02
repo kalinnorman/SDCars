@@ -41,7 +41,7 @@ class ObjectDetector:
         height = img.shape[0]
         width = img.shape[1]
 
-        for y in range(100, 164):
+        for y in range(115, 164):
             for x in range(25, 160):
                 if img[y][x] != 0:
                     return True
@@ -55,15 +55,17 @@ class ObjectDetector:
 
         """
         try:
+            print("Trying to detect...")
             time, depth_image = sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
-            birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transformation_matrix, (200, 200))
+            birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transform_matrix, (200, 200))
 
             cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
             cropped_image = self.crop_image(cannied_image)
 
             object_found = self.search_range(cropped_image)
+            print("Returning ", object_found)
             return object_found
         except:
             print("Detect Image Failed")
