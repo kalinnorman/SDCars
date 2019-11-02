@@ -6,6 +6,6 @@
 # Region 2 top middle of map
 168, 300
 # Region 3 bottom left of map 
-1200, 895
+895, 1200
 # Region 4 bottom left of map
-1200, 825
+825, 1200
