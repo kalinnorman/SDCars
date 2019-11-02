@@ -156,7 +156,7 @@ if __name__ == "__main__":
     cur_img = car.lane_follow_img  # The map that we are referencing.
     car_location = car.cc.sensor.get_gps_coord("Blue")  # get the GPS coordinates
     cur_region = car.get_region(car_location)  # indicate where we are
-    desired_region = gp.region_dict['Region 1']  # indicate where we want to go
+    desired_region = gp.region_dict['Region 2']  # indicate where we want to go
 
     # Check whether car is in valid position
     if cur_region < 1 or cur_region > 4:  # if the car isn't in region 1-4, stop the script
