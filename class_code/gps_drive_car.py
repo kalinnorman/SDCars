@@ -176,7 +176,7 @@ class Drive:
             sys.exit()
 
     def get_next_coordinates(self):
-        desired_coordinates = waypoints[0]
+        desired_coordinates = self.waypoints[0]
         des_x = desired_coordinates[0]
         des_y = desired_coordinates[1]
         desired_region = car.get_region(desired_coordinates)  # pass in tuple: (x,y)
@@ -250,10 +250,10 @@ if __name__ == "__main__":
                             print("Waypoint Reached!")
 
                             # get rid of the waypoint
-                            waypoints.pop(0)
+                            car.waypoints.pop(0)
 
                             # check to see if there are more waypoints
-                            if len(waypoints) == 0:  # if there are no more coordinates
+                            if len(car.waypoints) == 0:  # if there are no more coordinates
                                 print("All waypoints reached!")
                                 break  # we're done!
                             else:  # if there are more coordinates
