@@ -13,7 +13,7 @@ class Drive:
         self.speed = 0.35
         self.cc = CarControl()
         self.cur_angle = 0
-        self.cur_gps = (0,0)
+        self.cur_gps = (0, 0)
         self.cur_gray_val = 0
         self.cur_region = 0
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
@@ -57,7 +57,7 @@ class Drive:
         cur = float(current_gray) # Set the values to floats to prevent overflow
         prev = float(current_gray)
         ref = float(self.gray_desired)
-        angle = round(kp*(ref-cur))+round(kd*(cur-prev)) # Calculate the angle
+        angle = round(self.kp*(ref-cur))+round(self.kd*(cur-prev)) # Calculate the angle
         if abs(angle) > 30: # Cap the angle at -30 and 30
             angle = np.sign(angle)*30
         self.cur_angle = angle # update the class value tracking the current angle
