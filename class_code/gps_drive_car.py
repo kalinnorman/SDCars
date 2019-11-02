@@ -20,6 +20,7 @@ class Drive:
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
         self.waypoints_filename = "waypoints.txt"
+        self.waypoints = []
         self.kp = -0.45 # Kp value for Proportional Control
         self.kd = 5.0 # Kd value for Derivative Control
         self.kp_angle = 0 # Angle commanded by Proportional Control
@@ -56,6 +57,8 @@ class Drive:
         self.four_right = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
+
+        self.read_waypoints()
 
     def get_angle(self, current_gray, prev_gray):
         cur = float(current_gray) # Set the values to floats to prevent overflow
@@ -152,21 +155,21 @@ class Drive:
     def get_waypoints(self):
         try:
             waypoints_file = open(self.waypoints_filename,"r") # open the text file with waypoints
-            waypoints = [] # Initialize list to hold all waypoints
+            # waypoints = [] # Initialize list to hold all waypoints
             lines = waypoints_file.readlines() # Reads in each line of the file into a list
             for i in lines:
                 if not i.__contains__('#'): # If the line is not a comment
                     try:
                         x,y = i.split(',') # split the line at the comma
                         temp_tuple = (int(x),int(y)) # Create a tuple of the gps coordinates
-                        waypoints.append(temp_tuple) # Add the tuple to the list of waypoints
+                        self.waypoints.append(temp_tuple) # Add the tuple to the list of waypoints
                     except:
                         pass  # don't do anything
-            if len(waypoints) == 0:
-                print("ERROR: No valid waypoints in file,",self.waypoints_filename)
+            if len(self.waypoints) == 0:
+                print("ERROR: No valid waypoints in file,", self.waypoints_filename)
                 print("Terminating program")
                 sys.exit()
-            return waypoints
+            # return waypoints
         except:
             print("ERROR: waypoints file:", self.waypoints_filename, "does not exist.")
             print("Terminating program")
@@ -203,7 +206,7 @@ if __name__ == "__main__":
         car.out_file.close()  # close the output file
         sys.exit()  # terminate the script
 
-    waypoints = car.get_waypoints()
+    # waypoints = car.get_waypoints()
 
     desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
 
