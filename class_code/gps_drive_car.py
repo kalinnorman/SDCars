@@ -209,6 +209,7 @@ if __name__ == "__main__":
     # waypoints = car.get_waypoints()
 
     desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
+    print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
     car.cc.drive(0.6)  # get the car moving
@@ -245,7 +246,7 @@ if __name__ == "__main__":
                 elif region == cur_region: # Car is in the appropriate region
                     if cur_region == desired_region: # Lane is approximately 70 pixels wide
                         dist_from_waypoint = math.sqrt((des_x-car_x)**2 + (des_y-car_y)**2)
-                        print(dist_from_waypoint)
+                        # print(dist_from_waypoint)
                         if dist_from_waypoint < 40:
                             print("Waypoint Reached!")
 
@@ -258,6 +259,7 @@ if __name__ == "__main__":
                                 break  # we're done!
                             else:  # if there are more coordinates
                                 desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()  # get the next location and go!
+                                print("New waypoint coordinates: ", des_x, des_y)
 
 
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
