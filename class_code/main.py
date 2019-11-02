@@ -41,8 +41,7 @@ if __name__ == '__main__':
 
     cc = CarControl()  # create object to control car
     count = 0  # debouncer for finding limit lines
-    speed = 0.25 # 0.3
-#    list_of_actions = [0.0, 0.0, 0.0, 0.0, 0.0]
+    speed = 0.3 # 0.3
 
     # run the loop, waiting for a keyboard interrupt
     try:
@@ -57,18 +56,20 @@ if __name__ == '__main__':
             count += 1
             cc.update_sensors()  # update the sensors every loop
             t, rgb = cc.sensor.get_rgb_data()  # get color image
-            
+
             object_detected = cc.detector.detect_object()
             if (object_detected):
                 cc.drive(0.0)
                 print('Object Detected!')
                 continue
-            else:
-                cc.steer(0)  # straighten steering
-                lastSteerAngle = 0  # to keep track of steering value
-                cc.drive(0.7)  # drive fast to get the car going
-                time.sleep(0.5)  # get it up to speed
-                cc.drive(speed)  # slow down to a slower speed
+            # else:
+            #     cc.steer(0)  # straighten steering
+            #     lastSteerAngle = 0  # to keep track of steering value
+            #     cc.drive(0.7)  # drive fast to get the car going
+            #     time.sleep(0.5)  # get it up to speed
+            #     cc.drive(speed)  # slow down to a slower speed
+
+            object_detected = False
 
             frame, commands = cc.rf.find_lanes(rgb, show_images=True)  # find lines in image
 
