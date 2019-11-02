@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import queue
 import time
+import math
 import cv2
 import sys
 
@@ -18,8 +19,11 @@ class Drive:
         self.cur_region = 0
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
-        self.kp = -0.45 # Kp value for Proportional Control
-        self.kd = 5.0 # Kd value for Derivative Control
+        self.waypoints_filename = "waypoints.txt"
+        self.kp = -0.5 # Kp value for Proportional Control
+        self.kd = 2.0 # Kd value for Derivative Control
+        self.kp_angle = 0 # Angle commanded by Proportional Control
+        self.kd_angle = 0 # Angle commanded by Derivative Control
         self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
         self.gray_desired = 210 # The gray value that we want the car to follow
         self.lane_follow_img = cv2.imread('Maps/grayscale_blur.bmp') # Reads in the RGB image
@@ -57,7 +61,9 @@ class Drive:
         cur = float(current_gray) # Set the values to floats to prevent overflow
         prev = float(prev_gray)
         ref = float(self.gray_desired)
-        angle = round(self.kp*(ref-cur))+round(self.kd*(cur-prev)) # Calculate the angle
+        self.kp_angle = round(self.kp*(ref-cur))
+        self.kd_angle = round(self.kd*(cur-prev))
+        angle = self.kp_angle + self.kd_angle # Calculate the angle
         if abs(angle) > 30: # Cap the angle at -30 and 30
             angle = np.sign(angle)*30
         self.cur_angle = angle # update the class value tracking the current angle
@@ -124,13 +130,14 @@ class Drive:
 
     def get_region(self, coordinates):
         current_gray_val = self.get_gray_value(coordinates, self.regions_img)
-        return gp.region_dict[gp.region_values[current_gray_val]]
+        self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
+        return self.cur_region
 
     def update_log_file(self):
         if self.cur_region == 0:
             out_string = "OUTSIDE OF GPS BOUNDS"
         else:
-            out_string = "Region:"+str(self.cur_region)+" | GPS:"+str(self.cur_gps)+" | Gray:"+str(self.cur_gray_val)+" | Angle:"+str(self.cur_angle)
+            out_string = "Region:"+str(self.cur_region)+" | GPS:"+str(self.cur_gps)+" | Gray:"+str(self.cur_gray_val)+" | Angle:"+str(self.cur_angle)+" | Kp Angle:"+str(self.kp_angle)+" | Kd Angle:"+str(self.kd_angle)
         self.out_file.write(out_string + "\n")
 
     def update_queue_and_get_prev_gray_val(self, gray_val):
@@ -142,15 +149,33 @@ class Drive:
             self.prev_gray_vals.put(gray_val)
         return prev_gray
 
+    def get_waypoints(self):
+        try:
+            waypoints_file = open(self.waypoints_filename,"r") # open the text file with waypoints
+            waypoints = [] # Initialize list to hold all waypoints
+            lines = waypoints_file.readlines() # Reads in each line of the file into a list
+            for i in lines:
+                if not i.__contains__('#'): # If the line is not a comment
+                    try:
+                        x,y = i.split(',') # split the line at the comma
+                        temp_tuple = (int(x),int(y)) # Create a tuple of the gps coordinates
+                        waypoints.append(temp_tuple) # Add the tuple to the list of waypoints
+            if len(waypoints) == 0:
+                print("ERROR: No valid waypoints in file,",self.waypoints_filename)
+                print("Terminating program")
+                sys.exit()
+            return waypoints
+        except:
+            print("ERROR: waypoints file:",self.waypoints_filename,"does not exist.")
+            print("Terminating program")
+            sys.exit()
+
 
 if __name__ == "__main__":
 
     # Setup
     car = Drive()  # initialize the car
     car.cc.steer(0)  # set the steering to straight
-    car.cc.drive(0.6)  # get the car moving
-    time.sleep(0.1)  # ...but only briefly
-    car.cc.drive(car.speed)  # get the car moving again
 
     # Initialize State information
     cur_img = car.lane_follow_img  # The map that we are referencing.
@@ -164,12 +189,20 @@ if __name__ == "__main__":
         car.out_file.close()  # close the output file
         sys.exit()  # terminate the script
 
-    # FIXME Read in file or desired coordinate somehow and uncomment code below
-    # desired_region = car.get_region(desired_coordinates) # pass in tuple: (x,y)
-    # if desired_region == 0 or desired_region == 5:
-    #     print("Desired coordinates ", desired_coordinates, " are not located in a valid location")
-    #     car.out_file.close()
-    #     return
+    waypoints = car.get_waypoints()
+    desired_coordinates = waypoints[0]
+    des_x = desired_coordinates[0]
+    des_y = desired_coordinates[1]
+    desired_region = car.get_region(desired_coordinates) # pass in tuple: (x,y)
+    if desired_region == 0 or desired_region == 5:
+        print("Desired coordinates ", desired_coordinates, " are not located in a valid location")
+        car.out_file.close()
+        sys.exit()
+
+    # Begin Driving
+    car.cc.drive(0.6)  # get the car moving
+    time.sleep(0.1)  # ...but only briefly
+    car.cc.drive(car.speed)  # get the car moving again
 
     try:
         # Start driving!
@@ -177,7 +210,8 @@ if __name__ == "__main__":
 
             # Get GPS coordinates
             car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
-
+            car_x = car_location[0] # Get x (not as a tuple)
+            car_y = car_location[1] # Get y (not as a tuple)
             # Check if GPS found us
             if car_location[0] > 0:  # if the gps found us
                 region = car.get_region(car_location)  # update the current region
@@ -187,10 +221,7 @@ if __name__ == "__main__":
                 #FIXME either need to change the regions map to have the intersection start at the lines, or include a check with the limits map to transition to the intersection stuff
 
                 # Check where we are vs. where we want to be.
-                if region == desired_region:
-                    # Eventually we need to check for desired coordinates, not just correct region.
-                    break  # exit the loop
-                elif cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
+                if cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
                     cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
                     cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
@@ -201,8 +232,15 @@ if __name__ == "__main__":
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))  # ...and steer appropriately
                 elif region == cur_region: # Car is in the appropriate region
+                    if cur_region == desired_region: # Lane is approximately 70 pixels wide
+                        dist_from_waypoint = math.sqrt((des_x-car_x)**2 + (des_y-car_y)**2)
+                        print(dist_from_waypoint)
+                        if dist_from_waypoint < 40:
+                            print("Waypoint Reached!")
+                            break
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                    # Check if waypoint is reached
 
                 # Do nothing if the car is not in the correct region and is not in the intersection
                 # as it should already be correcting itself

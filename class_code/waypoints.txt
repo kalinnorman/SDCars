@@ -1,0 +1,11 @@
+# Welcome to the waypoints file
+# Lines will only correctly be parsed that are in the format:
+# x, y
+# Lines that begin with a '#' are comments and will be ignored by the parser
+
+# Region 2 top middle of map
+200, 165
+# Region 3 bottom left of map 
+1200, 895
+# Region 4 bottom left of map
+1200, 825
