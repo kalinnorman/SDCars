@@ -34,15 +34,9 @@ def detect_object(img):
     for y in range(124, 164):
         for x in range(25, 160):
             if img[y][x] != 0:
-                objectFound = True
-                break
+                return True
 
-        if objectFound:
-            break
-        else:
-            objectFound = False
-    
-    return objectFound
+    return False
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
@@ -87,7 +81,7 @@ try:
         # Show images
         # plt.imshow(cropped_image)
         # plt.show()
-
+        objectFound = False
         objectFound = detect_object(cropped_image)
 
         if objectFound:
