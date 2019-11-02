@@ -8,10 +8,9 @@ class ObjectDetector:
     This class is used to detect objects
     """
 
-    def __init__(self):
-        self.pipeline = rs.pipeline()
-        self.config = rs.config()
-        self.config.enable_stream(rs.stream.depth, 640, 400, rs.format.z16, 30)
+    def __init__(self, sensor):
+
+        self.sensor = sensor
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
         self.pipeline.start(config)
 
@@ -57,12 +56,7 @@ class ObjectDetector:
 
         """
         try:
-            frames = pipeline.wait_for_frames()
-            depth_frame = frames.get_depth_frame()
-            if not depth_frame:
-                continue
-
-            depth_image = np.asanyarray(depth_frame.get_data())
+            time, depth_image = sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
             birdseye_frame = cv2.warpPerspective(depth_colormap, self.birdseye_transformation_matrix, (200, 200))
