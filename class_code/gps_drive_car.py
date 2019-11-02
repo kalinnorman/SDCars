@@ -11,7 +11,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.35
+        self.speed = 0.4
         self.cc = CarControl()
         self.cur_angle = 0
         self.cur_gps = (0, 0)
@@ -20,8 +20,8 @@ class Drive:
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
         self.waypoints_filename = "waypoints.txt"
-        self.kp = -0.5 # Kp value for Proportional Control
-        self.kd = 2.0 # Kd value for Derivative Control
+        self.kp = -0.45 # Kp value for Proportional Control
+        self.kd = 5.0 # Kd value for Derivative Control
         self.kp_angle = 0 # Angle commanded by Proportional Control
         self.kd_angle = 0 # Angle commanded by Derivative Control
         self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
@@ -160,6 +160,8 @@ class Drive:
                         x,y = i.split(',') # split the line at the comma
                         temp_tuple = (int(x),int(y)) # Create a tuple of the gps coordinates
                         waypoints.append(temp_tuple) # Add the tuple to the list of waypoints
+                    except:
+                        1
             if len(waypoints) == 0:
                 print("ERROR: No valid waypoints in file,",self.waypoints_filename)
                 print("Terminating program")
