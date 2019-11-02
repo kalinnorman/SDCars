@@ -33,17 +33,25 @@ try:
         # Stack both images horizontally
         # images = np.hstack((color_image, depth_colormap))
 
+
         dCanny = cv2.Canny(depth_colormap, 50, 200)
 
-        birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200, 200))
+        birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
+
         bCanny = cv2.Canny(birdseye_frame, 50, 200)
 
+#        images = np.hstack((depth_colormap, dCanny, birdseye_frame, bCanny))
 
-        images = np.hstack((depth_colormap, dCanny), (birdseye_frame, bCanny))
+#        images1 = np.hstack((depth_colormap, birdseye_frame))
+ #       images2 = np.hstack((dCanny, bCanny))
 
         # Show images
-        plt.imshow(images)
+        plt.imshow(birdseye_frame)
         plt.show()
+
+  #      plt.imshow(images2)
+   #     plt.show()
+
 
 #        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
  #       cv2.imshow('RealSense', images)
