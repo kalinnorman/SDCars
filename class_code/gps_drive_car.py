@@ -18,8 +18,8 @@ class Drive:
         self.cur_region = 0
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
-        self.kp = -0.5 # Kp value for Proportional Control
-        self.kd = 2.0 # Kd value for Derivative Control
+        self.kp = -0.45 # Kp value for Proportional Control
+        self.kd = 5.0 # Kd value for Derivative Control
         self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
         self.gray_desired = 210 # The gray value that we want the car to follow
         self.lane_follow_img = cv2.imread('Maps/grayscale_blur.bmp') # Reads in the RGB image
@@ -187,7 +187,10 @@ if __name__ == "__main__":
                 #FIXME either need to change the regions map to have the intersection start at the lines, or include a check with the limits map to transition to the intersection stuff
 
                 # Check where we are vs. where we want to be.
-                if cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
+                if region == desired_region:
+                    # Eventually we need to check for desired coordinates, not just correct region.
+                    break  # exit the loop
+                elif cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
                     cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
                     cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
@@ -200,9 +203,7 @@ if __name__ == "__main__":
                 elif region == cur_region: # Car is in the appropriate region
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
-                elif region == desired_region:
-                    # Eventually we need to check for desired coordinates, not just correct region.
-                    break  # exit the loop
+
                 # Do nothing if the car is not in the correct region and is not in the intersection
                 # as it should already be correcting itself
                 #FIXME check to see if car has reached the desired coordinates, if so, end the program (break from the while loop)
