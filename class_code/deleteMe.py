@@ -8,6 +8,7 @@ pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
 
 # Start streaming
 pipeline.start(config)
@@ -31,6 +32,8 @@ try:
 
         # Stack both images horizontally
         images = np.hstack((color_image, depth_colormap))
+
+        birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200, 200))
 
         # Show images
         plt.imshow(images)
