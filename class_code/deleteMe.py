@@ -1,6 +1,7 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+from matplotlib import pyplot as plt
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
@@ -32,12 +33,15 @@ try:
         images = np.hstack((color_image, depth_colormap))
 
         # Show images
-        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('RealSense', images)
-        cv2.waitKey(1)
-        count += 1
-        if count == 12:
-            cv2.imwrite("Depth.jpg",depth_colormap)
+        plt.imshow(images)
+        plt.show()
+
+#        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+ #       cv2.imshow('RealSense', images)
+  #      cv2.waitKey(1)
+   #     count += 1
+    #    if count == 12:
+     #       cv2.imwrite("Depth.jpg",depth_colormap)
 
 
 finally:
