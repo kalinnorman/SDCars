@@ -3,6 +3,30 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
+
+def crop_image(img):
+        """
+        Takes in an image and crops out a specified range
+        """
+        cropVertices = [(25, 0),                      # Corners of cropped image
+                        (75, 163),        # Gets bottom portion
+                        (120, 163),
+                        (160, 0)] 
+
+        # Blank matrix that matches the image height/width
+        mask = np.zeros_like(img)
+
+        match_mask_color = 255 # Set to 255 to account for grayscale
+        # channel_count = img.shape[2] # Number of color channels      -> Same as below
+        # match_mask_color = (255,) * channel_count # Matches color    -> Commented out for grayscale
+
+        cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
+
+        masked_image = cv2.bitwise_and(img, mask)
+
+        return masked_image
+
+
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
@@ -33,20 +57,16 @@ try:
         # Stack both images horizontally
         # images = np.hstack((color_image, depth_colormap))
 
-
         dCanny = cv2.Canny(depth_colormap, 50, 200)
 
         birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
 
         bCanny = cv2.Canny(birdseye_frame, 50, 200)
 
-#        images = np.hstack((depth_colormap, dCanny, birdseye_frame, bCanny))
-
-#        images1 = np.hstack((depth_colormap, birdseye_frame))
- #       images2 = np.hstack((dCanny, bCanny))
+        bCanny = crop_image(bCanny)
 
         # Show images
-        plt.imshow(birdseye_frame)
+        plt.imshow(bCanny)
         plt.show()
 
   #      plt.imshow(images2)
@@ -68,25 +88,3 @@ finally:
 
 
 
-
-# import cv2
-# import numpy as np 
-# import pyrealsense2 as rs
-# from matplotlib import pyplot as plt
-
-
-# pipeline = rs.pipeline()
-# config = rs.config()
-# config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-# config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-
-# pipeline.start(config)
-
-# path = "C:/Users/benjj/Documents/College/Fall2019/ECEN522/Code/SDCars/class_code/depth_image.jpg"
-# depthImage = cv2.imread(path)
-
-# depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depthImage, alpha=0.03), cv2.COLORMAP_JET)
-
-
-# plt.imshow(depth_colormap) 
-# plt.show()
