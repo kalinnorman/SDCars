@@ -63,10 +63,10 @@ try:
 
         bCanny = cv2.Canny(birdseye_frame, 50, 200)
 
-        bCanny = crop_image(bCanny)
+        cropped_image  = crop_image(bCanny)
 
         # Show images
-        plt.imshow(bCanny)
+        plt.imshow(cropped_image)
         plt.show()
 
   #      plt.imshow(images2)
