@@ -57,7 +57,7 @@ class ObjectDetector:
         """
         #try:
         print("Trying to detect...")
-        time, depth_image = sensor.get_depth_data()
+        time, depth_image = self.sensor.get_depth_data()
         print("Data acquired)")
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
