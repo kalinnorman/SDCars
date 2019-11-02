@@ -31,12 +31,18 @@ try:
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
         # Stack both images horizontally
-        images = np.hstack((color_image, depth_colormap))
+        # images = np.hstack((color_image, depth_colormap))
+
+        dCanny = cv2.Canny(depth_colormap, 50, 200)
 
         birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200, 200))
+        bCanny = cv2.Canny(birdseye_frame, 50, 200)
+
+
+        images = np.hstack((depth_colormap, dCanny), (birdseye_frame, bCanny))
 
         # Show images
-        plt.imshow(birdseye_frame)
+        plt.imshow(images)
         plt.show()
 
 #        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
