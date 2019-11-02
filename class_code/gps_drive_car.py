@@ -200,6 +200,8 @@ if __name__ == "__main__":
                 elif region == cur_region: # Car is in the appropriate region
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
                     car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                elif region == desired_region:
+                    # Eventually we need to check for desired coordinates, not just correct region.
                     break  # exit the loop
                 # Do nothing if the car is not in the correct region and is not in the intersection
                 # as it should already be correcting itself
