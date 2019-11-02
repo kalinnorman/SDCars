@@ -259,7 +259,9 @@ if __name__ == "__main__":
                                 break  # we're done!
                             else:  # if there are more coordinates
                                 desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()  # get the next location and go!
-                                print("New waypoint coordinates: ", des_x, des_y)
+                                print("New waypoint coordinates:", des_x, des_y)
+                                print("Current region:", cur_region)
+                                print("Desired region:", desired_region)
 
 
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
