@@ -24,12 +24,12 @@ def modify_video(filename='Oct4DriveTest.avi'):
         # gray[0:img.shape[0], 0:img.shape[1]] = img
         #rd.find_straight_road_2(frame)
         # lf.runLaneDetection(frame)
-        result, control_values = rf.find_lanes(frame, show_images=False)
-
+        result, control_values = rf.find_lanes(frame, show_images=True)
+        #cv2.imshow("result", result)
 
         print(control_values)
 
-        key_press = cv2.waitKey(2)
+        key_press = cv2.waitKey(25)
 
         if key_press & 0xFF == ord('q'):
             break

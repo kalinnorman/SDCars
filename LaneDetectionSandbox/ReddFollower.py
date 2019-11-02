@@ -199,7 +199,7 @@ class ReddFollower:
             cv2.imshow('yellow', yellow_edges)
             cv2.imshow('birdseye', birdseye_frame)
 
-        return frame, control_values  # return these images for plotting
+        return birdseye_frame, control_values  # return these images for plotting
 
     def show_line_on_image(self, img, r, theta, offset=0):
         a = np.cos(theta)  # Stores the value of cos(theta) in a
