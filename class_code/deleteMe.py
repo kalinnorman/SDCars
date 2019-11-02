@@ -36,7 +36,7 @@ try:
         birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200, 200))
 
         # Show images
-        plt.imshow(images)
+        plt.imshow(birdseye_frame)
         plt.show()
 
 #        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
