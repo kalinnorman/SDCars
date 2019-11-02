@@ -20,7 +20,7 @@ if __name__ == '__main__':
         # cc.drive(0.7)  # drive fast to get the car going
         # time.sleep(0.5)  # get it up to speed
         # cc.drive(0.31)  # slow down to a slower speed
-
+        index = 0
         count = 0
         while True:
             count += 1
@@ -74,8 +74,13 @@ if __name__ == '__main__':
                 count = 0
 
             # Show image
-            depth_img = cc.sensor.get_depth_data()
+            time, depth_img = cc.sensor.get_depth_data()
             cv2.imshow('birds', depth_img)  # show the birdseye view
+            
+            index += 1
+            if index == 13:
+                cv2.imwrite("depth_image.jpg", depth_img)
+                print("Saved")   
 
             # Wait
             key = cv2.waitKey(25) & 0xFF  # wait a titch before the next loop
