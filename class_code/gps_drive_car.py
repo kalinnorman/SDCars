@@ -58,7 +58,7 @@ class Drive:
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
 
-        self.read_waypoints()
+        self.get_waypoints()
 
     def get_angle(self, current_gray, prev_gray):
         cur = float(current_gray) # Set the values to floats to prevent overflow
