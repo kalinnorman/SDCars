@@ -57,6 +57,7 @@ if __name__ == '__main__':
             count += 1
             cc.update_sensors()  # update the sensors every loop
             t, rgb = cc.sensor.get_rgb_data()  # get color image
+            
             object_detected = cc.detector.detect_object()
             if (object_detected):
                 cc.drive(0.0)

@@ -12,9 +12,8 @@ class ObjectDetector:
 
         self.sensor = sensor
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
-        self.pipeline.start(config)
 
-    def crop_image(img):
+    def crop_image(self, img):
         """
         Takes in an image and crops out a specified range.
         In this case, we are cropping a trapezoid out of the birdseye view
@@ -35,7 +34,7 @@ class ObjectDetector:
 
         return masked_image
 
-    def detect_object(img):
+    def search_range(self, img):
         """
         Searches through a picture for non-zero values
         """
@@ -69,6 +68,3 @@ class ObjectDetector:
         except:
             print("Detect Image Failed")
             return False
-
-    def __del__(self):
-        self.pipeline.stop()
