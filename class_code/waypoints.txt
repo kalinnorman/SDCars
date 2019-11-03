@@ -13,4 +13,4 @@
 # Region 3 top left of map
 70, 1200
 # Region 1 middle right of map
-500, 300
+500, 100
