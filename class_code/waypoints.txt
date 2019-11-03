@@ -3,9 +3,10 @@
 # x, y
 # Lines that begin with a '#' are comments and will be ignored by the parser
 
-# Region 2 top middle of map
-168, 300
+
 # Region 3 bottom left of map 
 895, 1200
 # Region 4 bottom left of map
 825, 1200
+# Region 2 top middle of map
+168, 300
