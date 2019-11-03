@@ -50,7 +50,8 @@ if __name__ == '__main__':
         cc.drive(0.7)  # drive fast to get the car going
         time.sleep(0.5)  # get it up to speed
         cc.drive(speed)  # slow down to a slower speed
-    
+       
+        restart_car = False    
         count = 0
         while True:
             count += 1
