@@ -227,6 +227,7 @@ if __name__ == "__main__":
             # Check if GPS found us
             if car_location[0] > 0:  # if the gps found us
                 region = car.get_region(car_location)  # update the current region
+                print(region)
 
                 # Note: from self.recognize_intersection_img the gray value for entering the intersection is 128
                 # Update the regions and control the steering
