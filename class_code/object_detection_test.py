@@ -1,3 +1,12 @@
+""" Object Detection Test 
+Used to test object detection functionality.
+Pulls in a depth image, converts it to colors, then transforms to birdseye.
+This is then cannied and cropped, and a specific region is searched for objects
+
+Date: 2 Nov 2019
+Author: Benj
+"""
+
 import pyrealsense2 as rs
 import numpy as np
 import cv2
@@ -26,6 +35,9 @@ def crop_image(img):
 
 
 def detect_object(img):
+    """
+    Takes in image and searches each pixel in a designated region to see if there is an object
+    """
     height = img.shape[0]
     width = img.shape[1]
 
@@ -63,7 +75,6 @@ try:
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
         
-
         # Stack both images horizontally
         # images = np.hstack((color_image, depth_colormap))
 
