@@ -101,7 +101,7 @@ class Drive:
             elif desired_region == 2:
                 return self.two_left, 2
             elif desired_region == 3:
-                return self.two_right, 2
+                return self.two_right, 3
             elif desired_region == 4:
                 return self.two_straight, 4
             else:
@@ -181,7 +181,7 @@ class Drive:
         des_y = desired_coordinates[1]
         desired_region = car.get_region(desired_coordinates)  # pass in tuple: (x,y)
         if desired_region == 0 or desired_region == 5:
-            print("Desired coordinates ", desired_coordinates, " are not located in a valid location")
+            print("Desired coordinates", desired_coordinates, "are not located in a valid location")
             car.out_file.close()
             sys.exit()
 
@@ -228,30 +228,20 @@ if __name__ == "__main__":
             if car_location[0] > 0:  # if the gps found us
                 region = car.get_region(car_location)  # update the current region
 
-                # Note: from self.recognize_intersection_img the gray value for entering the intersection is 128
-                # Update the regions and control the steering
-                #FIXME either need to change the regions map to have the intersection start at the lines, or include a check with the limits map to transition to the intersection stuff
-
                 # Check where we are vs. where we want to be.
                 if cur_region != gp.region_dict['Intersection'] and region == gp.region_dict['Intersection']:  # Entering the intersection
                     cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
                     cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
-                    gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))  # ...and steer appropriately
                 elif cur_region == gp.region_dict['Intersection'] and region != gp.region_dict['Intersection']:  # Leaving the intersection
                     cur_img = car.lane_follow_img  # go back to the default map
                     cur_region = next_region  # indicate where we ended up
-                    gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))  # ...and steer appropriately
                 elif region == cur_region: # Car is in the appropriate region
                     if cur_region == desired_region: # Lane is approximately 70 pixels wide
                         dist_from_waypoint = math.sqrt((des_x-car_x)**2 + (des_y-car_y)**2)
-                        # print(dist_from_waypoint)
                         if dist_from_waypoint < 40:
                             print("Waypoint Reached!")
 
-                            # get rid of the waypoint
-                            car.waypoints.pop(0)
+                            car.waypoints.pop(0) # get rid of the waypoint
 
                             # check to see if there are more waypoints
                             if len(car.waypoints) == 0:  # if there are no more coordinates
@@ -263,14 +253,8 @@ if __name__ == "__main__":
                                 print("Current region:", cur_region)
                                 print("Desired region:", desired_region)
 
-
-                    gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value  # TODO Check. redd added this line
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
-                    # Check if waypoint is reached
-
-                # Do nothing if the car is not in the correct region and is not in the intersection
-                # as it should already be correcting itself
-                #FIXME check to see if car has reached the desired coordinates, if so, end the program (break from the while loop)
+                gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
+                car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
 
             else:  # if the gps didn't find us
                 car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
