@@ -21,12 +21,12 @@ class Drive:
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
         self.waypoints_filename = "waypoints.txt"
         self.waypoints = []
-        self.kp = -0.4 # Kp value for Proportional Control
-        self.kd = 4.5 # Kd value for Derivative Control
+        self.kp = -0.76 #-0.4 # Kp value for Proportional Control
+        self.kd = 9 #4.5 # Kd value for Derivative Control
         self.kp_angle = 0 # Angle commanded by Proportional Control
         self.kd_angle = 0 # Angle commanded by Derivative Control
         self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
-        self.gray_desired = 215 # 210 # The gray value that we want the car to follow
+        self.gray_desired = 220 # 210 # The gray value that we want the car to follow
         self.lane_follow_img = cv2.imread('Maps/grayscale_blur.bmp') # Reads in the RGB image
         self.lane_follow_img = cv2.cvtColor(self.lane_follow_img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
         self.recognize_intersection_img = cv2.imread('Maps/map_with_limits.bmp') # RGB
