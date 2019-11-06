@@ -221,7 +221,7 @@ if __name__ == "__main__":
     time.sleep(0.1)  # ...but only briefly
     car.cc.drive(car.speed)  # get the car moving again
     count = 0
-    newspeed = speed
+    newspeed = car.speed
 
     try:
         # Start driving!
@@ -229,13 +229,14 @@ if __name__ == "__main__":
             while car_location == prev_gps:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
-                if car_location[0] > 0
+                if car_location[0] > 0:
                     count += 1
                     if count > 50:
                         newspeed = newspeed + 0.1
                         car.cc.drive(newspeed)
-            car.cc.drive(speed)
-            newspeed = speed
+            count = 0
+            car.cc.drive(car.speed)
+            newspeed = car.speed
             car_x = car_location[0] # Get x (not as a tuple)
             car_y = car_location[1] # Get y (not as a tuple)
             # Check if GPS found us
