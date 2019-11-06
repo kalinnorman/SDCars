@@ -283,6 +283,7 @@ if __name__ == "__main__":
                 gray_val = car.get_gray_value((-1*car_location[0], -1*car_location[1]), car.lane_follow_img)
             
             car.prev_gray_val = gray_val
+            prev_gps = car_location
             car.update_log_file()  # update the log file
 
         car.cc.drive(0)  # stop the car
