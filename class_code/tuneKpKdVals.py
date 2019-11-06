@@ -21,11 +21,12 @@ class Drive:
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
         self.waypoints_filename = "waypoints.txt"
         self.waypoints = []
-        self.kp = -0.1 # Kp value for Proportional Control
+        self.kp = -0.4 # Kp value for Proportional Control
         self.kd = 0.0 # Kd value for Derivative Control
         self.kp_angle = 0 # Angle commanded by Proportional Control
         self.kd_angle = 0 # Angle commanded by Derivative Control
-        self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
+        self.prev_steering_angle = 0.0
+        self.prev_gray_val = 0 # Creates a queue to provide a delay for the previous gray value (used in derivative control)
         self.gray_desired = 220 # 210 # The gray value that we want the car to follow
         self.lane_follow_img = cv2.imread('Maps/grayscale_blur.bmp') # Reads in the RGB image
         self.lane_follow_img = cv2.cvtColor(self.lane_follow_img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
@@ -67,9 +68,12 @@ class Drive:
         self.kp_angle = round(self.kp*(ref-cur))
         self.kd_angle = round(self.kd*(cur-prev))
         angle = self.kp_angle + self.kd_angle # Calculate the angle
+        if abs(self.prev_steering_angle-angle) > 4:
+            angle = self.prev_steering_angle + np.sign(angle)*4
         if abs(angle) > 30: # Cap the angle at -30 and 30
             angle = np.sign(angle)*30
         self.cur_angle = angle # update the class value tracking the current angle
+        self.prev_steering_angle = angle
         return angle
     
     def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
@@ -143,14 +147,14 @@ class Drive:
             out_string = "Region:"+str(self.cur_region)+" | GPS:"+str(self.cur_gps)+" | Gray:"+str(self.cur_gray_val)+" | Angle:"+str(self.cur_angle)+" | Kp Angle:"+str(self.kp_angle)+" | Kd Angle:"+str(self.kd_angle)
         self.out_file.write(out_string + "\n")
 
-    def update_queue_and_get_prev_gray_val(self, gray_val):
-        if not self.prev_gray_vals.full():
-            self.prev_gray_vals.put(gray_val)
-            prev_gray = gray_val
-        else:
-            prev_gray = self.prev_gray_vals.get()
-            self.prev_gray_vals.put(gray_val)
-        return prev_gray
+    # def update_queue_and_get_prev_gray_val(self, gray_val):
+    #     if not self.prev_gray_val.full():
+    #         self.prev_gray_val.put(gray_val)
+    #         prev_gray = gray_val
+    #     else:
+    #         prev_gray = self.prev_gray_val.get()
+    #         self.prev_gray_val.put(gray_val)
+    #     return prev_gray
 
     def get_waypoints(self):
         try:
@@ -197,6 +201,7 @@ if __name__ == "__main__":
     # Initialize State information
     cur_img = car.lane_follow_img  # The map that we are referencing.
     car_location = car.cc.sensor.get_gps_coord("Blue")  # get the GPS coordinates
+    prev_gps = car_location
     cur_region = car.get_region(car_location)  # indicate where we are
     desired_region = gp.region_dict['Region 2']  # indicate where we want to go
 
@@ -215,13 +220,22 @@ if __name__ == "__main__":
     car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
     car.cc.drive(car.speed)  # get the car moving again
+    count = 0
+    newspeed = speed
 
     try:
         # Start driving!
         while True:
-
-            # Get GPS coordinates
-            car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
+            while car_location == prev_gps:
+                # Get GPS coordinates
+                car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
+                if car_location[0] > 0
+                    count += 1
+                    if count > 50:
+                        newspeed = newspeed + 0.1
+                        car.cc.drive(newspeed)
+            car.cc.drive(speed)
+            newspeed = speed
             car_x = car_location[0] # Get x (not as a tuple)
             car_y = car_location[1] # Get y (not as a tuple)
             # Check if GPS found us
@@ -233,18 +247,18 @@ if __name__ == "__main__":
                     cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
                     cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                    car.cc.steer(car.get_angle(gray_val, car.prev_gray_val))
                 elif cur_region == gp.region_dict['Intersection'] and region != gp.region_dict['Intersection']:  # Leaving the intersection
                     cur_img = car.lane_follow_img  # go back to the default map
                     cur_region = next_region  # indicate where we ended up
                     if cur_region == desired_region:
-                        car.kp = car.kp-0.1
+                        car.kp = car.kp-0.2
                         print('Kp now set to:',car.kp)
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                    car.cc.steer(car.get_angle(gray_val, car.prev_gray_val))
                 elif region == cur_region: # Car is in the appropriate region
                     gray_val = car.get_gray_value(car_location, cur_img)  # update the current gray value
-                    car.cc.steer(car.get_angle(gray_val, car.update_queue_and_get_prev_gray_val(gray_val)))
+                    car.cc.steer(car.get_angle(gray_val, car.prev_gray_val))
                     # if cur_region == desired_region: # Lane is approximately 70 pixels wide
                     #     dist_from_waypoint = math.sqrt((des_x-car_x)**2 + (des_y-car_y)**2)
                     #     if dist_from_waypoint < 40:
@@ -261,20 +275,13 @@ if __name__ == "__main__":
                     #             print("New waypoint coordinates:", des_x, des_y)
                     #             print("Current region:", cur_region)
                     #             print("Desired region:", desired_region)
-                else:
-                    if region == gp.region_dict['Region 4'] or region == gp.region_dict['Region 1']:
-                        car.cc.steer(20)
-                        print("Forcing right turn to get back into desired region")
-                    else:
-                        car.cc.steer(-20)
-                        print("Forcing left turn to get back into desired region")
 
             else:  # if the gps didn't find us
                 car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
 
                 gray_val = car.get_gray_value((-1*car_location[0], -1*car_location[1]), car.lane_follow_img)
-                car.update_queue_and_get_prev_gray_val(gray_val)
-
+            
+            car.prev_gray_val = gray_val
             car.update_log_file()  # update the log file
 
         car.cc.drive(0)  # stop the car
