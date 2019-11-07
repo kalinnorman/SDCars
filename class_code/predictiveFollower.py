@@ -26,7 +26,7 @@ def show_scaled(img, scale_down_factor=3, wait=False, title="map"):
     global_map_small = cv2.resize(img, display_dimensions)
     cv2.imshow(title, global_map_small)
     if wait:
-        cv2.waitKey(0)
+        cv2.waitKey(1)
 
 
 def create_rotation_matrix(angle):
@@ -43,13 +43,12 @@ def create_rotation_matrix(angle):
 ####################
 class PredictiveFollower:
 
-    def __init__(self, blurred_map_filename, search_radius=50, desired_gray_val=205, number_of_dich_steps=10):
+    def __init__(self, blurred_img, search_radius=70, desired_gray_val=215, number_of_dich_steps=10):
         """
         Initializes the function
         """
         # Map parameters
-        self.blur = cv2.imread(blurred_map_filename)  # loads the map
-        self.blur = cv2.cvtColor(self.blur, cv2.COLOR_BGR2GRAY)  # convert to grayscale
+        self.blur = blurred_img  # loads the map (Should be in grayscale)
 
         # Search parameters
         self.desired_gray_val = desired_gray_val  # the value to track
@@ -125,3 +124,15 @@ class PredictiveFollower:
 
         # Returns the angle in radians
         return angle
+    
+    def set_img(self,img):
+        self.blur = img
+    
+    def set_gray_val(self, desired_gray_val):
+        self.desired_gray_val = desired_gray_val
+
+    def set_search_radius(self, radius):
+        self.search_radius = radius
+
+    def set_dichotomous_steps(self, steps):
+        self.number_of_dich_steps = steps
