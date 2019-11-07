@@ -227,7 +227,7 @@ if __name__ == "__main__":
     cv2.resizeWindow('image', 1000, 700)
     cv2.setMouseCallback('image', add_waypoint)
 
-    way_pts = open("C:/Users/benjj/Downloads/waypoints.txt", "w+")
+    way_pts = open("/home/nvidia/Desktop/class_code/waypoints.txt", "w+")
     while(True):
         cv2.imshow('image', img) 
         key = cv2.waitKey(20 & 0xFF)
