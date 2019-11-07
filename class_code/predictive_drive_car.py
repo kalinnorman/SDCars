@@ -12,7 +12,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.4
+        self.speed = 0.45
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -24,7 +24,7 @@ class Drive:
         self.waypoints_filename = "waypoints.txt"
         self.waypoints = []
         self.gray_desired = 220 # 210 # The gray value that we want the car to follow
-        self.lane_follow_img = cv2.imread('Maps/grayscale_blur_cutting_corners.bmp') # Reads in the RGB image
+        self.lane_follow_img = cv2.imread('Maps/binary_drivable_rounded_outside_expanded_inside_blurred.bmp') # Reads in the RGB image
         self.lane_follow_img = cv2.cvtColor(self.lane_follow_img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
@@ -172,7 +172,7 @@ class Drive:
 
     def update_desired_gray_val(self, region):
         if region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
-            self.predict.set_gray_val(245)
+            self.predict.set_gray_val(215)
         else:
             self.predict.set_gray_val(215)
 
