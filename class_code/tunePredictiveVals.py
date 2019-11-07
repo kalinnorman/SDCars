@@ -253,6 +253,9 @@ if __name__ == "__main__":
                 x_cur, y_cur, x_prev, y_prev = car.cvt_gps_to_map_coords(car_location, prev_gps)
                 angle = predict.find_angle(x_cur,y_cur,x_prev,y_prev)
                 mod_angle = round(0.2 * angle)
+                print(mod_angle)
+                if abs(mod_angle) > 30:
+                    mod_angle = np.sign(mod_angle)*30
                 car.cc.steer(mod_angle)
                 # region = car.get_region(car_location)  # update the current region
                 
