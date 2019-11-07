@@ -238,7 +238,7 @@ if __name__ == "__main__":
                             else:  # if there are more coordinates
                                 car.cc.drive(0)
                                 time.sleep(1)
-                                car.cc.drive(speed)
+                                car.cc.drive(car.speed)
                                 desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()  # get the next location and go!
                                 print("New waypoint coordinates:", des_x, des_y)
                                 print("Current region:", cur_region)
