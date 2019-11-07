@@ -12,7 +12,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.4
+        self.speed = 0.35
         self.cc = CarControl()
         self.cur_angle = 0
         self.cur_gps = (0, 0)
@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # Setup
     car = Drive()  # initialize the car
-    predict = PredictiveFollower('Maps/intersection_2_left.bmp',search_radius=70)
+    predict = PredictiveFollower('Maps/intersection_2_left.bmp',search_radius=70,desired_gray_val=230)
     car.cc.steer(0)  # set the steering to straight
 
     # Initialize State information
@@ -239,6 +239,8 @@ if __name__ == "__main__":
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
                 if car_location[0] > 0:
+                    if prev_gps[0] < 0:
+                        prev_gps = car_location
                     count += 1
                     # if count > 50:
                     #     newspeed = newspeed + 0.1
