@@ -12,7 +12,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.35
+        self.speed = 0.4
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -170,6 +170,12 @@ class Drive:
 
         return desired_coordinates, des_x, des_y, desired_region
 
+    def update_desired_gray_val(self, region):
+        if region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
+            self.predict.set_gray_val(245)
+        else:
+            self.predict.set_gray_val(215)
+
 
 if __name__ == "__main__":
 
@@ -189,6 +195,8 @@ if __name__ == "__main__":
         print("Car location is not in a valid road, cannot run program")
         car.out_file.close()  # close the output file
         sys.exit()  # terminate the script
+    else:
+        car.update_desired_gray_val(cur_region)
 
     desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
     print("Initial waypoint coordinates: ", des_x, des_y)
@@ -217,10 +225,7 @@ if __name__ == "__main__":
                     cur_img, next_region = car.get_intersection_map(cur_region, desired_region)  # use the appropriate map to turn
                     car.predict.set_img(cur_img)
                     cur_region = gp.region_dict['Intersection']  # indicate we are in the intersection
-                    if next_region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
-                        car.predict.set_gray_val(230)
-                    else:
-                        car.predict.set_gray_val(215)
+                    car.update_desired_gray_val(next_region)
                 elif cur_region == gp.region_dict['Intersection'] and region != gp.region_dict['Intersection']:  # Leaving the intersection
                     cur_img = car.lane_follow_img  # go back to the default map
                     car.predict.set_img(cur_img)
