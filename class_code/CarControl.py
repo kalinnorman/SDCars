@@ -21,8 +21,8 @@ import serial
 import time
 from Sensors import Sensors
 from CarActions import CarActions
-from LaneFollower import LaneFollower
-from ObjectDetector import ObjectDetector 
+# from ReddFollower import ReddFollower
+from NewFollower import NewFollower
 
 class CarControl:
     """
@@ -30,20 +30,16 @@ class CarControl:
     """
 
     def __init__(self):
-        """
-        Initializes the car
-        """
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
-        self.detector = ObjectDetector(self.sensor)
 
         # first few frames of camera feed are low quality
         for i in range(0, 10):
             self.update_sensors()
 
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
-        self.rf = LaneFollower()
+        self.rf = NewFollower()
 
     def update_sensors(self):
         """

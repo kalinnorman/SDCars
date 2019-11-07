@@ -21,8 +21,8 @@ class Drive:
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
         self.waypoints_filename = "waypoints.txt"
         self.waypoints = []
-        self.kp = -0.4 # Kp value for Proportional Control
-        self.kd = 4.5 # Kd value for Derivative Control
+        self.kp = -0.76 #-0.4 # Kp value for Proportional Control
+        self.kd = 0 #4.5 # Kd value for Derivative Control
         self.kp_angle = 0 # Angle commanded by Proportional Control
         self.kd_angle = 0 # Angle commanded by Derivative Control
         self.prev_gray_vals = queue.Queue(7) # Creates a queue to provide a delay for the previous gray value (used in derivative control)
