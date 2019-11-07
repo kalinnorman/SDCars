@@ -15,7 +15,6 @@ class Drive:
         self.speed = 0.35
         self.angle_multiplier = 0.7
         self.cc = CarControl()
-        self.predict = PredictiveFollower()
         self.cur_angle = 0
         self.cur_gps = (0, 0)
         self.cur_gray_val = 0
@@ -53,7 +52,7 @@ class Drive:
         self.four_right = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
-
+        self.predict = PredictiveFollower(self.lane_follow_img)
         self.get_waypoints()
 
     def get_angle(self,cur_gps,prev_gps):
