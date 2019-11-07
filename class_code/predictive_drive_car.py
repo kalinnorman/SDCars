@@ -12,7 +12,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.42
+        self.speed = 0.37
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -52,7 +52,7 @@ class Drive:
         self.four_right = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.predict = PredictiveFollower(self.lane_follow_img)
+        self.predict = PredictiveFollower(self.lane_follow_img, search_radius=50)
         self.get_waypoints()
 
     def get_angle(self,cur_gps,prev_gps):
@@ -241,9 +241,9 @@ if __name__ == "__main__":
                                 print("All waypoints reached!")
                                 break  # we're done!
                             else:  # if there are more coordinates
-                                car.cc.drive(0)
-                                time.sleep(1)
-                                car.cc.drive(car.speed)
+                                # car.cc.drive(0)
+                                # time.sleep(1)
+                                # car.cc.drive(car.speed)
                                 desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()  # get the next location and go!
                                 print("New waypoint coordinates:", des_x, des_y)
                                 print("Current region:", cur_region)
