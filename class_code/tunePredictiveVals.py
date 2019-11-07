@@ -253,6 +253,7 @@ if __name__ == "__main__":
                 x_cur, y_cur, x_prev, y_prev = car.cvt_gps_to_map_coords(car_location, prev_gps)
                 print(x_cur, y_cur, x_prev, y_prev)
                 angle = predict.find_angle(y_cur,x_cur,y_prev,x_prev)
+                angle = angle * 180.0/np.pi
                 print(angle)
                 mod_angle = round(0.2 * angle)
                 print(mod_angle)
