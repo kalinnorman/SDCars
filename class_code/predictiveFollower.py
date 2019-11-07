@@ -98,7 +98,7 @@ class PredictiveFollower:
             x_search = int(x_curr + k[0])
             if x_search > 1599 or x_search < 0:
                 gray_value = 0
-            elif y_search > 1024 or y_search < 0:
+            elif y_search > 1023 or y_search < 0:
                 gray_value = 0
             else:
                 gray_value = self.blur[y_search, x_search]

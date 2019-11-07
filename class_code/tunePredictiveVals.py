@@ -251,7 +251,7 @@ if __name__ == "__main__":
             # Check if GPS found us
             if car_location[0] > 0:  # if the gps found us
                 x_cur, y_cur, x_prev, y_prev = car.cvt_gps_to_map_coords(car_location, prev_gps)
-                angle = predict.find_angle(int(x_cur),int(y_cur),int(x_prev),int(y_prev))
+                angle = predict.find_angle(x_cur,y_cur,x_prev,y_prev)
                 mod_angle = round(0.2 * angle)
                 print(mod_angle)
                 if abs(mod_angle) > 30:
