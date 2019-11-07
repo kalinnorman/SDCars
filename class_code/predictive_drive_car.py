@@ -60,9 +60,9 @@ class Drive:
         angle_deg = angle_rads*180.0/np.pi # Convert angle from radians to degrees
         angle_mod = round(self.angle_multiplier*angle_deg)
         if abs(angle_mod) > 30: # Cap the angle at -30 and 30
-            angle = np.sign(angle_mod)*30
-        self.cur_angle = angle # update the class value tracking the current angle
-        return angle
+            angle_mod = np.sign(angle_mod)*30
+        self.cur_angle = angle_mod # update the class value tracking the current angle
+        return angle_mod
     
     def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
         imgWidth = img.shape[1] # Get width
