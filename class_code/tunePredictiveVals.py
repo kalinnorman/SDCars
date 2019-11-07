@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # Setup
     car = Drive()  # initialize the car
-    predict = PredictiveFollower('Maps/intersection_2_left.bmp',search_radius=70,desired_gray_val=230)
+    predict = PredictiveFollower('Maps/grayscale_blur_cutting_corners.bmp',search_radius=70,desired_gray_val=215)
     car.cc.steer(0)  # set the steering to straight
 
     # Initialize State information
