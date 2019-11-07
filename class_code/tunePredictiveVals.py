@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # Setup
     car = Drive()  # initialize the car
-    predict = PredictiveFollower(car.two_left)
+    predict = PredictiveFollower('Maps/intersection_2_left.bmp')
     car.cc.steer(0)  # set the steering to straight
 
     # Initialize State information
@@ -235,7 +235,7 @@ if __name__ == "__main__":
     try:
         # Start driving!
         while True:
-            while car_location == prev_gps:
+            while car_location == prev_gps or prev_gps[0] < 0:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
                 if car_location[0] > 0:
@@ -251,7 +251,7 @@ if __name__ == "__main__":
             # Check if GPS found us
             if car_location[0] > 0:  # if the gps found us
                 x_cur, y_cur, x_prev, y_prev = car.cvt_gps_to_map_coords(car_location, prev_gps)
-                angle = predict.find_angle(x_cur,y_cur,x_prev,y_prev)
+                angle = predict.find_angle(int(x_cur),int(y_cur),int(x_prev),int(y_prev))
                 mod_angle = round(0.2 * angle)
                 print(mod_angle)
                 if abs(mod_angle) > 30:
@@ -296,9 +296,9 @@ if __name__ == "__main__":
             else:  # if the gps didn't find us
                 car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
 
-                gray_val = car.get_gray_value((-1*car_location[0], -1*car_location[1]), car.lane_follow_img)
+                # gray_val = car.get_gray_value((-1*car_location[0], -1*car_location[1]), car.lane_follow_img)
             
-            car.prev_gray_val = gray_val
+            # car.prev_gray_val = gray_val
             prev_gps = car_location
             # car.update_log_file()  # update the log file
 
