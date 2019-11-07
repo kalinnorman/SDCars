@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # Setup
     car = Drive()  # initialize the car
-    predict = PredictiveFollower('Maps/intersection_2_left.bmp')
+    predict = PredictiveFollower('Maps/intersection_2_left.bmp',search_radius=70)
     car.cc.steer(0)  # set the steering to straight
 
     # Initialize State information
@@ -240,9 +240,9 @@ if __name__ == "__main__":
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
                 if car_location[0] > 0:
                     count += 1
-                    if count > 50:
-                        newspeed = newspeed + 0.1
-                        car.cc.drive(newspeed)
+                    # if count > 50:
+                    #     newspeed = newspeed + 0.1
+                    #     car.cc.drive(newspeed)
             count = 0
             car.cc.drive(car.speed)
             newspeed = car.speed
@@ -255,7 +255,7 @@ if __name__ == "__main__":
                 angle = predict.find_angle(y_cur,x_cur,y_prev,x_prev)
                 angle = angle * 180.0/np.pi
                 print(angle)
-                mod_angle = round(0.2 * angle)
+                mod_angle = round(0.7 * angle)
                 print(mod_angle)
                 if abs(mod_angle) > 30:
                     mod_angle = np.sign(mod_angle)*30
