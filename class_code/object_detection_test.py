@@ -91,8 +91,9 @@ try:
         # Show images
         plt.imshow(cropped_image)
         plt.show()
-        objectFound = False
+        # objectFound = False
         objectFound = detect_object(cropped_image)
+        print("Object found? ", objectFound)
 
         if objectFound:
             print("Object found!")
