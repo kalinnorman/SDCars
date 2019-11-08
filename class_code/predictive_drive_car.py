@@ -28,28 +28,20 @@ class Drive:
         self.lane_follow_img = cv2.cvtColor(self.lane_follow_img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.one_left = cv2.imread('Maps/intersection_1_left.bmp') # RGB
-        self.one_left = cv2.cvtColor(self.one_left, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.one_right = cv2.imread('Maps/intersection_1_right.bmp') # RGB
-        self.one_right = cv2.cvtColor(self.one_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.one_left = cv2.imread('Maps/3to2_and_1to4.bmp') # RGB
+        self.one_left = self.three_right = cv2.cvtColor(self.one_left, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.one_right = cv2.imread('Maps/1to1_and_2to2.bmp') # RGB
+        self.one_right = self.two_left = cv2.cvtColor(self.one_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.one_straight = cv2.imread('Maps/intersection_1_straight.bmp') # RGB
         self.one_straight = cv2.cvtColor(self.one_straight, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.two_left = cv2.imread('Maps/intersection_2_left.bmp') # RGB
-        self.two_left = cv2.cvtColor(self.two_left, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.two_right = cv2.imread('Maps/intersection_2_right.bmp') # RGB
-        self.two_right = cv2.cvtColor(self.two_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.two_right = cv2.imread('Maps/2to3_and_4to1.bmp') # RGB
+        self.two_right = self.four_left = cv2.cvtColor(self.two_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.two_straight = cv2.imread('Maps/intersection_2_straight.bmp') # RGB
         self.two_straight = cv2.cvtColor(self.two_straight, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.three_left = cv2.imread('Maps/intersection_3_left.bmp') # RGB
-        self.three_left = cv2.cvtColor(self.three_left, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.three_right = cv2.imread('Maps/intersection_3_right.bmp') # RGB
-        self.three_right = cv2.cvtColor(self.three_right, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.three_left = cv2.imread('Maps/3to3_and_4to4.bmp') # RGB
+        self.three_left = self.four_right = cv2.cvtColor(self.three_left, cv2.COLOR_BGR2GRAY) # Grayscale
         self.three_straight = cv2.imread('Maps/intersection_3_straight.bmp') # RGB
         self.three_straight = cv2.cvtColor(self.three_straight, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.four_left = cv2.imread('Maps/intersection_4_left.bmp') # RGB
-        self.four_left = cv2.cvtColor(self.four_left, cv2.COLOR_BGR2GRAY) # Grayscale
-        self.four_right = cv2.imread('Maps/intersection_4_right.bmp') # RGB
-        self.four_right = cv2.cvtColor(self.four_right, cv2.COLOR_BGR2GRAY) # Grayscale
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
         self.predict = PredictiveFollower(self.lane_follow_img, search_radius=50)
