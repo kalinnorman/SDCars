@@ -202,9 +202,10 @@ if __name__ == "__main__":
     try:
         # Start driving!
         while True:
-
+            print("you're in the while loop")
             ##### Milestone 3 - Check for objects first! #####
             object_detected = car.cc.detector.detect_object() # Search region in front of car for object
+            print("Mira eso! an object was detected! (kind of)")
             if (object_detected):
                 car.cc.drive(0.0)
                 print('Object Detected!')
