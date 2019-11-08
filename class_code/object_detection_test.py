@@ -89,8 +89,8 @@ try:
 
 
         # Show images
-        # plt.imshow(cropped_image)
-        # plt.show()
+        plt.imshow(cropped_image)
+        plt.show()
         objectFound = False
         objectFound = detect_object(cropped_image)
 
