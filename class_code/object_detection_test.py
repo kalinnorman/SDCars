@@ -41,8 +41,8 @@ def detect_object(img):
     height = img.shape[0]
     width = img.shape[1]
 
-    for y in range(124, 164):
-        for x in range(25, 160):
+    for y in range(100, 180):
+        for x in range(75, 110):
             if img[y][x] != 0:
                 return True
 
@@ -89,8 +89,10 @@ try:
 
 
         # Show images
-        plt.imshow(cropped_image)
-        plt.show()
+        # plt.imshow(cropped_image)
+        # plt.show()
+        cv2.imshow('vid', cropped_image)
+        cv2.waitKey(25)
         # objectFound = False
         objectFound = detect_object(cropped_image)
         print("Object found? ", objectFound)

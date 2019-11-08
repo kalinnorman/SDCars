@@ -46,8 +46,8 @@ class ObjectDetector:
         (Search area is in need of further tuning)
         """
 
-        for y in range(115, 164):       # 115 <= y <= 164
-            for x in range(25, 160):    # 25 <= x <= 160
+        for y in range(100, 180):       # 115 <= y <= 164
+            for x in range(75, 110):    # 25 <= x <= 160
                 if img[y][x] != 0:
                     return True
 
@@ -59,6 +59,7 @@ class ObjectDetector:
         Loads in a depth image, converts to birdseye view, Cannies, and then crops.
         """
         try:
+            print("it's in a try!")
             time, depth_image = self.sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
@@ -68,7 +69,7 @@ class ObjectDetector:
             cropped_image = self.crop_image(cannied_image)
 
             object_found = self.search_range(cropped_image)
-
+            print("you're done trying")
             return object_found
         except:
             print("Detect Image Failed")
