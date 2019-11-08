@@ -21,7 +21,8 @@ import serial
 import time
 from Sensors import Sensors
 from CarActions import CarActions
-# from ReddFollower import ReddFollower
+from LaneFollower import LaneFollower
+from ObjectDetector import ObjectDetector 
 from NewFollower import NewFollower
 
 class CarControl:
