@@ -163,7 +163,7 @@ class Drive:
         return desired_coordinates, des_x, des_y, desired_region
 
     def update_desired_gray_val(self, region):
-        if region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
+        if region == gp.region_dict['Region 1'] or region == gp.region_dict['Region 4']:
             self.predict.set_gray_val(215)
         else:
             self.predict.set_gray_val(215)
@@ -204,9 +204,9 @@ if __name__ == "__main__":
         while True:
 
             ##### Milestone 3 - Check for objects first! #####
-            object_detected = cc.detector.detect_object() # Search region in front of car for object
+            object_detected = car.cc.detector.detect_object() # Search region in front of car for object
             if (object_detected):
-                cc.drive(0.0)
+                car.cc.drive(0.0)
                 print('Object Detected!')
 
                 restart_car = True # When the object is removed, this tells the car to start again
