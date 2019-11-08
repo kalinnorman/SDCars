@@ -197,10 +197,33 @@ if __name__ == "__main__":
     car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
     car.cc.drive(car.speed)  # get the car moving again
+    restart_car = False 
 
     try:
         # Start driving!
         while True:
+
+            ##### Milestone 3 - Check for objects first! #####
+            object_detected = cc.detector.detect_object() # Search region in front of car for object
+            if (object_detected):
+                cc.drive(0.0)
+                print('Object Detected!')
+
+                restart_car = True # When the object is removed, this tells the car to start again
+                continue           # Skip all the remaining steps until the object is gone
+
+            if (restart_car):
+                car.cc.drive(0.6)  # get the car moving
+                time.sleep(0.1)  # ...but only briefly
+                car.cc.drive(car.speed)  # get the car moving again
+                restart_car = False 
+
+            object_detected = False
+
+            ##################################################
+
+
+
             while car_location == prev_gps or prev_gps[0] < 0:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
