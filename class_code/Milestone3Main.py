@@ -111,7 +111,7 @@ if __name__ == '__main__':
                count = 0
 
             # Wait 
-            key = cv2.waitKey(25) & 0xFF  # wait a titch before the next loop
+            key = cv2.waitKey(20) & 0xFF  # wait a titch before the next loop
 
     except KeyboardInterrupt:  # when the user ctrl-C's the script
         cc.drive(0.0)  # stop the car
