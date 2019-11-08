@@ -48,27 +48,25 @@ def turn_handler(cc):
     else:
         print("I haven't a clue where I am.")
 
-def start_car(cc):
+def start_car(cc, speed):
     """
     Gets the car going by ramping up the power and then slowing down to a more reasonable speed
         (Due to kinetic friction / static friction difference, we cannot start the car at a slow speed;
           the car must already be moving)
     """
     cc.steer(0)  # straighten steering
-    lastSteerAngle = 0  # to keep track of steering value
     cc.drive(0.7)  # drive fast to get the car going
     time.sleep(0.5)  # get it up to speed
     cc.drive(speed)  # slow down to a slower speed
 
 
 if __name__ == '__main__':
-
     cc = CarControl()  # create object to control car
+    lastSteerAngle = 0  # to keep track of steering value
     count = 0          # debouncer for finding limit lines
     speed = 0.3        # 0.25-0.4
     restart_car = False 
-    start_car(cc)      # Starts the car
-
+    start_car(cc, speed)      # Starts the car
     # run the loop, waiting for a keyboard interrupt
     try:   
         while True:
@@ -85,7 +83,7 @@ if __name__ == '__main__':
                 continue           # Skip all the remaining steps until the object is gone
 
             if (restart_car):
-                start_car(cc)
+                start_car(cc, speed)
                 restart_car = False
 
             object_detected = False
