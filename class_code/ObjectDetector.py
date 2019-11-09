@@ -21,6 +21,8 @@ class ObjectDetector:
 
         self.sensor = sensor       # Passed in by CarControl.py
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
+        self.count = 0
+        self.debuggerCount = 3
 
     def crop_image(self, img):
         """
@@ -59,7 +61,6 @@ class ObjectDetector:
         Loads in a depth image, converts to birdseye view, Cannies, and then crops.
         """
         try:
-            print("it's in a try!")
             time, depth_image = self.sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
@@ -69,8 +70,15 @@ class ObjectDetector:
             cropped_image = self.crop_image(cannied_image)
 
             object_found = self.search_range(cropped_image)
-            print("you're done trying")
-            return object_found
+            
+            if (object_found):
+                self.count += 1
+                if (self.count >= self.debuggerCount):
+                    self.count = 0
+                    return True, cropped_image
+            else:
+                self.count = 0
+                return False, cropped_image
         except:
             print("Detect Image Failed")
-            return False
+            return False, 0
