@@ -222,7 +222,7 @@ if __name__ == "__main__":
 
     ######### TESTING GUI #############
 
-    img = cv2.imread(cur_img)
+    img = cv2.imread('Maps/grayscale_blur.bmp')
     cv2.namedWindow('image', cv2.WINDOW_NORMAL) 
     cv2.resizeWindow('image', 1000, 700)
     cv2.setMouseCallback('image', add_waypoint)
