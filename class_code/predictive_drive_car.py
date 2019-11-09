@@ -12,7 +12,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.37
+        self.speed = 0.35
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -205,20 +205,19 @@ if __name__ == "__main__":
 
             ##### Milestone 3 - Check for objects first! #####
             car.cc.update_sensors()
-            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object
-            
-            cv2.imshow('vid', cropped_image)
-            cv2.waitKey(25)
+            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object           
+#            cv2.imshow('vid', image)
+#            cv2.waitKey(25)
 
             if (object_detected):
                 car.cc.drive(0.0)
                 print('Object Detected!')
-
+                time.sleep(0.5)
                 restart_car = True # When the object is removed, this tells the car to start again
                 continue           # Skip all the remaining steps until the object is gone
 
             if (restart_car):
-                car.cc.drive(0.6)  # get the car moving
+                car.cc.drive(0.9)#0.6)  # get the car moving
                 time.sleep(0.1)  # ...but only briefly
                 car.cc.drive(car.speed)  # get the car moving again
                 restart_car = False 
