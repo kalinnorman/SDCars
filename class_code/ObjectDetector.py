@@ -21,6 +21,8 @@ class ObjectDetector:
 
         self.sensor = sensor       # Passed in by CarControl.py
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
+        self.count = 0
+        self.debuggerCount = 3
 
     def crop_image(self, img):
         """
@@ -68,7 +70,15 @@ class ObjectDetector:
             cropped_image = self.crop_image(cannied_image)
 
             object_found = self.search_range(cropped_image)
-            return object_found
+            
+            if (object_found):
+                self.count += 1
+                if (self.count >= self.debuggerCount):
+                    self.count = 0
+                    return True, cropped_image
+            else:
+                self.count = 0
+                return False, cropped_image
         except:
             print("Detect Image Failed")
-            return False
+            return False, 0

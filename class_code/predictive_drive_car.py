@@ -202,9 +202,14 @@ if __name__ == "__main__":
     try:
         # Start driving!
         while True:
+
             ##### Milestone 3 - Check for objects first! #####
             car.cc.update_sensors()
-            object_detected = car.cc.detector.detect_object() # Search region in front of car for object
+            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object
+            
+            cv2.imshow('vid', cropped_image)
+            cv2.waitKey(25)
+
             if (object_detected):
                 car.cc.drive(0.0)
                 print('Object Detected!')
