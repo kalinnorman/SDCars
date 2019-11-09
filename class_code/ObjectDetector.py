@@ -38,6 +38,7 @@ class ObjectDetector:
         mask = np.zeros_like(img) # Blank matrix that matches the image height/width
         match_mask_color = 255    # Set to 255 to account for grayscale
         cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
+
         masked_image = cv2.bitwise_and(img, mask)
 
         return masked_image
@@ -48,7 +49,7 @@ class ObjectDetector:
         (Search area is in need of further tuning)
         """
 
-        for y in range(90, 180):       # 115 <= y <= 164
+        for y in range(100, 180):#90,180       # 115 <= y <= 164
             for x in range(75, 110):    # 25 <= x <= 160
                 if img[y][x] != 0:
                     return True
