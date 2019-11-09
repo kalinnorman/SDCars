@@ -46,8 +46,8 @@ class ObjectDetector:
         (Search area is in need of further tuning)
         """
 
-        for y in range(115, 164):       # 115 <= y <= 164
-            for x in range(25, 160):    # 25 <= x <= 160
+        for y in range(100, 180):       # 115 <= y <= 164
+            for x in range(75, 110):    # 25 <= x <= 160
                 if img[y][x] != 0:
                     return True
 
@@ -68,7 +68,6 @@ class ObjectDetector:
             cropped_image = self.crop_image(cannied_image)
 
             object_found = self.search_range(cropped_image)
-
             return object_found
         except:
             print("Detect Image Failed")
