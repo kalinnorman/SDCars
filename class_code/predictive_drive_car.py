@@ -10,9 +10,10 @@ import cv2
 import sys
 
 
+
 class Drive:
     def __init__(self):
-        self.speed = 0.35
+        self.speed = 0.3
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -206,8 +207,8 @@ if __name__ == "__main__":
             ##### Milestone 3 - Check for objects first! #####
             car.cc.update_sensors()
             object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object           
-#            cv2.imshow('vid', image)
-#            cv2.waitKey(25)
+            #cv2.imshow('vid', image)
+            #cv2.waitKey(25)
 
             if (object_detected):
                 car.cc.drive(0.0)
@@ -217,7 +218,7 @@ if __name__ == "__main__":
                 continue           # Skip all the remaining steps until the object is gone
 
             if (restart_car):
-                car.cc.drive(0.9)#0.6)  # get the car moving
+                car.cc.drive(0.8)#0.6)  # get the car moving
                 time.sleep(0.1)  # ...but only briefly
                 car.cc.drive(car.speed)  # get the car moving again
                 restart_car = False 
