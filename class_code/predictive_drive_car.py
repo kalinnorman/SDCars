@@ -9,16 +9,7 @@ import math
 import cv2
 import sys
 
-mouseX = 0
-mouseY = 0
 
-def add_waypoint(event, x, y, flags, param):
-    global mouseX, mouseY
-    if event == cv2.EVENT_LBUTTONDBLCLK:
-        cv2.circle(img, (x,y), 25, (255, 0, 0), 3)
-        mouseX, mouseY = x, y
-        waypoint = str(mouseX) + ", " + str(mouseY) + '\n'
-        way_pts.write(waypoint)
 
 class Drive:
     def __init__(self):
@@ -200,30 +191,6 @@ if __name__ == "__main__":
     else:
         car.update_desired_gray_val(cur_region)
 
-
-
-    ######### TESTING GUI #############
-
-    img = cv2.imread('Maps/grayscale_blur.bmp')
-    cv2.namedWindow('image', cv2.WINDOW_NORMAL) 
-    cv2.resizeWindow('image', 1000, 700)
-    cv2.setMouseCallback('image', add_waypoint)
-
-    way_pts = open("/home/nvidia/Desktop/class_code/waypoints.txt", "w+")
-    while(True):
-        cv2.imshow('image', img) 
-        key = cv2.waitKey(20 & 0xFF)
-        if key == 27: # Escape key
-            way_pts.close()
-            print("Successfully escaping")
-            break
-        elif key == ord('a'):
-            print(mouseX, mouseY)
-
-    ###################################
-
-
-
     desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
     print("Initial waypoint coordinates: ", des_x, des_y)
 
@@ -271,14 +238,6 @@ if __name__ == "__main__":
             car_y = car_location[1] # Get y (not as a tuple)
             # Check if GPS found us
             if car_location[0] > 0:  # if the gps found us
-
-                ##### ALSO TESTING GPS GUI ###########################
-
-                cv2.circle(img, (car_x,car_y), 3, (0, 200, 0), 3)
-
-                ######################################################
-
-
                 region = car.get_region(car_location)  # update the current region
 
                 # Check where we are vs. where we want to be.
