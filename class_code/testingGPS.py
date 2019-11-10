@@ -32,7 +32,7 @@ class Drive:
         self.cur_region = 0
         self.log_filename = datetime.now().strftime("%b-%d-%Y_%H:%M:%S") + ".txt" # Creates file named by the date and time to log items for debugging
         self.out_file = open("LogFiles/"+self.log_filename,"w") # Opens (creates the file)
-        self.waypoints_filename = "waypoints.txt"
+        # self.waypoints_filename = "waypoints.txt"
         self.waypoints = []
         self.gray_desired = 220 # 210 # The gray value that we want the car to follow
         self.lane_follow_img = cv2.imread('Maps/binary_drivable_rounded_outside_expanded_inside_2_blurred.bmp') # Reads in the RGB image
@@ -56,7 +56,7 @@ class Drive:
         self.four_straight = cv2.imread('Maps/intersection_4_straight.bmp') # RGB
         self.four_straight = cv2.cvtColor(self.four_straight, cv2.COLOR_BGR2GRAY) # Grayscale
         self.predict = PredictiveFollower(self.lane_follow_img, search_radius=50)
-        self.get_waypoints()
+        # self.get_waypoints()
 
     def get_angle(self,cur_gps,prev_gps):
         angle_rads = self.predict.find_angle(1600-cur_gps[1],cur_gps[0],1600-prev_gps[1],prev_gps[0])
@@ -181,6 +181,7 @@ class Drive:
 
     def update_waypoints(self):
         self.waypoints_filename = "waypoints.txt"
+        self.get_waypoints()
 
 
 if __name__ == "__main__":
