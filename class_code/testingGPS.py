@@ -17,7 +17,7 @@ def add_waypoint(event, x, y, flags, param):
     global mouseX, mouseY
     if event == cv2.EVENT_LBUTTONDBLCLK:
         cv2.circle(img, (x,y), 25, (255, 0, 0), 3)
-        mouseX, mouseY = x, y
+        mouseY, mouseX = x, y
         waypoint = str(mouseX) + ", " + str(mouseY) + '\n'
         way_pts.write(waypoint)
 
@@ -279,10 +279,12 @@ if __name__ == "__main__":
             if car_location[0] > 0:  # if the gps found us
 
                 ##### ALSO TESTING GPS GUI ###########################
-
-                cv2.circle(img, (int(car_x),int(car_y)), 3, (0, 200, 0), 3)
+#                print("Drawing Image...")
+                cv2.circle(img, (int(car_y),int(car_x)), 3, (0, 200, 0), 3)
                 cv2.imshow('image', img) 
-
+#                print("Showing image...")
+                key = cv2.waitKey(1)
+#                print("Waited key")
                 ######################################################
 
 
