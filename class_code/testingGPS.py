@@ -128,9 +128,7 @@ class Drive:
 
     def get_region(self, coordinates):
         current_gray_val = self.get_gray_value(coordinates, self.regions_img)
-        print("current gray val is ", current_gray_val)
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
-        print(" and region values is ", gp.region_values[current_gray_val])
         return self.cur_region
 
     def update_log_file(self):
@@ -167,7 +165,6 @@ class Drive:
         desired_coordinates = self.waypoints[0]
         des_x = desired_coordinates[0]
         des_y = desired_coordinates[1]
-        print("desired region is (x,y) = ", des_x, des_y)
         desired_region = car.get_region(desired_coordinates)  # pass in tuple: (x,y)
         if desired_region == 0 or desired_region == 5:
             print("Desired coordinates", desired_coordinates, "are not located in a valid location but in region ", desired_region)
@@ -181,6 +178,9 @@ class Drive:
             self.predict.set_gray_val(215)
         else:
             self.predict.set_gray_val(215)
+
+    def update_waypoints(self):
+        self.waypoints_filename = "waypoints.txt"
 
 
 if __name__ == "__main__":
@@ -220,6 +220,7 @@ if __name__ == "__main__":
         if key == 27: # Escape key
             way_pts.close()
             print("Successfully escaping")
+            car.update_waypoints()
             break
         elif key == ord('a'):
             print(mouseX, mouseY)
@@ -279,6 +280,7 @@ if __name__ == "__main__":
                 ##### ALSO TESTING GPS GUI ###########################
 
                 cv2.circle(img, (int(car_x),int(car_y)), 3, (0, 200, 0), 3)
+                cv2.imshow('image', img) 
 
                 ######################################################
 
