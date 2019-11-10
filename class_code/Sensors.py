@@ -127,6 +127,7 @@ class Sensors():
 
         # start realsense pipeline
         rsframes = self.pipeline.wait_for_frames()
+
         # GPS data
         self.region = self.get_gps_region()
 
@@ -175,6 +176,7 @@ class Sensors():
     # call this when car has reached an intersection
     def get_gps_region(self):
         x,y = self.get_gps_coord("Blue")  # outputs coordinates (x,y)
+
         # arbitrary values, need to test when have testing space
         # we only care about the horizontal axis (y) for turning purposes
         if y > 1400 :
@@ -192,7 +194,6 @@ class Sensors():
         else :
             region = 'middle'
             # can go any direction
-        
         return region
 
     # retrieves the coordinates of a car (provided in class code)
