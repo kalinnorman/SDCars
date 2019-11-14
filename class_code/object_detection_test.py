@@ -12,20 +12,27 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-y_min = 100
-y_max = 180
-x_min = 75
-x_max = 110
+y_min = 118
+y_max = 193
+x_min = 81
+x_max = 107
+
+crop_y_min = 0
+crop_y_max = 163
+v_tl = (25, crop_y_min)
+v_bl = (75, crop_y_max)
+v_br = (120, crop_y_max)
+v_tr = (160, crop_y_min)
+
+y_crop_offset = (200 - crop_y_max)
+
 count = 0
 
 def crop_image(img):
         """
-        Takes in an image and crops out a specified range
+        Tkes in an image and crops out a specified range
         """
-        cropVertices = [(25, 0),                      # Corners of cropped image
-                        (75, 163),        # Gets bottom portion
-                        (120, 163),
-                        (160, 0) ] 
+        cropVertices = [v_tl, v_bl, v_br, v_tr]                      # Corners of cropped image
 
         # Blank matrix that matches the image height/width
         mask = np.zeros_like(img)
@@ -78,27 +85,43 @@ try:
 
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+#        color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
 
         # dCanny = cv2.Canny(depth_colormap, 50, 200)
 
         birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
 
+        color_be_frame = cv2.warpPerspective(color_image, birdseye_transform_matrix, (200,200))
+
         bCanny = cv2.Canny(birdseye_frame, 100, 200)
 
         cropped_image  = crop_image(bCanny)
 
-        cv2.line(bCanny, (x_min, y_min), (x_min, y_max), (0,255,0), 2)
-        cv2.line(bCanny, (x_min, y_max), (x_max, y_max), (0,255,0), 2)
-        cv2.line(bCanny, (x_max, y_max), (x_max, y_min), (0,255,0), 2)
-        cv2.line(bCanny, (x_max, y_min), (x_min, y_min), (0,255,0), 2)
+
+        img = bCanny
+        cv2.line(img, v_tl, v_bl, (255,0,0), 2)
+        cv2.line(img, v_bl, v_br, (255,0,0), 2)
+        cv2.line(img, v_br, v_tr, (255,0,0), 2)
+        cv2.line(img, v_tr, v_tl, (255,0,0), 2)
+
+        cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
+        cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
+        cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
+        cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
+
+
+
+
 
         # Stack both images horizontally
-        images = np.hstack((bCanny, birdseye_frame))
+#        images = np.hstack((bCanny, birdseye_frame))
 
         # Show images
         # plt.imshow(cropped_image)
         # plt.show()
-        cv2.imshow('vid', bCanny)
+        cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
+        cv2.imshow('vid', img)
+        cv2.resizeWindow('vid', 700,700)
         cv2.waitKey(25)
         # objectFound = False
         objectFound = detect_object(cropped_image)
