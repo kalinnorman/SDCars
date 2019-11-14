@@ -12,6 +12,11 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
+y_min = 100
+y_max = 180
+x_min = 75
+x_max = 110
+count = 0
 
 def crop_image(img):
         """
@@ -33,7 +38,6 @@ def crop_image(img):
 
         return masked_image
 
-
 def detect_object(img):
     """
     Takes in image and searches each pixel in a designated region to see if there is an object
@@ -41,8 +45,8 @@ def detect_object(img):
     height = img.shape[0]
     width = img.shape[1]
 
-    for y in range(100, 180):
-        for x in range(75, 110):
+    for y in range(y_min, y_max):
+        for x in range(x_min, x_max):
             if img[y][x] != 0:
                 return True
 
@@ -74,31 +78,34 @@ try:
 
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-        
-        # Stack both images horizontally
-        # images = np.hstack((color_image, depth_colormap))
 
-        dCanny = cv2.Canny(depth_colormap, 50, 200)
+        # dCanny = cv2.Canny(depth_colormap, 50, 200)
 
         birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
 
-        bCanny = cv2.Canny(birdseye_frame, 50, 200)
+        bCanny = cv2.Canny(birdseye_frame, 100, 200)
 
         cropped_image  = crop_image(bCanny)
 
+        cv2.line(bCanny, (x_min, y_min), (x_min, y_max), (0,255,0), 2)
+        cv2.line(bCanny, (x_min, y_max), (x_max, y_max), (0,255,0), 2)
+        cv2.line(bCanny, (x_max, y_max), (x_max, y_min), (0,255,0), 2)
+        cv2.line(bCanny, (x_max, y_min), (x_min, y_min), (0,255,0), 2)
 
+        # Stack both images horizontally
+        images = np.hstack((bCanny, birdseye_frame))
 
         # Show images
         # plt.imshow(cropped_image)
         # plt.show()
-        cv2.imshow('vid', cropped_image)
+        cv2.imshow('vid', bCanny)
         cv2.waitKey(25)
         # objectFound = False
         objectFound = detect_object(cropped_image)
-        print("Object found? ", objectFound)
 
         if objectFound:
-            print("Object found!")
+            count += 1
+            print("Object found! ", count)
 
 
 finally:
