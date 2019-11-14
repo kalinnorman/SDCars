@@ -183,6 +183,16 @@ class Drive:
         self.waypoints_filename = "waypoints.txt"
         self.get_waypoints()
 
+    def start_car(self):
+        self.cc.drive(0.4)  # get the car moving
+        time.sleep(0.1)  # ...but only briefly
+        self.car.cc.drive(self.speed)  # get the car moving again
+
+    def stop_car(self):
+        self.cc.steer(0)
+        self.cc.drive(0.0)
+        #time.sleep(0.3)
+
 
 if __name__ == "__main__":
 
@@ -205,11 +215,9 @@ if __name__ == "__main__":
     else:
         car.update_desired_gray_val(cur_region)
 
-
-
     ######### TESTING GUI #############
 
-    img = cv2.imread('Maps/grayscale_blur_better.bmp')
+    img = cv2.imread('Maps/Global.jpg')
     cv2.namedWindow('image', cv2.WINDOW_NORMAL) 
     cv2.resizeWindow('image', 1000, 700)
     cv2.setMouseCallback('image', add_waypoint)
@@ -228,15 +236,14 @@ if __name__ == "__main__":
 
     ###################################
 
-
-
     desired_coordinates, des_x, des_y, desired_region = car.get_next_coordinates()
     print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
-    car.cc.drive(0.6)  # get the car moving
-    time.sleep(0.1)  # ...but only briefly
-    car.cc.drive(car.speed)  # get the car moving again
+    car.start_car()
+    # car.cc.drive(0.6)  # get the car moving
+    # time.sleep(0.1)  # ...but only briefly
+    # car.cc.drive(car.speed)  # get the car moving again
     restart_car = False 
 
     try:
@@ -250,16 +257,16 @@ if __name__ == "__main__":
             #cv2.waitKey(25)
 
             if (object_detected):
-                car.cc.drive(0.0)
-                print('Object Detected!')
-                time.sleep(0.5)
+                car.stop_car()
+                print("object detected! ")
                 restart_car = True # When the object is removed, this tells the car to start again
                 continue           # Skip all the remaining steps until the object is gone
 
             if (restart_car):
-                car.cc.drive(0.8)#0.6)  # get the car moving
-                time.sleep(0.1)  # ...but only briefly
-                car.cc.drive(car.speed)  # get the car moving again
+                car.start_car()
+                # car.cc.drive(0.8)#0.6)  # get the car moving
+                # time.sleep(0.1)  # ...but only briefly
+                # car.cc.drive(car.speed)  # get the car moving again
                 restart_car = False 
 
             # object_detected = False
