@@ -23,7 +23,7 @@ def add_waypoint(event, x, y, flags, param):
 
 class Drive:
     def __init__(self):
-        self.speed = 0.3
+        self.speed = 0.24
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -184,9 +184,9 @@ class Drive:
         self.get_waypoints()
 
     def start_car(self):
-        self.cc.drive(0.4)  # get the car moving
+        self.cc.drive(0.42)  # get the car moving
         time.sleep(0.1)  # ...but only briefly
-        self.car.cc.drive(self.speed)  # get the car moving again
+        self.cc.drive(self.speed)  # get the car moving again
 
     def stop_car(self):
         self.cc.steer(0)
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
-    car.start_car()
+#    car.start_car()
     # car.cc.drive(0.6)  # get the car moving
     # time.sleep(0.1)  # ...but only briefly
     # car.cc.drive(car.speed)  # get the car moving again
