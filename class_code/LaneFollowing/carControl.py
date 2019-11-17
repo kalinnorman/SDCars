@@ -43,7 +43,7 @@ class CarControl:
             self._send_command("!pid1\n")
         else:
             self._send_command("!pid0\n")
-        self._send_command("!start1550\n")
+        self._send_command("!start1570\n")
         self.drive(0.0)
         self._send_command("!inits0.3\n")
         print("Initialization Completed")
