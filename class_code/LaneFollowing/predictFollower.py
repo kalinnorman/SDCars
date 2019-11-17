@@ -71,6 +71,7 @@ class PredictiveFollower:
                 angle += angle_step
                 rot_mat = create_rotation_matrix(angle_step)
             else:
+                print("Found Angle!")
                 return angle
 
         # Returns the angle in radians

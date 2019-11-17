@@ -29,7 +29,7 @@ try:
             car.update_region()
             # First case: Entering the intersection from any region
             if prev_region != gp.region_dict['Intersection'] and car.cur_region == gp.region_dict['Intersection']: 
-                cur_img, next_region = car.get_intersection_map()  # use the appropriate map to turn
+                cur_img, next_region = car.get_intersection_map(prev_region)  # use the appropriate map to turn
                 car.predict.set_img(cur_img)
                 prev_region = car.cur_region
                 print("Entered Intersection, next region is", next_region)

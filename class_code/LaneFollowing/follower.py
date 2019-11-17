@@ -14,7 +14,7 @@ import os
 
 class Drive:
     def __init__(self):
-        self.speed = 0.25
+        self.speed = 0.28
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -73,10 +73,10 @@ class Drive:
         self.cur_gray_val = gray_val
         return gray_val
 
-    def get_intersection_map(self):
+    def get_intersection_map(self, prev_region):
         # Determine what action to take based on the current region and the region of the desired GPS coordinates
         # Returns the appropriate map for the action to take, and the next region the car will be in
-        if self.cur_region == 1:
+        if prev_region == 1:
             if self.desired_region == 1:
                 return self.regions1and4, 1
             elif self.desired_region == 2:
@@ -87,7 +87,7 @@ class Drive:
                 return self.region1to4, 4
             else:
                 return self.region1to4, 0
-        elif self.cur_region == 2:
+        elif prev_region == 2:
             if self.desired_region == 1:
                 return self.region2to4, 4
             elif self.desired_region == 2:
@@ -98,7 +98,7 @@ class Drive:
                 return self.region2to4, 4
             else:
                 return self.region2to4, 0
-        elif self.cur_region == 3:
+        elif prev_region == 3:
             if self.desired_region == 1:
                 return self.region3to1, 1
             elif self.desired_region == 2:
@@ -109,7 +109,7 @@ class Drive:
                 return self.region3to1, 1
             else:
                 return self.region3to1, 0
-        elif self.cur_region == 4:
+        elif prev_region == 4:
             if self.desired_region == 1:
                 return self.region4to1, 1
             elif self.desired_region == 2:
