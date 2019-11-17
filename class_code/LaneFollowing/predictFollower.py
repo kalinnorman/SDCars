@@ -12,7 +12,7 @@ def create_rotation_matrix(angle):
 
 class PredictiveFollower:
 
-    def __init__(self, input_map, search_radius=70, desired_gray_val=128, number_of_dich_steps=20):
+    def __init__(self, input_map, search_radius=70, desired_gray_val=128, number_of_dich_steps=15):
         """
         Initializes the function
         """
@@ -71,7 +71,6 @@ class PredictiveFollower:
                 angle += angle_step
                 rot_mat = create_rotation_matrix(angle_step)
             else:
-                print("Found Angle!")
                 return angle
 
         # Returns the angle in radians

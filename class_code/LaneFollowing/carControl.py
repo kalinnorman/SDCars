@@ -34,7 +34,7 @@ class CarControl:
             command = command + "\n"
         self.ser.write(command.encode())
 
-    def _initialize_car(self, pid_flag=True):
+    def _initialize_car(self, pid_flag=False):
         print("Initializing Car")
         self._send_command("!straight1430\n")
         self._send_command("!kp0.01\n")
@@ -43,6 +43,7 @@ class CarControl:
             self._send_command("!pid1\n")
         else:
             self._send_command("!pid0\n")
-        self._send_command("!start1590\n")
+        self._send_command("!start1550\n")
         self.drive(0.0)
+        self._send_command("!inits0.3\n")
         print("Initialization Completed")
