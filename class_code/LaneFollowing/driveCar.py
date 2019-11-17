@@ -15,6 +15,7 @@ car.cc.steer(0)  # set the steering to straight
 prev_region = car.cur_region
 next_region = car.desired_region
 cur_img = car.predict.map
+car.cc.drive(car.speed)
 try:
     while True:
         # Get new GPS Coordinate
