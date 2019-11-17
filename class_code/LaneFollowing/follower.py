@@ -123,6 +123,7 @@ class Drive:
 
     def update_region(self):
         current_gray_val = self.get_gray_value(self.cur_gps, self.regions_img)
+        print("Gray Val", current_gray_val)
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
