@@ -50,8 +50,10 @@ class Drive:
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = PredictiveFollower(self.regions1and4, search_radius=50)
+            print("using regions 1 and 4")
         else:
             self.predict = PredictiveFollower(self.regions2and3, search_radius=50)
+            print("using regions 2 and 3")
 
     def get_angle(self):
         angle_rads = self.predict.find_angle(1600-self.cur_gps[1],self.cur_gps[0],1600-self.prev_gps[1],self.prev_gps[0])

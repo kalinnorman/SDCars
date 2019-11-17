@@ -15,7 +15,6 @@ car.cc.steer(0)  # set the steering to straight
 prev_region = car.cur_region
 next_region = car.desired_region
 cur_img = car.predict.map
-cv2.imshow("Thing",cur_img)
 car.cc.drive(car.speed)
 try:
     while True:
