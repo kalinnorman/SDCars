@@ -14,7 +14,7 @@ import os
 
 class Drive:
     def __init__(self):
-        self.speed = 0.3
+        self.speed = 0.25
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0

@@ -12,7 +12,7 @@ def create_rotation_matrix(angle):
 
 class PredictiveFollower:
 
-    def __init__(self, input_map, search_radius=70, desired_gray_val=128, number_of_dich_steps=10):
+    def __init__(self, input_map, search_radius=70, desired_gray_val=128, number_of_dich_steps=20):
         """
         Initializes the function
         """
@@ -62,7 +62,7 @@ class PredictiveFollower:
             else:
                 gray_value = self.map[y_search, x_search]
 
-            
+
             # update parameters for next time
             if gray_value < self.desired_gray_val:
                 angle -= angle_step
@@ -71,11 +71,9 @@ class PredictiveFollower:
                 angle += angle_step
                 rot_mat = create_rotation_matrix(angle_step)
             else:
-                print("Found the desired Value!")
                 return angle
 
         # Returns the angle in radians
-        print("didnt...")
         return angle
     
     def set_img(self,img):
