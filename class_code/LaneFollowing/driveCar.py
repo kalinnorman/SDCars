@@ -53,7 +53,7 @@ try:
 
         else:  # if the gps didn't find us
             car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
-            prev_gps = car.cur_gps
+            car.prev_gps = car.cur_gps
            
         car.update_log_file()  # update the log file
     

@@ -14,7 +14,7 @@ import os
 
 class Drive:
     def __init__(self):
-        self.speed = 0.32
+        self.speed = 0.3
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -68,7 +68,7 @@ class Drive:
         imgWidth = img.shape[1] # Get width
         x = round(coordinates[0]) # x translates directly
         y = imgWidth - round(coordinates[1]) # y is inverted
-        self.cur_gps = (x,y)
+        # self.cur_gps = (x,y)
         gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
         self.cur_gray_val = gray_val
         return gray_val
@@ -125,7 +125,6 @@ class Drive:
 
     def update_region(self):
         current_gray_val = self.get_gray_value(self.cur_gps, self.regions_img)
-        print("Gray Val", current_gray_val)
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
