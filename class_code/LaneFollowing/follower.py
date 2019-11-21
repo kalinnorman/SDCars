@@ -23,7 +23,7 @@ class Drive:
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
         self.cur_region = self.update_region()
-        self.desired_region = 1 # self.update_desired_region()
+        self.desired_region = 3 # self.update_desired_region()
         self.log_filename = "Log.txt" # Creates file named by the date and time to log items for debugging
         if os.path.exists(self.log_filename):
             os.remove(self.log_filename)
@@ -40,8 +40,8 @@ class Drive:
         self.region2to2 = cv2.cvtColor(self.region2to2, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region2to4 = cv2.imread('Maps/Region2to4.bmp') # RGB
         self.region2to4 = cv2.cvtColor(self.region2to4, cv2.COLOR_BGR2GRAY) # Grayscale
-        # self.region3to3 = cv2.imread('Maps/Region3to3.bmp') # RGB
-        self.region3to3 = 0 # self.region3to3 = cv2.cvtColor(self.region3to3, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.region3to3 = cv2.imread('Maps/Region3to3.bmp') # RGB
+        self.region3to3 = cv2.cvtColor(self.region3to3, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region3to1 = cv2.imread('Maps/Region3to1.bmp') # RGB
         self.region3to1 = cv2.cvtColor(self.region3to1, cv2.COLOR_BGR2GRAY) # Grayscale
         # self.region4to1 = cv2.imread('Maps/Region4to1.bmp') # RGB
