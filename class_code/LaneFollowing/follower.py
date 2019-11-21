@@ -15,7 +15,7 @@ import os
 class Drive:
     def __init__(self):
         self.speed = 0.3
-        self.angle_multiplier = 0.7
+        self.angle_multiplier = 0.5
         self.cc = CarControl()
         self.cur_angle = 0
         self.cur_gps = self.update_gps_pos()
