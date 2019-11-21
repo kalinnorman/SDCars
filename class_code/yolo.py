@@ -96,14 +96,12 @@ current_bb = [0, 0, 0, 0]
 
 # loop over frames from the video file stream
 while True:   
-    print ("is it true?DEBUG")
     # read the next frame from the file
     (grabbed, frame) = vs.read()
 
     # if the frame was not grabbed, then we have reached the end
     # of the stream
     if not grabbed:
-        print ("not grabbed DEBUG")
         break
 
     # if the frame dimensions are empty, grab them
@@ -118,6 +116,10 @@ while True:
     
     # The next two lines draw boxes around detected objects
     ax = utils.viz.plot_bbox(img, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
+    plt.show()
+
+    imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    plt.imshow(imgHSV)
     plt.show()
 
     #print(class_IDs)
@@ -137,9 +139,10 @@ while True:
             current_bb = bounding_boxs[0][i-1]
             
     gc.collect()
-
-    print("Class ID: ", current_class_id)
-    print("Score: ", current_score)
+    
+    # note to AUTUMN: make a if statement here so that it still runs if there isn't a class ID... just maybe
+    #print("Class ID: ", current_class_id)
+    #print("Score: ", current_score)
     print("Bounding Box Coordinates: ", current_bb, "\n")
 
     cv2.imshow("Camera Feed", frame)
