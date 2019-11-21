@@ -4,7 +4,7 @@
 # -c/--confidence (.0-1.0) (detected objects with a confidence higher than this will be used)
 
 # import the necessary packages
-from car_control import steer, drive
+from CarControl import CarControl #steer, drive
 from matplotlib import pyplot as plt
 from gluoncv import model_zoo, utils
 import pyrealsense2 as rs
@@ -96,13 +96,14 @@ current_bb = [0, 0, 0, 0]
 
 # loop over frames from the video file stream
 while True:   
-
+    print ("is it true?DEBUG")
     # read the next frame from the file
     (grabbed, frame) = vs.read()
 
     # if the frame was not grabbed, then we have reached the end
     # of the stream
     if not grabbed:
+        print ("not grabbed DEBUG")
         break
 
     # if the frame dimensions are empty, grab them
@@ -137,12 +138,12 @@ while True:
             
     gc.collect()
 
-    #print("Class ID: ", current_class_id)
-    #print("Score: ", current_score)
-    #print("Bounding Box Coordinates: ", current_bb, "\n")
+    print("Class ID: ", current_class_id)
+    print("Score: ", current_score)
+    print("Bounding Box Coordinates: ", current_bb, "\n")
 
-    #cv2.imshow("Camera Feed", frame)
-    #key = cv2.waitKey(1) & 0xFF
+    cv2.imshow("Camera Feed", frame)
+    key = cv2.waitKey(1) & 0xFF
 	
 vs.release()
 cv2.destroyAllWindows()
