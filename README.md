@@ -2,6 +2,10 @@
 
 Repository for Team 2, Self-Driving Cars class
 
+## GitHub empty object file error (corrupted repository)
+
+Run the command "find .git/objects/ -size 0 -delete" while located in the Desktop directory (the home directory of the GitHub repository)
+
 ## Jetson Notes
 
 Note that both your computer and the Jetson must be on the NETGEAR24 network in order to SSH into it correctly (password is greattrail272).
