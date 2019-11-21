@@ -131,9 +131,9 @@ class NewFollower:
 
     """ -->  UNUSED ????
     def steering_control(self, lane_parameters, print_info=False):
-        """
+        ""
         # To control the steering
-        """
+        ""
         if lane_parameters[1] > self.theta_left_base:  # if the angle is to the right
             if self.steering_state != '>':  # if we haven't already
                 self.steering_state = '>'  # tell the car to turn right

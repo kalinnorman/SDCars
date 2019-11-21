@@ -3,3 +3,4 @@
 *.desktop
 *.avi
 .idea/
+__pycache__

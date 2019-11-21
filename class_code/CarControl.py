@@ -1,10 +1,7 @@
 """
 CarControl.py
-
 Holds functions that send commands to the car.
-
 Functions and Parameters:
-
 __init__()
 update_sensors()
 drive(speed)
@@ -12,8 +9,6 @@ steer(degree)
 _initialize_serial_communication()
 _send_command(command, addnewline=False)
 _initialize_car(pid_flag=True)
-
-
 Author: redd
 """
 
@@ -21,8 +16,8 @@ import serial
 import time
 from Sensors import Sensors
 from CarActions import CarActions
-# from ReddFollower import ReddFollower
 from NewFollower import NewFollower
+from ObjectDetector import ObjectDetector 
 
 class CarControl:
     """
@@ -30,9 +25,13 @@ class CarControl:
     """
 
     def __init__(self):
+        """
+        Initializes the car
+        """
         self.ser = self._initialize_serial_communication()  # establish serial communication
         self._initialize_car()  # initialize the car
         self.sensor = Sensors()  # initialize sensors
+        self.detector = ObjectDetector(self.sensor)
 
         # first few frames of camera feed are low quality
         for i in range(0, 10):
@@ -67,7 +66,6 @@ class CarControl:
     def _initialize_serial_communication(self):
         """
         Initializes the serial communication.
-
         :return: Object required for communication.
         """
         print("Initializing Serial Communications")
@@ -81,7 +79,6 @@ class CarControl:
     def _send_command(self, command, addnewline=False):
         """
         Sends a command to the car. Remember that every command must end with a new line.
-
         Author: redd
         """
         if addnewline:
@@ -91,7 +88,6 @@ class CarControl:
     def _initialize_car(self, pid_flag=True):
         """
         Initializes the car. This must be run before we can control the car.
-
         Author: redd
         """
 
