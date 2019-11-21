@@ -23,7 +23,7 @@ class Drive:
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
         self.cur_region = self.update_region()
-        self.desired_region = 3 # self.update_desired_region()
+        self.desired_region = 4 # self.update_desired_region()
         self.log_filename = "Log.txt" # Creates file named by the date and time to log items for debugging
         if os.path.exists(self.log_filename):
             os.remove(self.log_filename)
