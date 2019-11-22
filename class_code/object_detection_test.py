@@ -13,6 +13,9 @@ import cv2
 from matplotlib import pyplot as plt
 import time
 
+# referenceImage_path = ""
+saveName = "depthImage.jpg" 
+
 y_min = 118
 y_max = 193
 x_min = 81
@@ -28,9 +31,6 @@ v_tr = (160, crop_y_min)
 y_crop_offset = (200 - crop_y_max)
 
 count = 0
-saveDepthString = "depthImage.jpg"
-saveColorString = "colorImage.jpg"
-countString = "i"
 
 def crop_image(img):
         """
@@ -72,103 +72,53 @@ birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy
 
 # Start streaming
 pipeline.start(config)
+reference_image = cv2.imread(referenceImage_path)
 count = 0
 try:
-    while True:
+    # while True:
+    print("Getting frame in 1 second")
+    time.sleep(1)
 
-        # Wait for a coherent pair of frames: depth and color
-        frames = pipeline.wait_for_frames()
-        depth_frame = frames.get_depth_frame()
-        color_frame = frames.get_color_frame()
-        if not depth_frame or not color_frame:
-            continue
+    # Wait for a coherent pair of frames: depth and color
+    frames = pipeline.wait_for_frames()
+    depth_frame = frames.get_depth_frame()
+    color_frame = frames.get_color_frame()
+    if not depth_frame or not color_frame:
+        continue
 
-        # Convert images to numpy arrays
-        depth_image = np.asanyarray(depth_frame.get_data())
-        color_image = np.asanyarray(color_frame.get_data())
+    # Convert images to numpy arrays
+    depth_image = np.asanyarray(depth_frame.get_data())
 
-        # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-#        color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
+    # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
+    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+    # color_image = np.asanyarray(color_frame.get_data())   
+    # color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
+    # dCanny = cv2.Canny(depth_colormap, 50, 200)
+    # color_be_frame = cv2.warpPerspective(color_image, birdseye_transform_matrix, (200,200))
 
-        # dCanny = cv2.Canny(depth_colormap, 50, 200)
+    birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
+    bCanny = cv2.Canny(birdseye_frame, 100, 200)
+    cropped_image  = crop_image(bCanny)
+    cv2.imwrite(saveName, birdseye_frame)
 
-        birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
+    # img = bCanny
+    # cv2.line(img, v_tl, v_bl, (255,0,0), 2)
+    # cv2.line(img, v_bl, v_br, (255,0,0), 2)
+    # cv2.line(img, v_br, v_tr, (255,0,0), 2)
+    # cv2.line(img, v_tr, v_tl, (255,0,0), 2)
 
-        color_be_frame = cv2.warpPerspective(color_image, birdseye_transform_matrix, (200,200))
-
-        bCanny = cv2.Canny(birdseye_frame, 100, 200)
-
-        cropped_image  = crop_image(bCanny)
-
-
-        print('Starting in 1 second')
-        time.sleep(1)
-        cv2.imwrite("colorImage.jpg", color_image)
-        time.sleep(3)
-        cv2.imwrite("colorImage2.jpg", color_image)
-        time.sleep(3)
-        cv2.imwrite("colorImage3.jpg", color_image)
-        time.sleep(3)
-        cv2.imwrite("colorImage4.jpg", color_image)
-
-        # print('Starting in 1 second')
-        # time.sleep(1)
-        # cv2.imwrite("depthImage1.jpg", birdseye_frame)
-        # time.sleep(3)
-        # cv2.imwrite("DepthImage2.jpg", birdseye_frame)
-        # time.sleep(3)
-        # cv2.imwrite("DepthImage3.jpg", birdseye_frame)
-        # time.sleep(3)
-        # cv2.imwrite("DepthImage4.jpg", birdseye_frame)
-        # time.sleep(3)
-        # cv2.imwrite("DepthImage5.jpg", birdseye_frame)
-        # time.sleep(3)
-        # cv2.imwrite("DepthImage6.jpg", birdseye_frame)
-
-        # img = bCanny
-        # cv2.line(img, v_tl, v_bl, (255,0,0), 2)
-        # cv2.line(img, v_bl, v_br, (255,0,0), 2)
-        # cv2.line(img, v_br, v_tr, (255,0,0), 2)
-        # cv2.line(img, v_tr, v_tl, (255,0,0), 2)
-
-        # cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
-        # cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
-        # cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
-        # cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
+    # cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
+    # cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
+    # cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
+    # cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
 
 
+    # objectFound = False
+    # objectFound = detect_object(cropped_image)
 
-
-
-        # Stack both images horizontally
-#        images = np.hstack((bCanny, birdseye_frame))
-
-        # Show images
-        # plt.imshow(cropped_image)
-        # plt.show()
-#         cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
-#         cv2.imshow('vid', color_image)
-# #        cv2.resizeWindow('vid', 700,700)
-#         time.sleep(1)
-#         key = cv2.waitKey(20 & 0xFF)
-#         if key == 27: # C for color
-#             print("Successfully escaping")
-#             cv2.imwrite(saveColorString, color_image)
-#             saveColorString = countString + saveColorString
-
-#         elif key == 100: # D for color 
-#             print("Successfully doing number 2")
-#             cv2.imwrite(saveDepthString, birdseye_frame)
-#             saveDepthString = countString + saveDepthString
-        
-
-        # objectFound = False
-        # objectFound = detect_object(cropped_image)
-
-        # if objectFound:
-        #     count += 1
-        #     print("Object found! ", count)
+    # if objectFound:
+    #     count += 1
+    #     print("Object found! ", count)
 
 
 finally:
