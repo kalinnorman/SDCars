@@ -11,6 +11,7 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import time
 
 y_min = 118
 y_max = 193
@@ -123,17 +124,18 @@ try:
         # plt.imshow(cropped_image)
         # plt.show()
         cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
-        cv2.imshow('vid', img)
-        cv2.resizeWindow('vid', 700,700)
+        cv2.imshow('vid', color_image)
+#        cv2.resizeWindow('vid', 700,700)
+        time.sleep(1)
         key = cv2.waitKey(20 & 0xFF)
-        if key == 99: # C for color
+        if key == 27: # C for color
             print("Successfully escaping")
-            cv2.imwrite(saveColorString, frame)
+            cv2.imwrite(saveColorString, color_image)
             saveColorString = countString + saveColorString
 
         elif key == 100: # D for color 
             print("Successfully doing number 2")
-            cv2.imwrite(saveDepthString, frame)
+            cv2.imwrite(saveDepthString, birdseye_frame)
             saveDepthString = countString + saveDepthString
         
 
