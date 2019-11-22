@@ -102,6 +102,30 @@ try:
         cropped_image  = crop_image(bCanny)
 
 
+        print('Starting in 1 second')
+        time.sleep(1)
+        cv2.imwrite("colorImage.jpg", color_image)
+        time.sleep(3)
+        cv2.imwrite("colorImage2.jpg", color_image)
+        time.sleep(3)
+        cv2.imwrite("colorImage3.jpg", color_image)
+        time.sleep(3)
+        cv2.imwrite("colorImage4.jpg", color_image)
+
+        # print('Starting in 1 second')
+        # time.sleep(1)
+        # cv2.imwrite("depthImage1.jpg", birdseye_frame)
+        # time.sleep(3)
+        # cv2.imwrite("DepthImage2.jpg", birdseye_frame)
+        # time.sleep(3)
+        # cv2.imwrite("DepthImage3.jpg", birdseye_frame)
+        # time.sleep(3)
+        # cv2.imwrite("DepthImage4.jpg", birdseye_frame)
+        # time.sleep(3)
+        # cv2.imwrite("DepthImage5.jpg", birdseye_frame)
+        # time.sleep(3)
+        # cv2.imwrite("DepthImage6.jpg", birdseye_frame)
+
         # img = bCanny
         # cv2.line(img, v_tl, v_bl, (255,0,0), 2)
         # cv2.line(img, v_bl, v_br, (255,0,0), 2)
@@ -123,20 +147,20 @@ try:
         # Show images
         # plt.imshow(cropped_image)
         # plt.show()
-        cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
-        cv2.imshow('vid', color_image)
-#        cv2.resizeWindow('vid', 700,700)
-        time.sleep(1)
-        key = cv2.waitKey(20 & 0xFF)
-        if key == 27: # C for color
-            print("Successfully escaping")
-            cv2.imwrite(saveColorString, color_image)
-            saveColorString = countString + saveColorString
+#         cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
+#         cv2.imshow('vid', color_image)
+# #        cv2.resizeWindow('vid', 700,700)
+#         time.sleep(1)
+#         key = cv2.waitKey(20 & 0xFF)
+#         if key == 27: # C for color
+#             print("Successfully escaping")
+#             cv2.imwrite(saveColorString, color_image)
+#             saveColorString = countString + saveColorString
 
-        elif key == 100: # D for color 
-            print("Successfully doing number 2")
-            cv2.imwrite(saveDepthString, birdseye_frame)
-            saveDepthString = countString + saveDepthString
+#         elif key == 100: # D for color 
+#             print("Successfully doing number 2")
+#             cv2.imwrite(saveDepthString, birdseye_frame)
+#             saveDepthString = countString + saveDepthString
         
 
         # objectFound = False
