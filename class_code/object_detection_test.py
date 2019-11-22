@@ -27,6 +27,9 @@ v_tr = (160, crop_y_min)
 y_crop_offset = (200 - crop_y_max)
 
 count = 0
+saveDepthString = "depthImage.jpg"
+saveColorString = "colorImage.jpg"
+countString = "i"
 
 def crop_image(img):
         """
@@ -98,16 +101,16 @@ try:
         cropped_image  = crop_image(bCanny)
 
 
-        img = bCanny
-        cv2.line(img, v_tl, v_bl, (255,0,0), 2)
-        cv2.line(img, v_bl, v_br, (255,0,0), 2)
-        cv2.line(img, v_br, v_tr, (255,0,0), 2)
-        cv2.line(img, v_tr, v_tl, (255,0,0), 2)
+        # img = bCanny
+        # cv2.line(img, v_tl, v_bl, (255,0,0), 2)
+        # cv2.line(img, v_bl, v_br, (255,0,0), 2)
+        # cv2.line(img, v_br, v_tr, (255,0,0), 2)
+        # cv2.line(img, v_tr, v_tl, (255,0,0), 2)
 
-        cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
-        cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
-        cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
-        cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
+        # cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
+        # cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
+        # cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
+        # cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
 
 
 
@@ -122,13 +125,24 @@ try:
         cv2.namedWindow('vid', cv2.WINDOW_NORMAL)
         cv2.imshow('vid', img)
         cv2.resizeWindow('vid', 700,700)
-        cv2.waitKey(25)
-        # objectFound = False
-        objectFound = detect_object(cropped_image)
+        key = cv2.waitKey(20 & 0xFF)
+        if key == 99: # C for color
+            print("Successfully escaping")
+            cv2.imwrite(saveColorString, frame)
+            saveColorString = countString + saveColorString
 
-        if objectFound:
-            count += 1
-            print("Object found! ", count)
+        elif key == 100: # D for color 
+            print("Successfully doing number 2")
+            cv2.imwrite(saveDepthString, frame)
+            saveDepthString = countString + saveDepthString
+        
+
+        # objectFound = False
+        # objectFound = detect_object(cropped_image)
+
+        # if objectFound:
+        #     count += 1
+        #     print("Object found! ", count)
 
 
 finally:
