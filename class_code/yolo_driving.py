@@ -8,12 +8,6 @@ import numpy as np
 from yolo_4_autumn import Yolo
 
 # # defines
-lower_red = np.array([30,150,200])      # I need to test these values
-upper_red = np.array([255,255,255])
-lower_green = np.array([30,150,50])
-upper_green = np.array([255,255,180])
-lower_yellow = np.array([30,150,179])
-upper_yellow = np.array([255,255,180])
 yolo_map = cv2.imread('Maps/yolo_regions.bmp')
 yolo_region = 123
 yo = Yolo()
@@ -30,6 +24,44 @@ def get_gray_value(coordinates, img): # Converts from cv2 coords to coords on Dr
     gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
     cur_gray_val = gray_val
     return gray_val
+
+def find_color(img, color):
+    # Convert image to HSV
+    imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # Define the desired colorspace
+    if color == 'red':
+        lower = np.array([120, 40, 40], dtype='uint8') # was [150, 40, 40]
+        upper = np.array([255, 255, 255], dtype='uint8')
+    elif color == 'green':
+        lower = np.array([50, 40, 40], dtype='uint8')
+        upper = np.array([100, 255, 255], dtype='uint8')
+    elif color == 'yellow':
+        lower = np.array([0, 40, 40], dtype='uint8')
+        upper = np.array([50, 255, 255], dtype='uint8')
+    else:
+        print("Choose a valid color, bro.")
+
+    # Threshold the HSV image to get only the desired color
+    mask = cv2.inRange(imghsv, lower, upper)
+    res = cv2.bitwise_and(img, img, mask=mask)
+    count = cv2.countNonZero(res[:,:,0])
+    cv2.imshow('img', res)
+    cv2.waitKey(0)
+
+    return res, count  # returns the image and the count of non-zero pixels
+
+
+def predict_color(img):
+
+    colors = ['red', 'yellow', 'green']
+    counts = []
+
+    for color in colors:
+        res, count = find_color(img, color)
+        counts.append(count)
+
+    return colors[counts.index(max(counts))]  # returns the color as a string
 
 
 # driving stuff
@@ -55,9 +87,6 @@ if get_gray_value(coordinates, yolo_map)[0] == yolo_region :
         light_boxes = []
         # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
         for box in range(0, len(bounding_boxes)):
-            # x1 = bounding_boxes[box][0]
-            # x2 = bounding_boxes[box][2]
-
             if bounding_boxes[box][0] > img_middle and bounding_boxes[box][2] > img_middle :  # bounding box is on the right side of the camera
                 light_boxes.append(bounding_boxes[box])
                 print (light_boxes[-1])
@@ -84,39 +113,9 @@ if get_gray_value(coordinates, yolo_map)[0] == yolo_region :
         y2 = int(light_boxes[desired_light][3])
         cropped_img = yolo_img[y1:y2, x1:x2]
 
-        imgHSV = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2HSV)
+        color_detected = predict_color(cropped_img)
 
-        maskRed = cv2.inRange(imgHSV, lower_red, upper_red)
-        maskGreen = cv2.inRange(imgHSV, lower_green, upper_green)
-        maskYellow = cv2.inRange(imgHSV, lower_yellow, upper_yellow)
-
-        red_detection = 0
-        yellow_detection = 0
-        green_detection = 0
-
-        # parse through masked images and check for white
-        # whichever mask has the highest amount of white is the winner
-        for y in range(0, y2-y1) :
-            for x in range(0, x2-x1) :
-                if maskRed[y][x] == color_detected :
-                    red_detection += 1
-                if maskYellow[y][x] == color_detected :
-                    yellow_detection += 1
-                if maskGreen[y][x] == color_detected :
-                    green_detection += 1
-        if red_detection > green_detection and red_detection > yellow_detection :
-            detection = 'red'
-        elif yellow_detection > green_detection :
-            detection = 'yellow'
-        else :
-            detection = 'green'
-
-        print(detection, " is the winner!")
-        cv2.imshow("cropped", imgHSV)
-        cv2.imshow('red mask',maskRed)
-        cv2.imshow('yellow mask',maskYellow)
-        cv2.imshow('green mask',maskGreen)
+        print(color_detected, " is the winner!")
+        cv2.imshow("cropped", cropped_img)
 
         cv2.waitKey(0)
-
-        # return detection
