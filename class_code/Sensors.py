@@ -63,6 +63,65 @@ class Sensors():
         # Start streaming
         self.pipeline.start(self.config)
 
+        # YOLO
+        self.yolo_map = cv2.imread('Maps/yolo_regions.bmp')
+        self.yolo_region_color = 123
+        self.yolo_region = False
+        self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
+        self.yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
+        self.yo = YOLO()
+        self.green_light = False
+
+    # YOLO
+    # this is also in predictive_drive_car.py
+    def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
+        imgWidth = img.shape[1] # Get width
+        x = round(coordinates[0]) # x translates directly
+        y = imgWidth - round(coordinates[1]) # y is inverted
+        cur_gps = (x,y)
+        gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
+        cur_gray_val = gray_val
+        return gray_val
+
+    # YOLO
+    def find_color(self, img, color):
+        # Convert image to HSV
+        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        # Define the desired colorspace
+        if color == 'red':
+            lower = np.array([120, 40, 40], dtype='uint8') # was [150, 40, 40]
+            upper = np.array([255, 255, 255], dtype='uint8')
+        elif color == 'green':
+            lower = np.array([50, 40, 40], dtype='uint8')
+            upper = np.array([100, 255, 255], dtype='uint8')
+        elif color == 'yellow':
+            lower = np.array([0, 40, 40], dtype='uint8')
+            upper = np.array([50, 255, 255], dtype='uint8')
+        else:
+            print("Choose a valid color, bro.")
+
+        # Threshold the HSV image to get only the desired color
+        mask = cv2.inRange(imghsv, lower, upper)
+        res = cv2.bitwise_and(img, img, mask=mask)
+        count = cv2.countNonZero(res[:,:,0])
+        cv2.imshow('img', res)
+        cv2.waitKey(0)
+
+        return res, count  # returns the image and the count of non-zero pixels
+
+    # YOLO
+    def predict_color(self, img):
+
+        colors = ['red', 'yellow', 'green']
+        counts = []
+
+        for color in colors:
+            res, count = self.find_color(img, color)
+            counts.append(count)
+
+        return colors[counts.index(max(counts))]  # returns the color as a string
+
     # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
         """
@@ -132,30 +191,59 @@ class Sensors():
         self.region = self.get_gps_region()
 
         #### Implement YOLOv3MXNet ####
-        #net = model_zoo.get_model('yolo3_mobilenet1.0_coco', pretrained=True)
+        coordinates = self.get_gps_coord("Blue")
+        # if the car is in the yolo region and it hasn't detected a green light yet, run yolo
+        if self.get_gray_value(coordinates, self.yolo_map)[0] == self.yolo_region_color :
+            self.yolo_region = True
+            if self.green_light == False :
+                self.yolo_frame_count += 1 # = 10
 
-        # from gluoncv import data
-        #yolo_image = Image.fromarray(frame, 'RGB')
-        #x, img = load_test(yolo_image, short=416)
+                if self.yolo_frame_count == 10 : # not sure how many frames we should count before we check YOLO. # monte carlo
+                    self.yolo_frame_count = 0
 
-        # Set device to GPU
-        #device = mx.gpu()
+                    cv2.imshow("light", frame)
+                    cv2.waitKey(0)
 
-        #net.collect_params().reset_ctx(device)
+                    bounding_boxes, yolo_img = self.yo.main_yolo(frame)#imgLight)#, args)
+                    light_boxes = []
+                    # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
+                    for box in range(0, len(bounding_boxes)):
+                        if bounding_boxes[box][0] > img_middle and bounding_boxes[box][2] > img_middle :  # bounding box is on the right side of the camera
+                            light_boxes.append(bounding_boxes[box])
+                            print (light_boxes[-1])
+                    y_of_light = 400 # arbitrary value that is used to compare when there is more than one detected traffic light
+                    if not light_boxes:
+                        print("DEBUG: oh no! there aren't any boxes!") # exit frame and try again
+                    # we only want to look at one light, so if we detect more than one,
+                    # we will look at the traffic light that is closest to the top of the pic as
+                    # that one is likely to be the one we want to look at
+                    else:
+                        elif len(light_boxes) > 1 :
+                            for i in range(0, len(light_boxes)) :
+                                top_y = min(light_boxes[i][1], light_boxes[i][3])
+                                if top_y < y_of_light :
+                                    y_of_light = top_y
+                                    desired_light = i
+                        else :
+                            desired_light = 0   # there's only one traffic light detected in the desired region
 
-        #class_IDs, scores, bounding_boxs = net(x.copyto(device))
+                        # crop image:
+                        x1 = int(light_boxes[desired_light][0])
+                        y1 = int(light_boxes[desired_light][1])
+                        x2 = int(light_boxes[desired_light][2])
+                        y2 = int(light_boxes[desired_light][3])
+                        cropped_img = yolo_img[y1:y2, x1:x2]
 
-        # Convert to numpy arrays, then to lists
-        #class_IDs = class_IDs.asnumpy().tolist()
-        #scores = scores.asnumpy().tolist()
-        #bounding_boxs = bounding_boxs.asnumpy()
-
-        # iterate through detected objects, updating global variable
-        # for i in range(len(class_IDs[0])):
-        #     if ((scores[0][i])[0]) > args["confidence"]:
-        #         current_class_id = net.classes[int((class_IDs[0][i])[0])]
-        #         current_score = (scores[0][i])[0]
-        #         current_bb = bounding_boxs[0][i]
+                        self.color_detected = self.predict_color(cropped_img)
+                        # print(self.color_detected, " is the winner!")
+                        # cv2.imshow("cropped", cropped_img)
+                        # cv2.waitKey(0)
+                        ################## I need to double check that y = 0 is the top ############
+        else:
+            self.yolo_region = False    # we are not currently in the region to check for traffic lights
+            self.color_detected = 'black'   # make sure it's not an actual color we are detecting
+            self.green_light = False # set this back to false so we don't lock out the function when we're in the region again
+        # end of YOLO
 
         # iterate through camera/IMU data, updating global variable
         for rsframe in rsframes:
@@ -217,5 +305,5 @@ class Sensors():
                 success = True
             except:
                 success = False
-            
+
         return (latitude, longitude)

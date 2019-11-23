@@ -31,6 +31,10 @@ class Yolo:
 
 	def __init__(self):
 		self.yo = 0
+		self.ap = argparse.ArgumentParser()
+		self.ap.add_argument("-c", "--confidence", type=float, default=0.5,
+		    help="minimum probability to filter weak detections")
+		self.args = vars(self.ap.parse_args())
 
 
 	"""Transforms for YOLO series."""
@@ -82,13 +86,7 @@ class Yolo:
 	    print('CTRL-C detected. Exiting gracefully')
 	    exit(0)
 
-	def main_yolo(self, vs):
-
-		# construct the argument parse and parse the arguments
-		ap = argparse.ArgumentParser()
-		ap.add_argument("-c", "--confidence", type=float, default=0.5,
-			help="minimum probability to filter weak detections")
-		args = vars(ap.parse_args())
+	def main_yolo(self, vs):#, args):
 
 		# initialize the video stream, pointer to output video file, and
 		# frame dimensions
@@ -134,12 +132,6 @@ class Yolo:
 		ax = utils.viz.plot_bbox(img, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
 		plt.show()
 
-		# cv2.imshow('img', img)
-		# cv2.waitKey(0)
-		#print(class_IDs)
-		#print(scores)
-		#print(bounding_boxs)
-
 		# Convert to numpy arrays, then to lists
 		class_IDs = class_IDs.asnumpy().tolist()
 		scores = scores.asnumpy().tolist()
@@ -147,19 +139,17 @@ class Yolo:
 		traffic_boxes = []
 		# iterate through detected objects
 		for i in range(len(class_IDs[0])):
-			if ((scores[0][i])[0]) > args["confidence"]:
+			if ((scores[0][i])[0]) > self.args["confidence"]:
 				current_class_id = net.classes[int((class_IDs[0][i])[0])]
 				current_score = (scores[0][i])[0]
 				current_bb = bounding_boxs[0][i-1]
 				if current_class_id == 'traffic light':
 					traffic_boxes.append(current_bb)
-
-
 		gc.collect()
 
-		print("Class ID: ", current_class_id)
-		print("Score: ", current_score)
-		print("Bounding Box Coordinates: ", current_bb, "\n")
+		# print("Class ID: ", current_class_id)
+		# print("Score: ", current_score)
+		# print("Bounding Box Coordinates: ", current_bb, "\n")
 
 		cv2.imshow("Camera Feed", frame)
 		key = cv2.waitKey(1) & 0xFF

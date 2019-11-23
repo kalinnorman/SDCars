@@ -55,15 +55,16 @@ class Drive:
             angle_mod = np.sign(angle_mod)*30
         self.cur_angle = angle_mod # update the class value tracking the current angle
         return angle_mod
-    
-    def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
-        imgWidth = img.shape[1] # Get width
-        x = round(coordinates[0]) # x translates directly
-        y = imgWidth - round(coordinates[1]) # y is inverted
-        self.cur_gps = (x,y)
-        gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
-        self.cur_gray_val = gray_val
-        return gray_val
+
+    # this function is now in Sensors.py
+    # def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
+    #     imgWidth = img.shape[1] # Get width
+    #     x = round(coordinates[0]) # x translates directly
+    #     y = imgWidth - round(coordinates[1]) # y is inverted
+    #     self.cur_gps = (x,y)
+    #     gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
+    #     self.cur_gray_val = gray_val
+    #     return gray_val
 
     def get_intersection_map(self, cur_region, desired_region):
         # Determine what action to take based on the current region and the region of the desired GPS coordinates
@@ -116,7 +117,7 @@ class Drive:
             return self.lane_follow_img, 0
 
     def get_region(self, coordinates):
-        current_gray_val = self.get_gray_value(coordinates, self.regions_img)
+        current_gray_val = car.cc.sensor.get_gray_value(coordinates, self.regions_img)
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
@@ -168,7 +169,6 @@ class Drive:
         else:
             self.predict.set_gray_val(215)
 
-
 if __name__ == "__main__":
 
     # Setup
@@ -197,7 +197,8 @@ if __name__ == "__main__":
     car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
     car.cc.drive(car.speed)  # get the car moving again
-    restart_car = False 
+    restart_car = False
+    stop_at_light = False
 
     try:
         # Start driving!
@@ -205,9 +206,25 @@ if __name__ == "__main__":
 
             ##### Milestone 3 - Check for objects first! #####
             car.cc.update_sensors()
-            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object           
+            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object
 #            cv2.imshow('vid', image)
 #            cv2.waitKey(25)
+
+            # YOLO
+            if car.cc.sensor.yolo_region:
+                if car.cc.sensor.color_detected == 'green':
+                    car.cc.sensor.green_light = True
+                    if stop_at_light:
+                        restart_car = True
+                        stop_at_light = False
+                else :  # red or yellow light has been detected
+                    car.cc.sensor.green_light = False
+                    # slow down car
+                    car.cc.drive(0.0)
+                    print('Its not green!')
+                    stop_at_light = True
+                    continue    # Skip all the remaining steps until the object is gone
+            # end YOLO
 
             if (object_detected):
                 car.cc.drive(0.0)
@@ -220,7 +237,7 @@ if __name__ == "__main__":
                 car.cc.drive(0.9)#0.6)  # get the car moving
                 time.sleep(0.1)  # ...but only briefly
                 car.cc.drive(car.speed)  # get the car moving again
-                restart_car = False 
+                restart_car = False
 
             # object_detected = False
 
@@ -274,13 +291,13 @@ if __name__ == "__main__":
             else:  # if the gps didn't find us
                 car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
                 prev_gps = car_location
-                
+
             car.update_log_file()  # update the log file
 
         car.cc.drive(0)  # stop the car
         print("Terminating Program")
         car.out_file.close()  # close the log file
-        
+
     except KeyboardInterrupt:  # if the user Ctrl+C's us
         print("User Terminated Program")
         car.out_file.close()  # close the log file

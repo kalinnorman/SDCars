@@ -5,7 +5,8 @@ driving with yolo
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
-from yolo_4_autumn import Yolo
+import argparse
+from YoloTest import Yolo
 
 # # defines
 yolo_map = cv2.imread('Maps/yolo_regions.bmp')
@@ -13,7 +14,6 @@ yolo_region = 123
 yo = Yolo()
 img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
 yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
-color_detected = 255  # used to detect white in the mask pictures
 
 # this function is already in the driving code
 def get_gray_value(coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
@@ -70,6 +70,8 @@ def predict_color(img):
 # if we are, check for yolo (have a counter for each frame so you aren't checking
 # it at every frame)
 
+# construct the argument parse and parse the arguments
+
 coordinates = (300,600) # this is for testing purposes; it's in the NE of the yolo regions
 if get_gray_value(coordinates, yolo_map)[0] == yolo_region :
     yolo_frame_count = 10 #+= 1
@@ -78,12 +80,11 @@ if get_gray_value(coordinates, yolo_map)[0] == yolo_region :
         yolo_frame_count = 0
         # this is the equivalent to reading in a frame
         imgLight = cv2.imread('traffic_lights/red_light2.png')
-
         cv2.imshow("light", imgLight)
         cv2.waitKey(0)
         # do yolo
         # get vector of bounding boxes from yolo and check that they're on the right side
-        bounding_boxes, yolo_img = yo.main_yolo(imgLight)
+        bounding_boxes, yolo_img = yo.main_yolo(imgLight)#, args)
         light_boxes = []
         # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
         for box in range(0, len(bounding_boxes)):
@@ -114,7 +115,6 @@ if get_gray_value(coordinates, yolo_map)[0] == yolo_region :
         cropped_img = yolo_img[y1:y2, x1:x2]
 
         color_detected = predict_color(cropped_img)
-
         print(color_detected, " is the winner!")
         cv2.imshow("cropped", cropped_img)
 
