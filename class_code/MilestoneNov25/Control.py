@@ -98,3 +98,5 @@ class Control:
         self.drive(0.0)
         self._send_command("!inits0.3\n")
         print("Initialization Completed")
+
+        

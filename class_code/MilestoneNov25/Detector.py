@@ -93,3 +93,46 @@ class Detector:
         except:
             print("Detect Image Failed")
             return False, 0
+
+    def locate_object(self):
+        """
+        Loads in a depth image, converts to birdseye view, crops
+        Determines whether the object is found on the right side or left side
+        Allows car to attempt to go around object
+        """
+        try:
+            time, depth_image = self.sensor.get_depth_data()
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+
+            grayed_depth = cv2.cvtColor(depth_colormap, cv2.COLOR_BGR2GRAY)
+            birdseye_frame = cv2.warpPerspective(grayed_depth, self.birdseye_transform_matrix, (200, 200))
+            cropped_image = self.crop_image(birdseye_frame)
+            threshold_image = cv2.subtract(self.reference_image, cropped_image)
+
+            onLeft, onRight = self.search_side(threshold_image)
+            self.count = 0
+            return onLeft, onRight
+
+        except:
+            print("Detect Image Failed")
+            return False, 0
+
+
+    def search_side(self, img):
+        """
+        Searches through a picture for non-zero values, returning True if something is found
+        (Search area is in need of further tuning)
+        """
+        width = img.shape[1]
+        offset = 5
+
+        for y in range(self.y_min, self.y_max):# 115 <= y <= 164
+            for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
+                if img[y][x] > self.min_difference:
+                    if (x > (offset + width/2.0)):
+                        onRight = True
+                    if (x < (-offset + width/2.0)):
+                        onLeft = True
+                    return onLeft, onRight
+
+        return False, False

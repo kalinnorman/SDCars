@@ -25,7 +25,11 @@ try:
         object_detected, image = car.cc.detector.detect_object()
 
         if (object_detected):
+            if (not car.restart_car): # meaning the car is just stopping
+                car.stop_time = time.time()
             car.stop_car()
+            if ( (time.time() - car.stop_time) > car.attempt_time ) # after a few seconds, try to fix
+                car.attempt_correction()
             continue
         if (car.restart_car):
             car.start_car()
@@ -37,11 +41,15 @@ try:
             object_detected, image = car.cc.detector.detect_object()
 
             if (object_detected):
+                if (not car.restart_car): # meaning the car is just stopping
+                    car.stop_time = time.time()
                 car.stop_car()
+                if ( (time.time() - car.stop_time) > car.attempt_time ) # after a few seconds, try to fix
+                    car.attempt_correction()
                 continue
             if (car.restart_car):
                 car.start_car()
-
+                
 
             car.update_gps_pos()
             if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
