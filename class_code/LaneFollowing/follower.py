@@ -155,7 +155,7 @@ class Drive:
     def check_stop_signs(self):
         if self.cur_region == gp.region_dict['Region 1']:
             if self.cur_gps[0] < 280:
-                if self.prev_gps[1] > 230 and self.cur_gps[1] >= 230:
+                if self.prev_gps[1] > 230 and self.cur_gps[1] <= 230:
                     return True
         elif self.cur_region == gp.region_dict['Region 2']:
             if self.cur_gps[1] < 75:
