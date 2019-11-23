@@ -98,8 +98,8 @@ def find_color(img, color):
 	mask = cv2.inRange(imghsv, lower, upper)
 	res = cv2.bitwise_and(img, img, mask=mask)
 	count = cv2.countNonZero(res[:,:,0])
-	cv2.imshow('img', res)
-	cv2.waitKey(0)
+	#cv2.imshow('img', res)
+	#cv2.waitKey(0)
 
 	return res, count  # returns the image and the count of non-zero pixels
 
@@ -110,7 +110,7 @@ def predict_color(img):
 	counts = []
 
 	for color in colors:
-		res, count = self.find_color(img, color)
+		res, count = find_color(img, color)
 		counts.append(count)
 
 	return colors[counts.index(max(counts))]  # returns the color as a string
@@ -150,7 +150,7 @@ while True:
     # from gluoncv import data
     yolo_image = Image.fromarray(frame, 'RGB')
     x, img = load_test(yolo_image, short=416)
-	img_middle = 208
+    img_middle = 208
 
     class_IDs, scores, bounding_boxs = net(x.copyto(device))
 
@@ -167,61 +167,61 @@ while True:
     #print(bounding_boxs)
 
 
-	# Convert to numpy arrays, then to lists
-	class_IDs = class_IDs.asnumpy().tolist()
-	scores = scores.asnumpy().tolist()
-	bounding_boxs = bounding_boxs.asnumpy()
-	traffic_boxes = []
-	# iterate through detected objects
-	for i in range(len(class_IDs[0])):
-		if ((scores[0][i])[0]) > self.args["confidence"]:
-			current_class_id = self.net.classes[int((class_IDs[0][i])[0])]
-			current_score = (scores[0][i])[0]
-			current_bb = bounding_boxs[0][i-1]
-			if current_class_id == 'traffic light':
-				traffic_boxes.append(current_bb)
-	# start of Sensor.py stuff
-	light_boxes = []
-	# bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
-	for box in range(0, len(traffic_boxes)):
-		if traffic_boxes[box][0] > img_middle and traffic_boxes[box][2] > img_middle :  # bounding box is on the right side of the camera
-			light_boxes.append(traffic_boxes[box])
-			print (light_boxes[-1])
-	y_of_light = 400 # arbitrary value that is used to compare when there is more than one detected traffic light
-	if not light_boxes:
-		print("DEBUG: oh no! there aren't any boxes!") # exit frame and try again
-	# we only want to look at one light, so if we detect more than one,
-	# we will look at the traffic light that is closest to the top of the pic as
-	# that one is likely to be the one we want to look at
-	else:
-		if len(light_boxes) > 1 :
-			for i in range(0, len(light_boxes)) :
-				top_y = min(light_boxes[i][1], light_boxes[i][3])
-				if top_y < y_of_light :
-					y_of_light = top_y
-					desired_light = i
-		else :
-			desired_light = 0   # there's only one traffic light detected in the desired region
+    # Convert to numpy arrays, then to lists
+    class_IDs = class_IDs.asnumpy().tolist()
+    scores = scores.asnumpy().tolist()
+    bounding_boxs = bounding_boxs.asnumpy()
+    traffic_boxes = []
+    # iterate through detected objects
+    for i in range(len(class_IDs[0])):
+        if ((scores[0][i])[0]) > args["confidence"]:
+            current_class_id = net.classes[int((class_IDs[0][i])[0])]
+            current_score = (scores[0][i])[0]
+            current_bb = bounding_boxs[0][i-1]
+            if current_class_id == 'traffic light':
+                traffic_boxes.append(current_bb)
+                # start of Sensor.py stuff
+    light_boxes = []
+    # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
+    for box in range(0, len(traffic_boxes)):
+        if traffic_boxes[box][0] > img_middle and traffic_boxes[box][2] > img_middle :  # bounding box is on the right side of the camera
+            light_boxes.append(traffic_boxes[box])
+            print (light_boxes[-1])
+    y_of_light = 400 # arbitrary value that is used to compare when there is more than one detected traffic light
+    if len(light_boxes) < 1:
+        print("DEBUG: oh no! there aren't any boxes!") # exit frame and try again
+    # we only want to look at one light, so if we detect more than one,
+    # we will look at the traffic light that is closest to the top of the pic as
+    # that one is likely to be the one we want to look at
+    else:
+        if len(light_boxes) > 1 :
+            for i in range(0, len(light_boxes)) :
+                top_y = min(light_boxes[i][1], light_boxes[i][3])
+                if top_y < y_of_light :
+                    y_of_light = top_y
+                    desired_light = i
+        else :
+            desired_light = 0   # there's only one traffic light detected in the desired region
 
-		# crop image:
-		x1 = int(light_boxes[desired_light][0])
-		y1 = int(light_boxes[desired_light][1])
-		x2 = int(light_boxes[desired_light][2])
-		y2 = int(light_boxes[desired_light][3])
-		cropped_img = yolo_img[y1:y2, x1:x2]
+        # crop image:
+        x1 = int(light_boxes[desired_light][0])
+        y1 = int(light_boxes[desired_light][1])
+        x2 = int(light_boxes[desired_light][2])
+        y2 = int(light_boxes[desired_light][3])
+        cropped_img = img[y1:y2, x1:x2]
+        '''
+        color_detected = predict_color(cropped_img)
+        print (color_detected)'''
+        # print to file
+    # end of Sensor stuff
+    gc.collect()
 
-		color_detected = predict_color(cropped_img)
-		print (color_detected)
-		# print to file
-	# end of Sensor stuff
-	gc.collect()
+    # print("Class ID: ", current_class_id)
+    # print("Score: ", current_score)
+    # print("Bounding Box Coordinates: ", current_bb, "\n")
 
-	# print("Class ID: ", current_class_id)
-	# print("Score: ", current_score)
-	# print("Bounding Box Coordinates: ", current_bb, "\n")
-
-	cv2.imshow("Camera Feed", frame)
-	key = cv2.waitKey(1) & 0xFF
+    cv2.imshow("Camera Feed", frame)
+    key = cv2.waitKey(1) & 0xFF
 
 
 vs.release()
