@@ -41,12 +41,12 @@ class CarControl:
         self.action = CarActions(self)  # allows us to perform hard-coded actions in the car
         self.rf = NewFollower()
 
-    def update_sensors(self):
+    def update_sensors(self, yolo_flag=False):
         """
         updates the sensors values
         :return:
         """
-        self.sensor.update_sensors()
+        self.sensor.update_sensors(yolo_flag=yolo_flag)
 
     def drive(self, speed):
         """
