@@ -14,55 +14,55 @@ import cv2
 from matplotlib import pyplot as plt
 import time
 
-class Test_Object_Detection:
-    def __init__(self, reference_image):
-        self.ref_image = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
-        self.min_compare_value = 3
-        self.debouncer_count = 0
-        self.debouncer_max = 3
+#class Test_Object_Detection:
+#    def __init__(self, reference_image):
+#        self.ref_image = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
+#        self.min_compare_value = 3
+#        self.debouncer_count = 0
+       # self.debouncer_max = 3
 
         # Search Regions:
-        self.y_min = 118
-        self.y_max = 163 #193
-        self.x_min = 81
-        self.x_max = 107
-        self.crop_y_min = 0
-        self.crop_y_max = 163
-        self.v_tl = (25, crop_y_min)
-        self.v_bl = (75, crop_y_max)
-        self.v_br = (120, crop_y_max)
-        self.v_tr = (160, crop_y_min)
+        #self.y_min = 118
+        #self.y_max = 163 #193
+        #self.x_min = 81
+        #self.x_max = 107
+        #self.crop_y_min = 0
+        #self.crop_y_max = 163
+        #self.v_tl = (25, crop_y_min)
+        #self.v_bl = (75, crop_y_max)
+        #self.v_br = (120, crop_y_max)
+        #self.v_tr = (160, crop_y_min)
 
-    def crop_image(self, img):
-        """
-        Tkes in an image and crops out a specified range
-        """
-        cropVertices = [self.v_tl, self.v_bl, self.v_br, self.v_tr]                      # Corners of cropped image
-
+#    def crop_image(self, img):
+#        """
+#        Tkes in an image and crops out a specified range
+#        """
+#        cropVertices = [self.v_tl, self.v_bl, self.v_br, self.v_tr]                      # Corners of cropped image
+#
         # Blank matrix that matches the image height/width
-        mask = np.zeros_like(img)
+ #       mask = np.zeros_like(img)
 
-        match_mask_color = 255 # Set to 255 to account for grayscale
+#        match_mask_color = 255 # Set to 255 to account for grayscale
 
-        cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
+#        cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
 
-        masked_image = cv2.bitwise_and(img, mask)
+#        masked_image = cv2.bitwise_and(img, mask)
 
-        return masked_image
+#        return masked_image
 
-    def detect_object(self, img):
-        """
-        Takes in image and searches each pixel in a designated region to see if there is an object
-        """
+#    def detect_object(self, img):
+ #       """
+ #       Takes in image and searches each pixel in a designated region to see if there is an object
+ #       """
         # height = img.shape[0]
         # width = img.shape[1]
 
-        for y in range(self.y_min, self.y_max):
-            for x in range(self.x_min, self.x_max):
-                if img[y][x] > min_compare_value:
-                    return (y,x), True
-
-        return (0,0), False
+ #       for y in range(self.y_min, self.y_max):
+ #           for x in range(self.x_min, self.x_max):
+ #               if img[y][x] > min_compare_value:
+ #                   return (y,x), True
+#
+#        return (0,0), False
         
 
 # Loads in reference image, sets to gray scale
@@ -87,8 +87,8 @@ v_br = (120, crop_y_max)
 v_tr = (160, crop_y_min)
 y_crop_offset = (200 - crop_y_max)
 
-cv2.namedWindow('image', cv2.WINDOW_NORMAL) 
-cv2.resizeWindow('image', 1000, 700)
+#cv2.namedWindow('image', cv2.WINDOW_NORMAL) 
+#cv2.resizeWindow('image', 1000, 700)
 
 def crop_image(img):
         """
@@ -151,8 +151,8 @@ try:
         cropped_image  = crop_image(birdseye_frame)
         threshold_image = cv2.subtract(reference_image, cropped_image)
 
-        cv2.imshow("image",threshold_image)
-        key = cv2.waitKey(0)
+#        cv2.imshow("image",threshold_image)
+#        key = cv2.waitKey(0)
 
         location, objectFound = detect_object(threshold_image)
 
