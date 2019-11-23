@@ -46,7 +46,7 @@ try:
                     car.cc.drive(0)
                     time.sleep(2)
                     car.cc.drive(car.speed)
-                    continue
+                    #continue
                 # elif for YOLO behavior will go here
                 elif car.cur_region == car.desired_region:
                     car.update_desired_region()
