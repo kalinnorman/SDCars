@@ -140,11 +140,15 @@ class Drive:
         self.out_file.write(out_string + "\n")
 
     def update_desired_region(self):
+        # if self.cur_region == gp.region_dict['Region 1']:
+        #     self.desired_region = gp.region_dict['Region 2']
+        # elif self.cur_region == gp.region_dict['Region 2']:
+        #     self.desired_region = gp.region_dict['Region 3']
+        # elif self.cur_region == gp.region_dict['Region 3']:
+        #     self.desired_region = gp.region_dict['Region 4']
+        # else:
+        #     self.desired_region = gp.region_dict['Region 1']
         if self.cur_region == gp.region_dict['Region 1']:
-            self.desired_region = gp.region_dict['Region 2']
-        elif self.cur_region == gp.region_dict['Region 2']:
-            self.desired_region = gp.region_dict['Region 3']
-        elif self.cur_region == gp.region_dict['Region 3']:
             self.desired_region = gp.region_dict['Region 4']
         else:
             self.desired_region = gp.region_dict['Region 1']

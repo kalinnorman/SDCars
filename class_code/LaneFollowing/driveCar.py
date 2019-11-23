@@ -40,9 +40,9 @@ try:
                 car.predict.set_img(cur_img)
                 prev_region = next_region
             # Third Case: Car is located in the region it is meant to be in for driving commands
-            # elif prev_region == car.cur_region:
-            #     if car.cur_region == car.desired_region: # Lane is approximately 70 pixels wide
-                    # car.update_desired_region()
+            elif prev_region == car.cur_region:
+                if car.cur_region == car.desired_region: # Lane is approximately 70 pixels wide
+                    car.update_desired_region()
             steering_angle = car.get_angle()
             car.cc.steer(steering_angle)
             car.prev_gps = car.cur_gps
