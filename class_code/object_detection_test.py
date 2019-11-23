@@ -13,18 +13,23 @@ import cv2
 from matplotlib import pyplot as plt
 import time
 
-referenceImage_path = ""
+referenceImage_path ="/home/nvidia/Desktop/class_code/referenceImage.jpg"
 # saveName = "depthImage.jpg" 
 min_compare_value = 3
 reference_image = cv2.imread(referenceImage_path,0)
+#plt.imshow(reference_image)
+#plt.show()
+#reference_image = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
+#plt.imshow(reference_image)
+#plt.show()
 
 y_min = 118
 y_max = 163 #193
 x_min = 81
 x_max = 107
 
-# crop_y_min = 0
-# crop_y_max = 163
+crop_y_min = 0
+crop_y_max = 163
 v_tl = (25, crop_y_min)
 v_bl = (75, crop_y_max)
 v_br = (120, crop_y_max)
@@ -73,8 +78,10 @@ birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy
 
 # Start streaming
 pipeline.start(config)
-reference_image = cv2.imread(referenceImage_path)
+#reference_image = cv2.imread(referenceImage_path)
 count = 0
+iterCount = 0
+
 try:
     while True:
         # Wait for a coherent pair of frames: depth and color
@@ -91,17 +98,36 @@ try:
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
         gray_image = cv2.cvtColor(depth_colormap, cv2.COLOR_BGR2GRAY)
+#        plt.imshow(reference_image)
+#        plt.show()
+       
         birdseye_frame = cv2.warpPerspective(gray_image, birdseye_transform_matrix, (200,200))
-        bCanny = cv2.Canny(birdseye_frame, 100, 200)
-        cropped_image  = crop_image(bCanny)
+#        bCanny = cv2.Canny(birdseye_frame, 100, 200)
+#        print(len(birdseye_frame.shape))
+#        print(len(reference_image.shape))
+#        threshold_image = cv2.subtract(reference_image, birdseye_frame)
+        cropped_image  = crop_image(birdseye_frame)
+#        plt.imshow(cropped_image)
+#        plt.show()
         threshold_image = cv2.subtract(reference_image, cropped_image)
+
+        cv2.imshow("vi",threshold_image)
+        key = cv2.waitKey(0)
+
+#        plt.imshow(threshold_image)
+#        plt.show()
 
         objectFound = False
         objectFound = detect_object(threshold_image)
 
         if objectFound:
-            count += 1
-            print("Object found! ", count)
+            iterCount += 1
+            if (iterCount >= 3):
+                count += 1
+                print("Object Found: ", count)
+                iterCount = 0
+        else:
+            iterCount = 0
 
 finally:
 
