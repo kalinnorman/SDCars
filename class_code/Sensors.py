@@ -351,7 +351,7 @@ class Sensors():
                 #plt.show()
                 print("DEBUG")
                 self.color_detected = self.predict_color(cropped_img)
-                # print(self.color_detected, " is the winner!")
+                print(self.color_detected, " is the winner!")
                 ################## I need to double check that y = 0 is the top ############
         #### END OF YOLO ####
 
