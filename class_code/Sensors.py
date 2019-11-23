@@ -346,6 +346,7 @@ class Sensors():
                 x2 = int(light_boxes[desired_light][2])
                 y2 = int(light_boxes[desired_light][3])
                 cropped_img = img[y1:y2, x1:x2]
+                cv2.imshow('cropped_image', cropped_img)
                 #croppedHSV = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2HSV)
                 #plt.imshow('cropped', croppedHSV)
                 #plt.show()
