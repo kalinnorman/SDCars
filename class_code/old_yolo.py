@@ -147,6 +147,6 @@ while True:
 
     cv2.imshow("Camera Feed", frame)
     key = cv2.waitKey(1) & 0xFF
-	
+
 vs.release()
 cv2.destroyAllWindows()

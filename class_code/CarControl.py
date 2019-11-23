@@ -14,8 +14,8 @@ Author: redd
 
 import serial
 import time
-from Sensors2 import Sensors
-#from Sensors import Sensors
+#from Sensors2 import Sensors
+from Sensors import Sensors
 from CarActions import CarActions
 from NewFollower import NewFollower
 from ObjectDetector import ObjectDetector 
