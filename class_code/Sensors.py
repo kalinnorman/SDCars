@@ -175,8 +175,8 @@ class Sensors():
         imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         print("Shape of imghsv", imghsv.shape)
-        # plt.imshow('cropped_image', imghsv)
-        # plt.show()
+        cv2.imwrite('cropped_image.jpg', imghsv)
+
 
         # Define the desired colorspace
         if color == 'red':
