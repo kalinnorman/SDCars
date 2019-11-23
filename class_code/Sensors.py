@@ -56,6 +56,7 @@ import time
 import cv2
 import os
 import gc
+from matplotlib import pyplot as plt
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -156,6 +157,7 @@ class Sensors():
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.green_light = False
         self.traffic_boxes = []
+        self.color_detected = "purple"
         signal(SIGINT, self.handler)
 
 
@@ -174,13 +176,13 @@ class Sensors():
 
         # Define the desired colorspace
         if color == 'red':
-            lower = np.array([120, 40, 40], dtype='uint8') # was [150, 40, 40]
+            lower = np.array([100, 40, 40], dtype='uint8') # was [150, 40, 40]
             upper = np.array([255, 255, 255], dtype='uint8')
         elif color == 'green':
-            lower = np.array([50, 40, 40], dtype='uint8')
+            lower = np.array([50, 40, 40], dtype='uint8') 
             upper = np.array([100, 255, 255], dtype='uint8')
         elif color == 'yellow':
-            lower = np.array([0, 40, 40], dtype='uint8')
+            lower = np.array([0, 40, 40], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
             upper = np.array([50, 255, 255], dtype='uint8')
         else:
             print("Choose a valid color, bro.")
@@ -189,8 +191,8 @@ class Sensors():
         mask = cv2.inRange(imghsv, lower, upper)
         res = cv2.bitwise_and(img, img, mask=mask)
         count = cv2.countNonZero(res[:,:,0])
-        cv2.imshow('img', res)
-        cv2.waitKey(0)
+        #cv2.imshow('img', res)
+        #cv2.waitKey(0)
 
         return res, count  # returns the image and the count of non-zero pixels
 
@@ -203,6 +205,7 @@ class Sensors():
         for color in colors:
             res, count = self.find_color(img, color)
             counts.append(count)
+        print(counts)
 
         return colors[counts.index(max(counts))]  # returns the color as a string
 
@@ -285,11 +288,7 @@ class Sensors():
 
             # The next two lines draw boxes around detected objects
             ax = utils.viz.plot_bbox(img, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
-            plt.show()
-
-            imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            plt.imshow(imgHSV)
-            plt.show()
+            #plt.show()
 
             # print(class_IDs)
             # print(scores)
@@ -314,14 +313,12 @@ class Sensors():
                 self.current_bb = [0, 0, 0, 0]
                 print("YOLO didn't find anything. :(")
 
-            print("Bounding Box Coordinates: ", self.current_bb)
-            cv2.imshow("Camera Feed", frame)
+            #print("Bounding Box Coordinates: ", self.current_bb)
+            #cv2.imshow("Camera Feed", frame)
 
-            bounding_boxes = self.traffic_boxes
-            yolo_img = img
             light_boxes = []
             # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
-            for box in range(0, len(bounding_boxes)):
+            for box in range(0, len(self.traffic_boxes)):
                 if self.traffic_boxes[box][0] > self.img_middle and self.traffic_boxes[box][2] > self.img_middle:  # bounding box is on the right side of the camera
                     light_boxes.append(self.traffic_boxes[box])
                     print(light_boxes[-1])
@@ -333,6 +330,7 @@ class Sensors():
             # we will look at the traffic light that is closest to the top of the pic as
             # that one is likely to be the one we want to look at
             else:
+                print("light boxes = ", len(light_boxes))
                 if len(light_boxes) > 1:
                     for i in range(0, len(light_boxes)):
                         top_y = min(light_boxes[i][1], light_boxes[i][3])
@@ -347,8 +345,11 @@ class Sensors():
                 y1 = int(light_boxes[desired_light][1])
                 x2 = int(light_boxes[desired_light][2])
                 y2 = int(light_boxes[desired_light][3])
-                cropped_img = yolo_img[y1:y2, x1:x2]
-
+                cropped_img = img[y1:y2, x1:x2]
+                #croppedHSV = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2HSV)
+                #plt.imshow('cropped', croppedHSV)
+                #plt.show()
+                print("DEBUG")
                 self.color_detected = self.predict_color(cropped_img)
                 # print(self.color_detected, " is the winner!")
                 ################## I need to double check that y = 0 is the top ############

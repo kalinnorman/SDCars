@@ -66,8 +66,8 @@ class Drive:
     # YOLO & other uses
     def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
         imgWidth = img.shape[1] # Get width
-        x = round(coordinates[0]) # x translates directly
-        y = imgWidth - round(coordinates[1]) # y is inverted
+        x = int(coordinates[0]) # x translates directly
+        y = imgWidth - int(coordinates[1]) # y is inverted
         self.cur_gps = (x,y)
         gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
         self.cur_gray_val = gray_val
@@ -209,6 +209,7 @@ if __name__ == "__main__":
 
     try:
         # Start driving!
+        print(car.cc.sensor.color_detected)
         while True:
 
             # YOLO
@@ -219,18 +220,19 @@ if __name__ == "__main__":
                 if car.cc.sensor.green_light == False:
                     car.yolo_frame_count += 1  # = 10
 
-                    if car.yolo_frame_count == 10:  # not sure how many frames we should count before we check YOLO. # monte carlo
+                    if car.yolo_frame_count == 5:  # not sure how many frames we should count before we check YOLO. # monte carlo
                         car.cc.update_sensors(yolo_flag=True)
+                        print("The light is: ", car.cc.sensor.color_detected)
                         car.yolo_frame_count = 0
                     else:
                         car.cc.update_sensors(yolo_flag=False)
                 else:
                     car.cc.update_sensors(yolo_flag=False)
 
-                print("in yolo region")
-                print("The light is: ", car.cc.sensor.color_detected)
+                #print("in yolo region")
+                #print("The light is: ", car.cc.sensor.color_detected)
                 if car.cc.sensor.color_detected == 'green':
-                    print("GO! it's a green light")
+                    #print("GO! it's a green light")
                     car.cc.sensor.green_light = True
                     if stop_at_light:
                         restart_car = True
@@ -238,9 +240,8 @@ if __name__ == "__main__":
                 else:  # red or yellow light has been detected
                     car.cc.sensor.green_light = False
                     # slow down car
-                    print("stopping: red or yellow light")
+                    #print("stopping: red or yellow light")
                     car.cc.drive(0.0)
-                    print('Its not green!')
                     stop_at_light = True
                     continue  # Skip all the remaining steps until the object is gone
             else:
