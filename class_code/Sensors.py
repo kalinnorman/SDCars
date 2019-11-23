@@ -41,7 +41,6 @@ import gc
 import requests # needed to for get_gps_coord()
 from Yolo import Yolo
 # YOLO packages
-from CarControl import CarControl #steer, drive
 from matplotlib import pyplot as plt
 from gluoncv import model_zoo, utils
 import pyrealsense2 as rs
