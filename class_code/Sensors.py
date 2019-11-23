@@ -174,6 +174,9 @@ class Sensors():
         # Convert image to HSV
         imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+        plt.imshow('cropped_image', imghsv)
+        plt.show()
+
         # Define the desired colorspace
         if color == 'red':
             lower = np.array([100, 40, 40], dtype='uint8') # was [150, 40, 40]
@@ -191,8 +194,6 @@ class Sensors():
         mask = cv2.inRange(imghsv, lower, upper)
         res = cv2.bitwise_and(img, img, mask=mask)
         count = cv2.countNonZero(res[:,:,0])
-        #cv2.imshow('img', res)
-        #cv2.waitKey(0)
 
         return res, count  # returns the image and the count of non-zero pixels
 
@@ -345,12 +346,7 @@ class Sensors():
                 y1 = int(light_boxes[desired_light][1])
                 x2 = int(light_boxes[desired_light][2])
                 y2 = int(light_boxes[desired_light][3])
-                cropped_img = img[x1:x2, y1:y2]
-                plt.imshow('cropped_image', cropped_img)
-                #croppedHSV = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2HSV)
-                #plt.imshow('cropped', croppedHSV)
-                #plt.show()
-                print("DEBUG")
+                cropped_img = img[y1:y2, x1:x2]
                 self.color_detected = self.predict_color(cropped_img)
                 print(self.color_detected, " is the winner!")
                 ################## I need to double check that y = 0 is the top ############
