@@ -211,7 +211,12 @@ while True:
         cropped_img = img[y1:y2, x1:x2]
         '''
         color_detected = predict_color(cropped_img)
-        print (color_detected)'''
+        print (color_detected)
+		file = open('yolo_file.txt','w') # write to a file
+		file.write(color_detected)
+		file.close()'''
+		# file = open('yolo_file.txt','r')
+		# color = file.readline()
         # print to file
     # end of Sensor stuff
     gc.collect()

@@ -43,7 +43,7 @@ class Yolo:
         signal(SIGINT, self.handler)
         print('Running. Press CTRL-C to exit')
 
-        os.system('MXNET_CUDNN_AUTOTUNE_DEFAULT=0')
+        #os.system('MXNET_CUDNN_AUTOTUNE_DEFAULT=0')
 
 
     """Transforms for YOLO series."""
