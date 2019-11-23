@@ -30,8 +30,8 @@ class Drive:
         self.out_file = open(self.log_filename,"w") # Opens (creates the file)
         self.regions1and4 = cv2.imread('Maps/Region1to1_4to4.bmp') # Reads in the RGB image
         self.regions1and4 = cv2.cvtColor(self.regions1and4, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-        # self.region1to4 = cv2.imread('Maps/Region1to4.bmp') # RGB
-        self.region1to4 = 0 # self.region1to4 = cv2.cvtColor(self.region1to4, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.region1to4 = cv2.imread('Maps/Region1to4.bmp') # RGB
+        self.region1to4 = cv2.cvtColor(self.region1to4, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region1to3 = cv2.imread('Maps/Region1to3.bmp') # RGB
         self.region1to3 = cv2.cvtColor(self.region1to3, cv2.COLOR_BGR2GRAY) # Grayscale
         self.regions2and3 = cv2.imread('Maps/Region2to3_3to2.bmp') # RGB
@@ -44,8 +44,8 @@ class Drive:
         self.region3to3 = cv2.cvtColor(self.region3to3, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region3to1 = cv2.imread('Maps/Region3to1.bmp') # RGB
         self.region3to1 = cv2.cvtColor(self.region3to1, cv2.COLOR_BGR2GRAY) # Grayscale
-        # self.region4to1 = cv2.imread('Maps/Region4to1.bmp') # RGB
-        self.region4to1 = 0 # self.region4to1 = cv2.cvtColor(self.region4to1, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.region4to1 = cv2.imread('Maps/Region4to1.bmp') # RGB
+        self.region4to1 = cv2.cvtColor(self.region4to1, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region4to2 = cv2.imread('Maps/Region4to2.bmp') # RGB
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
