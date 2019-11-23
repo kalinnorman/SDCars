@@ -22,6 +22,10 @@ try:
         while car.cur_gps == car.prev_gps: # Wait for new gps coordinate
             # FIXME insert object detection behavior here!
             car.update_gps_pos()
+            if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
+                continue
+            elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
+                continue
             print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
             if car.prev_gps[0] < 0: # Updates the prev gps if the car was out of bounds but reentered
                 car.prev_gps = car.cur_gps
