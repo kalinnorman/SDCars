@@ -122,8 +122,6 @@ net.collect_params().reset_ctx(device)
 
 print('Running. Press CTRL-C to exit')
 
-current_bb = [0, 0, 0, 0]
-
 
 class Sensors():
 
@@ -135,7 +133,7 @@ class Sensors():
         self.current_accel = None
         self.current_class_id = None
         self.current_score = None
-        self.current_bb = None
+        self.current_bb = [0, 0, 0, 0]
         self.region = None
 
         # initialize the video stream, pointer to output video file, and
@@ -321,9 +319,13 @@ class Sensors():
                 if ((scores[0][i])[0]) > args["confidence"]:
                     current_class_id = net.classes[int((class_IDs[0][i])[0])]
                     current_score = (scores[0][i])[0]
-                    current_bb = bounding_boxs[0][i - 1]
+                    self.current_bb = bounding_boxs[0][i - 1]
 
-            print("Bounding Box Coordinates: ", current_bb)
+            if len(class_IDs[0]) == 0:
+                self.current_bb = [0, 0, 0, 0]
+                print("YOLO didn't find anything. :(")
+
+            print("Bounding Box Coordinates: ", self.current_bb)
             cv2.imshow("Camera Feed", frame)
 
         #### END OF YOLO ####
