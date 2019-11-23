@@ -9,6 +9,7 @@ import math
 import cv2
 import sys
 
+# before running code, type in su and enter password to be in sudo mode
 
 class Drive:
     def __init__(self):
@@ -194,7 +195,7 @@ if __name__ == "__main__":
     print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
-    car.cc.drive(0.6)  # get the car moving
+    # YOLO test car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
     # YOLO test car.cc.drive(car.speed)  # get the car moving again
     restart_car = False

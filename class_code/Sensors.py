@@ -70,7 +70,7 @@ class Sensors():
         self.yolo_region = False
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
-        #self.yo = Yolo()
+        self.yo = Yolo()
         self.green_light = False
 
     # YOLO
@@ -195,7 +195,7 @@ class Sensors():
         coordinates = self.get_gps_coord("Blue")
         # if the car is in the yolo region and it hasn't detected a green light yet, run yolo
         if self.get_gray_value(coordinates, self.yolo_map)[0] == self.yolo_region_color :
-            yo = Yolo()
+            #yo = Yolo()
             self.yolo_region = True
             if self.green_light == False :
                 self.yolo_frame_count += 1 # = 10
@@ -206,7 +206,7 @@ class Sensors():
                     cv2.imshow("light", frame)
                     cv2.waitKey(0)
                     print("going into Yolo")
-                    bounding_boxes, yolo_img = yo.main_yolo(frame)
+                    bounding_boxes, yolo_img = self.yo.main_yolo(frame)
                     light_boxes = []
                     # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
                     for box in range(0, len(bounding_boxes)):
