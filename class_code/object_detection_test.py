@@ -13,22 +13,23 @@ import cv2
 from matplotlib import pyplot as plt
 import time
 
-# referenceImage_path = ""
-saveName = "depthImage.jpg" 
+referenceImage_path = ""
+# saveName = "depthImage.jpg" 
+min_compare_value = 3
+reference_image = cv2.imread(referenceImage_path,0)
 
 y_min = 118
-y_max = 193
+y_max = 163 #193
 x_min = 81
 x_max = 107
 
-crop_y_min = 0
-crop_y_max = 163
+# crop_y_min = 0
+# crop_y_max = 163
 v_tl = (25, crop_y_min)
 v_bl = (75, crop_y_max)
 v_br = (120, crop_y_max)
 v_tr = (160, crop_y_min)
-
-y_crop_offset = (200 - crop_y_max)
+# y_crop_offset = (200 - crop_y_max)
 
 count = 0
 
@@ -58,7 +59,7 @@ def detect_object(img):
 
     for y in range(y_min, y_max):
         for x in range(x_min, x_max):
-            if img[y][x] != 0:
+            if img[y][x] > min_compare_value:
                 return True
 
     return False
@@ -75,56 +76,59 @@ pipeline.start(config)
 reference_image = cv2.imread(referenceImage_path)
 count = 0
 try:
-    # while True:
-    print("Getting frame in 1 second")
-    time.sleep(1)
+    while True:
+        # Wait for a coherent pair of frames: depth and color
+        frames = pipeline.wait_for_frames()
+        depth_frame = frames.get_depth_frame()
+        color_frame = frames.get_color_frame()
+        if not depth_frame or not color_frame:
+            continue
 
-    # Wait for a coherent pair of frames: depth and color
-    frames = pipeline.wait_for_frames()
-    depth_frame = frames.get_depth_frame()
-    color_frame = frames.get_color_frame()
-    if not depth_frame or not color_frame:
-        continue
+        # Convert images to numpy arrays
+        depth_image = np.asanyarray(depth_frame.get_data())
 
-    # Convert images to numpy arrays
-    depth_image = np.asanyarray(depth_frame.get_data())
+        # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
+        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
-    # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-    # color_image = np.asanyarray(color_frame.get_data())   
-    # color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
-    # dCanny = cv2.Canny(depth_colormap, 50, 200)
-    # color_be_frame = cv2.warpPerspective(color_image, birdseye_transform_matrix, (200,200))
+        gray_image = cv2.cvtColor(depth_colormap, cv2.COLOR_BGR2GRAY)
+        birdseye_frame = cv2.warpPerspective(gray_image, birdseye_transform_matrix, (200,200))
+        bCanny = cv2.Canny(birdseye_frame, 100, 200)
+        cropped_image  = crop_image(bCanny)
+        threshold_image = cv2.subtract(reference_image, cropped_image)
 
-    birdseye_frame = cv2.warpPerspective(depth_colormap, birdseye_transform_matrix, (200,200))
-    bCanny = cv2.Canny(birdseye_frame, 100, 200)
-    cropped_image  = crop_image(bCanny)
-    cv2.imwrite(saveName, birdseye_frame)
+        objectFound = False
+        objectFound = detect_object(threshold_image)
 
-    # img = bCanny
-    # cv2.line(img, v_tl, v_bl, (255,0,0), 2)
-    # cv2.line(img, v_bl, v_br, (255,0,0), 2)
-    # cv2.line(img, v_br, v_tr, (255,0,0), 2)
-    # cv2.line(img, v_tr, v_tl, (255,0,0), 2)
-
-    # cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
-    # cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
-    # cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
-    # cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
-
-
-    # objectFound = False
-    # objectFound = detect_object(cropped_image)
-
-    # if objectFound:
-    #     count += 1
-    #     print("Object found! ", count)
-
+        if objectFound:
+            count += 1
+            print("Object found! ", count)
 
 finally:
 
     # Stop streaming
     pipeline.stop()
+
+
+# Code below can be added above to plot the rectangular search region
+
+# img = bCanny
+# cv2.line(img, v_tl, v_bl, (255,0,0), 2)
+# cv2.line(img, v_bl, v_br, (255,0,0), 2)
+# cv2.line(img, v_br, v_tr, (255,0,0), 2)
+# cv2.line(img, v_tr, v_tl, (255,0,0), 2)
+
+# cv2.line(img, (x_min, y_min-y_crop_offset), (x_min, y_max-y_crop_offset), (255,0,0), 1)
+# cv2.line(img, (x_min, y_max-y_crop_offset), (x_max, y_max-y_crop_offset), (255,0,0), 1)
+# cv2.line(img, (x_max, y_max-y_crop_offset), (x_max, y_min-y_crop_offset), (255,0,0), 1)
+# cv2.line(img, (x_max, y_min - y_crop_offset), (x_min, y_min - y_crop_offset), (255,0, 0), 1)
+
+# Code below can be added to conver color to birdseye
+
+# color_image = np.asanyarray(color_frame.get_data())   
+# color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
+# dCanny = cv2.Canny(depth_colormap, 50, 200)
+# color_be_frame = cv2.warpPerspective(color_image, birdseye_transform_matrix, (200,200))
+
 
 
 
