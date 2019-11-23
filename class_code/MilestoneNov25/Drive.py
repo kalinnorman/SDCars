@@ -27,7 +27,7 @@ try:
         if (object_detected):
             car.stop_car()
             continue
-        if (restart_car):
+        if (car.restart_car):
             car.start_car()
 
         # Get new GPS Coordinate
@@ -39,11 +39,15 @@ try:
             if (object_detected):
                 car.stop_car()
                 continue
-            if (restart_car):
+            if (car.restart_car):
                 car.start_car()
 
 
             car.update_gps_pos()
+            if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
+                continue
+            elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
+                continue
             print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
             if car.prev_gps[0] < 0: # Updates the prev gps if the car was out of bounds but reentered
                 car.prev_gps = car.cur_gps
