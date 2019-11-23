@@ -196,7 +196,7 @@ if __name__ == "__main__":
     # Begin Driving
     car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
-    car.cc.drive(car.speed)  # get the car moving again
+    # YOLO test car.cc.drive(car.speed)  # get the car moving again
     restart_car = False
     stop_at_light = False
 
@@ -212,7 +212,10 @@ if __name__ == "__main__":
 
             # YOLO
             if car.cc.sensor.yolo_region:
+                print("in yolo region")
+                print("The light is: ", car.cc.sensor.color_detected)
                 if car.cc.sensor.color_detected == 'green':
+                    print("GO! it's a green light")
                     car.cc.sensor.green_light = True
                     if stop_at_light:
                         restart_car = True
@@ -220,10 +223,13 @@ if __name__ == "__main__":
                 else :  # red or yellow light has been detected
                     car.cc.sensor.green_light = False
                     # slow down car
+                    print("stopping: red or yellow light")
                     car.cc.drive(0.0)
                     print('Its not green!')
                     stop_at_light = True
                     continue    # Skip all the remaining steps until the object is gone
+            else : # debugging purposes
+                print("NOT in yolo region")
             # end YOLO
 
             if (object_detected):
@@ -233,18 +239,19 @@ if __name__ == "__main__":
                 restart_car = True # When the object is removed, this tells the car to start again
                 continue           # Skip all the remaining steps until the object is gone
 
-            if (restart_car):
-                car.cc.drive(0.9)#0.6)  # get the car moving
-                time.sleep(0.1)  # ...but only briefly
-                car.cc.drive(car.speed)  # get the car moving again
-                restart_car = False
+            # YOLO test
+            #if (restart_car):
+            #    car.cc.drive(0.9)#0.6)  # get the car moving
+            #    time.sleep(0.1)  # ...but only briefly
+            #    car.cc.drive(car.speed)  # get the car moving again
+            #    restart_car = False
 
             # object_detected = False
 
             ##################################################
 
 
-
+            ''' YOLO
             while car_location == prev_gps or prev_gps[0] < 0:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
@@ -293,7 +300,7 @@ if __name__ == "__main__":
                 prev_gps = car_location
 
             car.update_log_file()  # update the log file
-
+            '''
         car.cc.drive(0)  # stop the car
         print("Terminating Program")
         car.out_file.close()  # close the log file

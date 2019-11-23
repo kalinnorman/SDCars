@@ -32,6 +32,7 @@ import cv2
 import numpy as np
 import gc
 import requests # needed to for get_gps_coord()
+from Yolo import Yolo
 
 
 class Sensors():
@@ -69,7 +70,7 @@ class Sensors():
         self.yolo_region = False
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
-        self.yo = YOLO()
+        #self.yo = Yolo()
         self.green_light = False
 
     # YOLO
@@ -194,6 +195,7 @@ class Sensors():
         coordinates = self.get_gps_coord("Blue")
         # if the car is in the yolo region and it hasn't detected a green light yet, run yolo
         if self.get_gray_value(coordinates, self.yolo_map)[0] == self.yolo_region_color :
+            yo = Yolo()
             self.yolo_region = True
             if self.green_light == False :
                 self.yolo_frame_count += 1 # = 10
@@ -203,8 +205,8 @@ class Sensors():
 
                     cv2.imshow("light", frame)
                     cv2.waitKey(0)
-
-                    bounding_boxes, yolo_img = self.yo.main_yolo(frame)#imgLight)#, args)
+                    print("going into Yolo")
+                    bounding_boxes, yolo_img = yo.main_yolo(frame)
                     light_boxes = []
                     # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
                     for box in range(0, len(bounding_boxes)):
@@ -218,7 +220,7 @@ class Sensors():
                     # we will look at the traffic light that is closest to the top of the pic as
                     # that one is likely to be the one we want to look at
                     else:
-                        elif len(light_boxes) > 1 :
+                        if len(light_boxes) > 1 :
                             for i in range(0, len(light_boxes)) :
                                 top_y = min(light_boxes[i][1], light_boxes[i][3])
                                 if top_y < y_of_light :

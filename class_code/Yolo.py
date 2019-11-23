@@ -40,7 +40,7 @@ class Yolo:
 
 		self.net.collect_params().reset_ctx(self.device)
 
-		self.signal(SIGINT, self.handler)
+		signal(SIGINT, self.handler)
 		print('Running. Press CTRL-C to exit')
 
 
@@ -97,6 +97,7 @@ class Yolo:
 
 		current_bb = [0, 0, 0, 0]
 		frame = vs
+		print("DEBUG: I'm in YOLO!")
 
 		# if the frame dimensions are empty, grab them
 		if self.W is None or self.H is None:
