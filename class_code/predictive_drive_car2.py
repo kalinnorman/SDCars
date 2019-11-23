@@ -8,6 +8,19 @@ import time
 import math
 import cv2
 import sys
+# YOLO
+from matplotlib import pyplot as plt
+from gluoncv import model_zoo, utils
+import pyrealsense2 as rs
+from PIL import Image
+from signal import signal, SIGINT
+from sys import exit
+import mxnet as mx
+import argparse
+import imutils
+#import serial
+import os
+import gc
 
 # before running code, type in su and enter password to be in sudo mode
 
@@ -54,7 +67,7 @@ class Drive:
         self.yolo_region = False
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
-        self.yo = Yolo()
+        #self.yo = Yolo()
         self.green_light = False
 
         self.ap = argparse.ArgumentParser()
@@ -381,19 +394,19 @@ if __name__ == "__main__":
             #### Implement YOLOv3MXNet ####
             coordinates = car.cc.sensor.get_gps_coord("Blue")
             # if the car is in the yolo region and it hasn't detected a green light yet, run yolo
-            if car.cc.sensor.get_gray_value(coordinates, self.yolo_map)[0] == self.yolo_region_color :
+            if car.cc.sensor.get_gray_value(coordinates, car.yolo_map)[0] == car.yolo_region_color :
                 #yo = Yolo()
-                self.yolo_region = True
-                if self.green_light == False :
-                    self.yolo_frame_count += 1 # = 10
+                car.yolo_region = True
+                if car.green_light == False :
+                    car.yolo_frame_count += 1 # = 10
 
-                    if self.yolo_frame_count == 10 : # not sure how many frames we should count before we check YOLO. # monte carlo
-                        self.yolo_frame_count = 0
-
-                        cv2.imshow("light", frame)
-                        cv2.waitKey(0)
+                    if car.yolo_frame_count == 10 : # not sure how many frames we should count before we check YOLO. # monte carlo
+                        car.yolo_frame_count = 0
+                        print("DEBUG: YOLO")
+                        #cv2.imshow("light", frame)
+                        #cv2.waitKey(0)
                         print("going into Yolo")
-                        bounding_boxes, yolo_img = self.main_yolo(frame)
+                        bounding_boxes, yolo_img = car.main_yolo(frame)
                         light_boxes = []
                         # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
                         for box in range(0, len(bounding_boxes)):
@@ -423,30 +436,30 @@ if __name__ == "__main__":
                             y2 = int(light_boxes[desired_light][3])
                             cropped_img = yolo_img[y1:y2, x1:x2]
 
-                            self.color_detected = self.predict_color(cropped_img)
-                            # print(self.color_detected, " is the winner!")
+                            car.color_detected = car.predict_color(cropped_img)
+                            # print(car.color_detected, " is the winner!")
                             # cv2.imshow("cropped", cropped_img)
                             # cv2.waitKey(0)
                             ################## I need to double check that y = 0 is the top ############
             else:
-                self.yolo_region = False    # we are not currently in the region to check for traffic lights
-                self.color_detected = 'black'   # make sure it's not an actual color we are detecting
-                self.green_light = False # set this back to false so we don't lock out the function when we're in the region again
+                car.yolo_region = False    # we are not currently in the region to check for traffic lights
+                car.color_detected = 'black'   # make sure it's not an actual color we are detecting
+                car.green_light = False # set this back to false so we don't lock out the function when we're in the region again
             # end of YOLO
 
 
             # YOLO
-            if self.yolo_region:
+            if car.yolo_region:
                 print("in yolo region")
-                print("The light is: ", self.color_detected)
-                if self.color_detected == 'green':
+                print("The light is: ", car.color_detected)
+                if car.color_detected == 'green':
                     print("GO! it's a green light")
-                    self.green_light = True
+                    car.green_light = True
                     if stop_at_light:
                         restart_car = True
                         stop_at_light = False
                 else :  # red or yellow light has been detected
-                    self.green_light = False
+                    car.green_light = False
                     # slow down car
                     print("stopping: red or yellow light")
                     car.cc.drive(0.0)

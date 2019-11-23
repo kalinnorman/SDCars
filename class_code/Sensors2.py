@@ -32,7 +32,7 @@ import cv2
 import numpy as np
 import gc
 import requests # needed to for get_gps_coord()
-from Yolo import Yolo
+#from Yolo import Yolo
 
 
 class Sensors():
