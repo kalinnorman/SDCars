@@ -41,7 +41,14 @@ try:
                 prev_region = next_region
             # Third Case: Car is located in the region it is meant to be in for driving commands
             elif prev_region == car.cur_region:
-                if car.cur_region == car.desired_region: # Lane is approximately 70 pixels wide
+                if car.get_gray_value(car.cur_gps, car.stops_and_lights) == 128: # If at a stop sign location
+                    car.cc.steer(0)
+                    car.cc.drive(0)
+                    time.sleep(2)
+                    car.cc.drive(car.speed)
+                    continue
+                # elif for YOLO behavior will go here
+                elif car.cur_region == car.desired_region:
                     car.update_desired_region()
             steering_angle = car.get_angle()
             car.cc.steer(steering_angle)

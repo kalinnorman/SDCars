@@ -23,7 +23,9 @@ class Drive:
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
         self.cur_region = self.update_region()
-        self.desired_region = 3 # self.update_desired_region()
+        self.update_desired_region()
+        self.stops_and_lights = cv2.imread('Maps/StopSignsAndLightDetection.bmp') # RGB
+        self.stops_and_lights = cv2.cvtColor(self.stops_and_lights, cv2.COLOR_BGR2GRAY) # Grayscale
         self.log_filename = "Log.txt" # Creates file named by the date and time to log items for debugging
         if os.path.exists(self.log_filename):
             os.remove(self.log_filename)
@@ -140,16 +142,12 @@ class Drive:
         self.out_file.write(out_string + "\n")
 
     def update_desired_region(self):
-        # if self.cur_region == gp.region_dict['Region 1']:
-        #     self.desired_region = gp.region_dict['Region 2']
-        # elif self.cur_region == gp.region_dict['Region 2']:
-        #     self.desired_region = gp.region_dict['Region 3']
-        # elif self.cur_region == gp.region_dict['Region 3']:
-        #     self.desired_region = gp.region_dict['Region 4']
-        # else:
-        #     self.desired_region = gp.region_dict['Region 1']
-        if self.cur_region == gp.region_dict['Region 2']:
+        if self.cur_region == gp.region_dict['Region 1']:
+            self.desired_region = gp.region_dict['Region 2']
+        elif self.cur_region == gp.region_dict['Region 2']:
             self.desired_region = gp.region_dict['Region 3']
+        elif self.cur_region == gp.region_dict['Region 3']:
+            self.desired_region = gp.region_dict['Region 4']
         else:
-            self.desired_region = gp.region_dict['Region 3']
+            self.desired_region = gp.region_dict['Region 1']
         return self.desired_region
