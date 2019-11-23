@@ -153,25 +153,11 @@ class Sensors():
         self.pipeline.start(self.config)
 
         # YOLO
-        self.yolo_map = cv2.imread('Maps/yolo_regions.bmp')
-        self.yolo_region_color = 123
-        self.yolo_region = False
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
-        self.yolo_frame_count = 0    # we use this so that we aren't checking yolo at every frame; probably should put this in Sensors.py
-        self.yo = Yolo()
         self.green_light = False
+        self.traffic_boxes = []
         signal(SIGINT, self.handler)
 
-    # YOLO
-    # this is also in predictive_drive_car.py
-    def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
-        imgWidth = img.shape[1] # Get width
-        x = round(coordinates[0]) # x translates directly
-        y = imgWidth - round(coordinates[1]) # y is inverted
-        cur_gps = (x,y)
-        gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
-        cur_gray_val = gray_val
-        return gray_val
 
     # YOLO
     # Function to correctly exit program
@@ -313,6 +299,7 @@ class Sensors():
             class_IDs = class_IDs.asnumpy().tolist()
             scores = scores.asnumpy().tolist()
             bounding_boxs = bounding_boxs.asnumpy()
+            self.traffic_boxes = []
 
             # iterate through detected objects
             for i in range(len(class_IDs[0])):
@@ -320,6 +307,8 @@ class Sensors():
                     current_class_id = net.classes[int((class_IDs[0][i])[0])]
                     current_score = (scores[0][i])[0]
                     self.current_bb = bounding_boxs[0][i - 1]
+                    if current_class_id == 'traffic light':
+                        self.traffic_boxes.append(self.current_bb)
 
             if len(class_IDs[0]) == 0:
                 self.current_bb = [0, 0, 0, 0]
@@ -328,6 +317,41 @@ class Sensors():
             print("Bounding Box Coordinates: ", self.current_bb)
             cv2.imshow("Camera Feed", frame)
 
+            bounding_boxes = self.traffic_boxes
+            yolo_img = img
+            light_boxes = []
+            # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
+            for box in range(0, len(bounding_boxes)):
+                if self.traffic_boxes[box][0] > self.img_middle and self.traffic_boxes[box][2] > self.img_middle:  # bounding box is on the right side of the camera
+                    light_boxes.append(self.traffic_boxes[box])
+                    print(light_boxes[-1])
+            y_of_light = 400  # arbitrary value that is used to compare when there is more than one detected traffic light
+            if not light_boxes:
+                print("DEBUG: oh no! there aren't any boxes!")  # exit frame and try again
+                ########## we don't care about the rest of the code
+            # we only want to look at one light, so if we detect more than one,
+            # we will look at the traffic light that is closest to the top of the pic as
+            # that one is likely to be the one we want to look at
+            else:
+                if len(light_boxes) > 1:
+                    for i in range(0, len(light_boxes)):
+                        top_y = min(light_boxes[i][1], light_boxes[i][3])
+                        if top_y < y_of_light:
+                            y_of_light = top_y
+                            desired_light = i
+                else:
+                    desired_light = 0  # there's only one traffic light detected in the desired region
+
+                # crop image:
+                x1 = int(light_boxes[desired_light][0])
+                y1 = int(light_boxes[desired_light][1])
+                x2 = int(light_boxes[desired_light][2])
+                y2 = int(light_boxes[desired_light][3])
+                cropped_img = yolo_img[y1:y2, x1:x2]
+
+                self.color_detected = self.predict_color(cropped_img)
+                # print(self.color_detected, " is the winner!")
+                ################## I need to double check that y = 0 is the top ############
         #### END OF YOLO ####
 
         # iterate through camera/IMU data, updating global variable

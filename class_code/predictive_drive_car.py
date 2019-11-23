@@ -48,6 +48,12 @@ class Drive:
         self.predict = PredictiveFollower(self.lane_follow_img, search_radius=50)
         self.get_waypoints()
 
+        # YOLO
+        self.yolo_map = cv2.imread('Maps/yolo_regions.bmp')
+        self.yolo_region_color = 123
+        self.yolo_frame_count = 0  # we use this so that we aren't checking yolo at every frame
+        self.yolo_region = False
+
     def get_angle(self,cur_gps,prev_gps):
         angle_rads = self.predict.find_angle(1600-cur_gps[1],cur_gps[0],1600-prev_gps[1],prev_gps[0])
         angle_deg = angle_rads*180.0/np.pi # Convert angle from radians to degrees
@@ -57,15 +63,15 @@ class Drive:
         self.cur_angle = angle_mod # update the class value tracking the current angle
         return angle_mod
 
-    # this function is now in Sensors.py
-    # def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
-    #     imgWidth = img.shape[1] # Get width
-    #     x = round(coordinates[0]) # x translates directly
-    #     y = imgWidth - round(coordinates[1]) # y is inverted
-    #     self.cur_gps = (x,y)
-    #     gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
-    #     self.cur_gray_val = gray_val
-    #     return gray_val
+    # YOLO & other uses
+    def get_gray_value(self, coordinates, img): # Converts from cv2 coords to coords on Dr Lee's image
+        imgWidth = img.shape[1] # Get width
+        x = round(coordinates[0]) # x translates directly
+        y = imgWidth - round(coordinates[1]) # y is inverted
+        self.cur_gps = (x,y)
+        gray_val = img[x,y] # Obtains the desired gray val from the x and y coordinate
+        self.cur_gray_val = gray_val
+        return gray_val
 
     def get_intersection_map(self, cur_region, desired_region):
         # Determine what action to take based on the current region and the region of the desired GPS coordinates
@@ -118,7 +124,7 @@ class Drive:
             return self.lane_follow_img, 0
 
     def get_region(self, coordinates):
-        current_gray_val = car.cc.sensor.get_gray_value(coordinates, self.regions_img)
+        current_gray_val = self.get_gray_value(coordinates, self.regions_img)
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
@@ -205,14 +211,22 @@ if __name__ == "__main__":
         # Start driving!
         while True:
 
-            ##### Milestone 3 - Check for objects first! #####
-            car.cc.update_sensors(yolo_flag=True)
-            object_detected, image = car.cc.detector.detect_object() # Search region in front of car for object
-#            cv2.imshow('vid', image)
-#            cv2.waitKey(25)
-
             # YOLO
-            if car.cc.sensor.yolo_region:
+            coordinates = car.cc.sensor.get_gps_coord("Blue")
+
+            if car.get_gray_value(coordinates, car.yolo_map)[0] == car.yolo_region_color:
+                car.yolo_region = True
+                if car.cc.sensor.green_light == False:
+                    car.yolo_frame_count += 1  # = 10
+
+                    if car.yolo_frame_count == 10:  # not sure how many frames we should count before we check YOLO. # monte carlo
+                        car.cc.update_sensors(yolo_flag=True)
+                        car.yolo_frame_count = 0
+                    else:
+                        car.cc.update_sensors(yolo_flag=False)
+                else:
+                    car.cc.update_sensors(yolo_flag=False)
+
                 print("in yolo region")
                 print("The light is: ", car.cc.sensor.color_detected)
                 if car.cc.sensor.color_detected == 'green':
@@ -221,17 +235,26 @@ if __name__ == "__main__":
                     if stop_at_light:
                         restart_car = True
                         stop_at_light = False
-                else :  # red or yellow light has been detected
+                else:  # red or yellow light has been detected
                     car.cc.sensor.green_light = False
                     # slow down car
                     print("stopping: red or yellow light")
                     car.cc.drive(0.0)
                     print('Its not green!')
                     stop_at_light = True
-                    continue    # Skip all the remaining steps until the object is gone
-            else : # debugging purposes
+                    continue  # Skip all the remaining steps until the object is gone
+            else:
+                car.cc.update_sensors(yolo_flag=False)
                 print("NOT in yolo region")
-            # end YOLO
+                car.yolo_region = False  # we are not currently in the region to check for traffic lights
+                car.cc.sensor.color_detected = 'black'  # make sure it's not an actual color we are detecting
+                car.cc.sensor.green_light = False  # set this back to false so we don't lock out the function when we're in the region again
+            # end of YOLO
+
+            ##### Milestone 3 - Check for objects first! #####
+            object_detected, image = car.cc.detector.detect_object()  # Search region in front of car for object
+            #            cv2.imshow('vid', image)
+            #            cv2.waitKey(25)
 
             if (object_detected):
                 car.cc.drive(0.0)
