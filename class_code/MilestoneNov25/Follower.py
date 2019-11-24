@@ -190,15 +190,21 @@ class Follower:
         onLeft, onRight = self.cc.detector.locate_object()
         print("attempting to avoid")
         if (onLeft and onRight):
+            self.restart_car = False
+            print("Obstacle too hard to avoid!")
             return
         elif onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
+            print("OnLeft")
             self.cc.steer(15)
             self.cc.drive(self.speed)
             self.restart_car = False
+            print("Swerve right...")
         elif onRight: # swerve left
+            print("onRight")
             self.cc.steer(-15)
             self.cc.drive(self.speed)
             self.restart_car = False
+            print("Swerve left...")
         else: # Unnecessary ?
             print("Object thin and centered - choosing either side")
             self.cc.steer(-15)
