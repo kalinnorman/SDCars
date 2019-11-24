@@ -180,13 +180,13 @@ class Sensors():
 
         # Define the desired colorspace
         if color == 'red':
-            lower = np.array([100, 40, 40], dtype='uint8') # was [150, 40, 40]
+            lower = np.array([100, 40, 10], dtype='uint8') # was [150, 40, 40]
             upper = np.array([255, 255, 255], dtype='uint8')
         elif color == 'green':
-            lower = np.array([50, 40, 40], dtype='uint8') 
+            lower = np.array([50, 40, 10], dtype='uint8')
             upper = np.array([100, 255, 255], dtype='uint8')
         elif color == 'yellow':
-            lower = np.array([0, 40, 40], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
+            lower = np.array([0, 40, 10], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
             upper = np.array([50, 255, 255], dtype='uint8')
         else:
             print("Choose a valid color, bro.")
