@@ -13,7 +13,7 @@ import sys
 
 class Drive:
     def __init__(self):
-        self.speed = 0.35
+        self.speed = 0.3
         self.angle_multiplier = 0.7
         self.cc = CarControl()
         self.cur_angle = 0
@@ -201,15 +201,14 @@ if __name__ == "__main__":
     print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
-    # YOLO test car.cc.drive(0.6)  # get the car moving
+    car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
-    # YOLO test car.cc.drive(car.speed)  # get the car moving again
+    car.cc.drive(car.speed)  # get the car moving again
     restart_car = False
     stop_at_light = False
 
     try:
         # Start driving!
-        print(car.cc.sensor.color_detected)
         while True:
 
             # YOLO
@@ -265,18 +264,18 @@ if __name__ == "__main__":
                 continue           # Skip all the remaining steps until the object is gone
 
             # YOLO test
-            #if (restart_car):
-            #    car.cc.drive(0.9)#0.6)  # get the car moving
-            #    time.sleep(0.1)  # ...but only briefly
-            #    car.cc.drive(car.speed)  # get the car moving again
-            #    restart_car = False
+            if (restart_car):
+                car.cc.drive(0.9)#0.6)  # get the car moving
+                time.sleep(0.1)  # ...but only briefly
+                car.cc.drive(car.speed)  # get the car moving again
+                restart_car = False
 
             # object_detected = False
 
             ##################################################
 
 
-            ''' YOLO
+            ''' YOLO '''
             while car_location == prev_gps or prev_gps[0] < 0:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
@@ -325,7 +324,7 @@ if __name__ == "__main__":
                 prev_gps = car_location
 
             car.update_log_file()  # update the log file
-            '''
+            
         car.cc.drive(0)  # stop the car
         print("Terminating Program")
         car.out_file.close()  # close the log file

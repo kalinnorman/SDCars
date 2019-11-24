@@ -157,7 +157,7 @@ class Sensors():
         self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.green_light = False
         self.traffic_boxes = []
-        self.color_detected = "purple"
+        self.color_detected = "black"
         signal(SIGINT, self.handler)
 
 
@@ -224,9 +224,9 @@ class Sensors():
 
         count = [redcount, greencount]
 
-        pixel_threshold = int(0.1 * img.shape[0] * img.shape[1])
+        pixel_threshold = int(0.05 * img.shape[0] * img.shape[1])
 
-        if greencount > pixel_threshold and redcount < pixel_threshold:
+        if greencount > pixel_threshold :# and redcount < greencount: #if greencount > pixel_threshold and redcount < pixel_threshold:
             res = 'green'
         else:
             res = 'red'
@@ -356,7 +356,7 @@ class Sensors():
             # we will look at the traffic light that is closest to the top of the pic as
             # that one is likely to be the one we want to look at
             else:
-                print("light boxes = ", len(light_boxes))
+                #print("light boxes = ", len(light_boxes))
                 if len(light_boxes) > 1:
                     for i in range(0, len(light_boxes)):
                         top_y = min(light_boxes[i][1], light_boxes[i][3])
@@ -373,7 +373,7 @@ class Sensors():
                 y2 = int(light_boxes[desired_light][3])
                 cropped_img = img[y1:y2, x1:x2]
                 self.color_detected = self.predict_color(cropped_img)
-                print(self.color_detected, " is the winner!")
+                #print(self.color_detected, " is the winner!")
                 ################## I need to double check that y = 0 is the top ############
         #### END OF YOLO ####
 
