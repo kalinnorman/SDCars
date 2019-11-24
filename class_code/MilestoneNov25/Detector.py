@@ -17,6 +17,7 @@ class Detector:
     """
     This class is used to detect objects
     """
+    
 
     def __init__(self, sensor):
 

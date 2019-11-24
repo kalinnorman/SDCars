@@ -51,6 +51,7 @@ class Follower:
         self.region4to2 = cv2.imread('Maps/Region4to2.bmp') # RGB
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
 
+ 
         self.restart_car = False
         self.attempt_time = 5.0
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:

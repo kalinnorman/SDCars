@@ -94,6 +94,8 @@ try:
             car.cc.steer(steering_angle)
             car.prev_gps = car.cur_gps
 
+            
+
         else:  # if the gps didn't find us
             car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
             car.prev_gps = car.cur_gps
