@@ -52,7 +52,7 @@ class Follower:
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
 
         self.restart_car = False
-        self.attempt_time = 3.0
+        self.attempt_time = 5.0
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = Planner(self.regions1and4, search_radius=50)
             print("using regions 1 and 4")
@@ -191,16 +191,16 @@ class Follower:
         if (onLeft and onRight):
             return
         elif onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
-            self.cc.steer(20)
+            self.cc.steer(15)
             self.cc.drive(self.speed)
             self.restart_car = False
         elif onRight: # swerve left
-            self.cc.steer(-20)
+            self.cc.steer(-15)
             self.cc.drive(self.speed)
             self.restart_car = False
-        else: # Unnecessary?
+        else: # Unnecessary ?
             print("Object thin and centered - choosing either side")
-            self.cc.steer(-20)
+            self.cc.steer(-15)
             self.cc.drive(self.speed)
             self.restart_car = False
         time.sleep(1)

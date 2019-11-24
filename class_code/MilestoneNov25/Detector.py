@@ -26,12 +26,19 @@ class Detector:
         self.debuggerCount = 3 # Accounts for noise
         self.min_difference = 3 # Accounts for normal fluctuation when comparing to reference image
         self.reference_image = cv2.imread("/home/nvidia/Desktop/class_code/MilestoneNov25/referenceImage.jpg",0)
+        self.inIntersection = False
 
         # Search Region Parameters:
         self.y_min = 118
         self.y_max = 163 # (193?)
         self.x_min = 81
         self.x_max = 107
+
+        # Search Region Parameters in intersection...?
+        self.y_min_int = 145
+        self.y_max_int = 163
+        self.x_min_int = 90
+        self.x_max_int = 100
 
     def crop_image(self, img):
         """
@@ -57,11 +64,16 @@ class Detector:
         Searches through a picture for non-zero values, returning True if something is found
         (Search area is in need of further tuning)
         """
-
-        for y in range(self.y_min, self.y_max):# 115 <= y <= 164
-            for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
-                if img[y][x] > self.min_difference:
-                    return True
+        if (self.inIntersection):
+            for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
+                for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        return True
+        else:
+            for y in range(self.y_min, self.y_max):# 115 <= y <= 164
+                for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        return True
 
         return False
 
@@ -117,7 +129,6 @@ class Detector:
             print("Detect Image Failed")
             return False, 0
 
-
     def search_side(self, img):
         """
         Searches through a picture for non-zero values, returning True if something is found
@@ -125,14 +136,29 @@ class Detector:
         """
         width = img.shape[1]
         offset = 5
+        rightCount = 0
+        leftCount = 0
 
-        for y in range(self.y_min, self.y_max):# 115 <= y <= 164
-            for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
-                if img[y][x] > self.min_difference:
-                    if (x > (offset + width/2.0)):
-                        onRight = True
-                    if (x < (-offset + width/2.0)):
-                        onLeft = True
-                    return onLeft, onRight
+        if (self.inIntersection):
+            for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
+                for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        if (x > (offset + width/2.0)):
+                            rightCount += 1
+                        if (x < (-offset + width/2.0)):
+                            leftCount += 1
+        else:
+            for y in range(self.y_min, self.y_max):# 115 <= y <= 164
+                for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        if (x > (offset + width/2.0)):
+                            rightCount += 1
+                        elif (x < (-offset + width/2.0)):
+                            leftCount += 1
 
-        return False, False
+        if (leftCount > rightCount):
+            return True, False
+        elif (rightCount > leftCount):
+            return False, True
+        else:
+            return True, True

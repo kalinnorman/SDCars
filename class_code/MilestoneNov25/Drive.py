@@ -51,7 +51,7 @@ try:
                 continue
             if (car.restart_car):
                 car.start_car()
-                
+
 
             car.update_gps_pos()
             if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
@@ -69,6 +69,7 @@ try:
                 cur_img, next_region = car.get_intersection_map(prev_region)  # use the appropriate map to turn
                 car.predict.set_img(cur_img)
                 prev_region = car.cur_region
+                car.cc.detector.inIntersection = True
             # Second case: Leaving the intersection
             elif prev_region == gp.region_dict['Intersection'] and car.cur_region != gp.region_dict['Intersection']:
                 if next_region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
@@ -77,6 +78,7 @@ try:
                     cur_img = car.regions2and3
                 car.predict.set_img(cur_img)
                 prev_region = next_region
+                car.cc.detector.inIntersection = False
             # Third Case: Car is located in the region it is meant to be in for driving commands
             elif prev_region == car.cur_region:
                 if car.check_stop_signs(): # If at a stop sign location
