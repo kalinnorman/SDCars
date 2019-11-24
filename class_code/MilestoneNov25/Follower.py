@@ -187,29 +187,35 @@ class Follower:
         self.StopTime = time.time()
 
     def attempt_correction(self):
-        onLeft, onRight = self.cc.detector.locate_object()
-        print("attempting to avoid")
-        #if (onLeft and onRight):
-        #    self.restart_car = False
-        #    print("Obstacle too hard to avoid!")
-        #    return
-        onLeft = False
-        onRight = True
-        if onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
-            print("OnLeft")
+        if (self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']): # In inside lanes, swerve right
             self.cc.steer(18)
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve right...")
-        elif onRight: # swerve left
-            print("onRight")
-            self.cc.steer(-30)
+        
+        else:  # In outside lanes, swerve left
+            self.cc.steer(-18)
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve left...")
-        else: # Unnecessary ?
-            print("Object thin and centered - choosing either side")
-            self.cc.steer(-30)
-            self.cc.drive(self.speed)
-            self.restart_car = False
+
+        # onLeft, onRight = self.cc.detector.locate_object()
+        # print("attempting to avoid")
+        # #if (onLeft and onRight):
+        # #    self.restart_car = False
+        # #    print("Obstacle too hard to avoid!")
+        # #    return
+        # if onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
+
+        # elif onRight: # swerve left
+        #     print("onRight")
+        #     self.cc.steer(-30)
+        #     self.cc.drive(self.speed)
+        #     self.restart_car = False
+        #     print("Swerve left...")
+        # else: # Unnecessary ?
+        #     print("Object thin and centered - choosing either side")
+        #     self.cc.steer(-30)
+        #     self.cc.drive(self.speed)
+        #     self.restart_car = False
         time.sleep(1)
