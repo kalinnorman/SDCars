@@ -17,7 +17,7 @@ class Detector:
     """
     This class is used to detect objects
     """
-    
+
 
     def __init__(self, sensor):
 
@@ -113,6 +113,7 @@ class Detector:
         Determines whether the object is found on the right side or left side
         Allows car to attempt to go around object
         """
+        print("In locate object")
         try:
             time, depth_image = self.sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
@@ -121,7 +122,7 @@ class Detector:
             birdseye_frame = cv2.warpPerspective(grayed_depth, self.birdseye_transform_matrix, (200, 200))
             cropped_image = self.crop_image(birdseye_frame)
             threshold_image = cv2.subtract(self.reference_image, cropped_image)
-
+            print("About to search side")
             onLeft, onRight = self.search_side(threshold_image)
             self.count = 0
             return onLeft, onRight
@@ -135,11 +136,13 @@ class Detector:
         Searches through a picture for non-zero values, returning True if something is found
         (Search area is in need of further tuning)
         """
+        print("In search side")
         width = img.shape[1]
         offset = 5
         rightCount = 0
         leftCount = 0
 
+        print("In intersection? ", self.inIntersection)
         if (self.inIntersection):
             for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
                 for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
@@ -157,6 +160,7 @@ class Detector:
                         elif (x < (-offset + width/2.0)):
                             leftCount += 1
 
+        print("In front of return statements")
         if (leftCount > rightCount):
             return True, False
         elif (rightCount > leftCount):
