@@ -172,6 +172,7 @@ class Sensors():
     # YOLO
     def find_color(self, img, color):
         # Convert image to HSV
+        imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         print("Shape of imghsv", imghsv.shape)
@@ -180,19 +181,20 @@ class Sensors():
 
         # Define the desired colorspace
         if color == 'red':
-            lower = np.array([100, 40, 10], dtype='uint8') # was [150, 40, 40]
+            lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
             upper = np.array([255, 255, 255], dtype='uint8')
         elif color == 'green':
-            lower = np.array([50, 40, 10], dtype='uint8')
-            upper = np.array([100, 255, 255], dtype='uint8')
+            lower = np.array([40, 40, 50], dtype='uint8')
+            upper = np.array([255, 255, 100], dtype='uint8')
         elif color == 'yellow':
-            lower = np.array([0, 40, 10], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
-            upper = np.array([50, 255, 255], dtype='uint8')
+            lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
+            upper = np.array([255, 255, 50], dtype='uint8')
         else:
             print("Choose a valid color, bro.")
 
         # Threshold the HSV image to get only the desired color
         mask = cv2.inRange(imghsv, lower, upper)
+        cv2.imwrite(color + 'mask.jpg', mask)
         res = cv2.bitwise_and(img, img, mask=mask)
         count = cv2.countNonZero(res[:,:,0])
 
