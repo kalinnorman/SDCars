@@ -213,9 +213,9 @@ class Sensors():
     #
     #     return colors[counts.index(max(counts))]  # returns the color as a string
 
-    def find_color(self, img):
+    def predict_color(self, img):
 
-        ret, redmask = cv2.threshold(cv2.extractChannel(img, 2), 127, 255,
+        ret, redmask = cv2.threshold(cv2.extractChannel(img, 0), 127, 255,
                                      cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
         ret, greenmask = cv2.threshold(cv2.extractChannel(img, 1), 127, 255, cv2.THRESH_BINARY)
 
