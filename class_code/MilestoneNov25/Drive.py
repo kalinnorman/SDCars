@@ -16,6 +16,7 @@ prev_region = car.cur_region
 next_region = car.desired_region
 cur_img = car.predict.map
 car.cc.drive(car.speed)
+stopAtIntersection = True
 try:
     while True:
         # Get new GPS Coordinate
@@ -52,8 +53,15 @@ try:
                     car.cc.drive(0)
                     time.sleep(2)
                     car.cc.drive(car.speed)
-                # FIXME elif for YOLO behavior will go here
-                # FIXME if we do need to stop at the light I also need to add in a good way to detect where that is...
+                    stopAtIntersection = True
+                elif car.get_gray_value(car.cur_gps, car.intersectionStops) == 128 and stopAtIntersection:
+                    car.cc.steer(0)
+                    car.cc.drive(0)
+                    stopAtIntersection = False
+                    # FIXME (IMPLEMENT THE THREE LINES OF COMMENTED OUT CODE BENEATH THIS)
+                    # while YOLO STUFF:
+                    #     if light is green:
+                    #         car.cc.drive(car.speed)
                 elif car.cur_region == car.desired_region:
                     car.update_desired_region()
             steering_angle = car.get_angle()
