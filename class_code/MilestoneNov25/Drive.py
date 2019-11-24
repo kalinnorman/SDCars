@@ -28,8 +28,9 @@ try:
             if (not car.restart_car): # meaning the car is just stopping
                 car.stop_time = time.time()
             car.stop_car()
-            if ( (time.time() - car.stop_time) > car.attempt_time ) # after a few seconds, try to fix
-                car.attempt_correction()
+            if ( (time.time() - car.stop_time) > car.attempt_time): # after a few seconds, try to fix
+                #car.attempt_correction()
+                print("Attempting Correction")
             continue
         if (car.restart_car):
             car.start_car()
@@ -44,8 +45,9 @@ try:
                 if (not car.restart_car): # meaning the car is just stopping
                     car.stop_time = time.time()
                 car.stop_car()
-                if ( (time.time() - car.stop_time) > car.attempt_time ) # after a few seconds, try to fix
-                    car.attempt_correction()
+                if ( (time.time() - car.stop_time) > car.attempt_time):  # after a few seconds, try to fix
+                    #car.attempt_correction()
+                    print("Attempted Correction")
                 continue
             if (car.restart_car):
                 car.start_car()

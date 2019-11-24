@@ -203,3 +203,4 @@ class Follower:
             self.cc.steer(-20)
             self.cc.drive(self.speed)
             self.restart_car = False
+        time.sleep(1)
