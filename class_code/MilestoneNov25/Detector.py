@@ -36,10 +36,10 @@ class Detector:
         self.x_max = 107
 
         # Search Region Parameters in intersection...?
-        self.y_min_int = 145
+        self.y_min_int = 153
         self.y_max_int = 163
-        self.x_min_int = 90
-        self.x_max_int = 100
+        self.x_min_int = 88
+        self.x_max_int = 102
 
     def crop_image(self, img):
         """

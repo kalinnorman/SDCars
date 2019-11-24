@@ -53,7 +53,7 @@ class Follower:
 
  
         self.restart_car = False
-        self.attempt_time = 5.0
+        self.attempt_time = 3.5
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = Planner(self.regions1and4, search_radius=50)
             print("using regions 1 and 4")
@@ -189,25 +189,27 @@ class Follower:
     def attempt_correction(self):
         onLeft, onRight = self.cc.detector.locate_object()
         print("attempting to avoid")
-        if (onLeft and onRight):
-            self.restart_car = False
-            print("Obstacle too hard to avoid!")
-            return
-        elif onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
+        #if (onLeft and onRight):
+        #    self.restart_car = False
+        #    print("Obstacle too hard to avoid!")
+        #    return
+        onLeft = False
+        onRight = True
+        if onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
             print("OnLeft")
-            self.cc.steer(15)
+            self.cc.steer(18)
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve right...")
         elif onRight: # swerve left
             print("onRight")
-            self.cc.steer(-15)
+            self.cc.steer(-30)
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve left...")
         else: # Unnecessary ?
             print("Object thin and centered - choosing either side")
-            self.cc.steer(-15)
+            self.cc.steer(-30)
             self.cc.drive(self.speed)
             self.restart_car = False
         time.sleep(1)
