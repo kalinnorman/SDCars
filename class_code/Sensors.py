@@ -169,49 +169,71 @@ class Sensors():
         print('CTRL-C detected. Exiting gracefully')
         exit(0)
 
-    # YOLO
-    def find_color(self, img, color):
-        # Convert image to HSV
-        imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    # # YOLO
+    # def find_color(self, img, color):
+    #     # Convert image to HSV
+    #     imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #     imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #
+    #     print("Shape of imghsv", imghsv.shape)
+    #     cv2.imwrite('cropped_image.jpg', imghsv)
+    #
+    #
+    #     # Define the desired colorspace
+    #     if color == 'red':
+    #         lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
+    #         upper = np.array([255, 255, 255], dtype='uint8')
+    #     elif color == 'green':
+    #         lower = np.array([40, 40, 50], dtype='uint8')
+    #         upper = np.array([255, 255, 100], dtype='uint8')
+    #     elif color == 'yellow':
+    #         lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
+    #         upper = np.array([255, 255, 50], dtype='uint8')
+    #     else:
+    #         print("Choose a valid color, bro.")
+    #
+    #     # Threshold the HSV image to get only the desired color
+    #     mask = cv2.inRange(imghsv, lower, upper)
+    #     cv2.imwrite(color + 'mask.jpg', mask)
+    #     res = cv2.bitwise_and(img, img, mask=mask)
+    #     count = cv2.countNonZero(res[:,:,0])
+    #
+    #     return res, count  # returns the image and the count of non-zero pixels
+    #
+    # # YOLO
+    # def predict_color(self, img):
+    #
+    #     colors = ['red', 'yellow', 'green']
+    #     counts = []
+    #
+    #     for color in colors:
+    #         res, count = self.find_color(img, color)
+    #         counts.append(count)
+    #     print(counts)
+    #
+    #     return colors[counts.index(max(counts))]  # returns the color as a string
 
-        print("Shape of imghsv", imghsv.shape)
-        cv2.imwrite('cropped_image.jpg', imghsv)
+    def find_color(self, img):
 
+        ret, redmask = cv2.threshold(cv2.extractChannel(img, 2), 127, 255,
+                                     cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
+        ret, greenmask = cv2.threshold(cv2.extractChannel(img, 1), 127, 255, cv2.THRESH_BINARY)
 
-        # Define the desired colorspace
-        if color == 'red':
-            lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
-            upper = np.array([255, 255, 255], dtype='uint8')
-        elif color == 'green':
-            lower = np.array([40, 40, 50], dtype='uint8')
-            upper = np.array([255, 255, 100], dtype='uint8')
-        elif color == 'yellow':
-            lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
-            upper = np.array([255, 255, 50], dtype='uint8')
+        redcount = cv2.countNonZero(redmask)
+        greencount = cv2.countNonZero(greenmask)
+
+        count = [redcount, greencount]
+
+        pixel_threshold = int(0.1 * img.shape[0] * img.shape[1])
+
+        if greencount > pixel_threshold and redcount < pixel_threshold:
+            res = 'green'
         else:
-            print("Choose a valid color, bro.")
+            res = 'red'
 
-        # Threshold the HSV image to get only the desired color
-        mask = cv2.inRange(imghsv, lower, upper)
-        cv2.imwrite(color + 'mask.jpg', mask)
-        res = cv2.bitwise_and(img, img, mask=mask)
-        count = cv2.countNonZero(res[:,:,0])
+        print("[redcount, greencount]:", count)
 
-        return res, count  # returns the image and the count of non-zero pixels
-
-    # YOLO
-    def predict_color(self, img):
-
-        colors = ['red', 'yellow', 'green']
-        counts = []
-
-        for color in colors:
-            res, count = self.find_color(img, color)
-            counts.append(count)
-        print(counts)
-
-        return colors[counts.index(max(counts))]  # returns the color as a string
+        return res  # returns the image and the count of non-zero pixels
 
     # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
