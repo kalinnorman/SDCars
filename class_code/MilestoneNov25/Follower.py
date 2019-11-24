@@ -50,6 +50,10 @@ class Follower:
         self.region4to1 = cv2.cvtColor(self.region4to1, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region4to2 = cv2.imread('Maps/Region4to2.bmp') # RGB
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
+        
+        self.restart_car = False
+        self.attempt_time = 3.5
+        
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = Planner(self.regions1and4, search_radius=50)
             print("using regions 1 and 4")
@@ -170,3 +174,28 @@ class Follower:
                 if self.prev_gps[1] < 1330 and self.cur_gps[1] >= 1330:
                     return True
         return False
+
+    def start_car(self):
+        self.cc.steer(0)
+        self.cc.drive(self.speed)
+        self.restart_car = False
+
+    def stop_car(self):
+        self.cc.steer(0)
+        self.cc.drive(0)
+        self.restart_car = True
+        self.StopTime = time.time()
+
+    def attempt_correction(self):
+        if (self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']): # In inside lanes, swerve right
+            self.cc.steer(18)
+            self.cc.drive(self.speed)
+            self.restart_car = False
+            print("Swerve right...")
+        
+        else:  # In outside lanes, swerve left
+            self.cc.steer(-18)
+            self.cc.drive(self.speed)
+            self.restart_car = False
+            print("Swerve left...")
+        time.sleep(1)
