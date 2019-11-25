@@ -4,8 +4,12 @@ import cv2
 
 import pyrealsense2 as rs 
 
-colorMin = np.asarray([85, 240, 175])
-colorMax = np.asarray([105, 255, 220])
+colorMin_1 = np.asarray([0, 0, 0])
+colorMax_1 = np.asarray([255, 10, 10])
+colorMin_2 = np.asarray([0, 0, 0])
+colorMax_2 = np.asarray([10, 255, 10])
+colorMin_3 = np.asarray([0, 0, 0])
+colorMax_3 = np.asarray([10, 10, 255])
 
 
 pipeline = rs.pipeline()
@@ -25,10 +29,11 @@ try:
         color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha= 0.03), cv2.COLORMAP_JET)
 
         img = cv2.cvtColor(color_frame, cv2.COLOR_BGR2HSV)
-        mask_image_1 = cv2.inRange(img, colorMin, colorMax)
-        mask_image_2 = cv2.inRange(img, colorMin, colorMax)
+        mask_image_1 = cv2.inRange(img, colorMin_1, colorMax_1)
+        mask_image_2 = cv2.inRange(img, colorMin_2, colorMax_2)
+        mask_image_3 = cv2.inRange(img, colorMin_3, colorMax_3)
 
-        imageStack = np.hstack((mask_image_1, mask_image_2))
+        imageStack = np.hstack((mask_image_1, mask_image_2, mask_image_3))
 
         cv2.imshow("image", imageStack)
         key=cv2.waitKey(0)
