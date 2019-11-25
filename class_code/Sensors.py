@@ -154,10 +154,8 @@ class Sensors():
         self.pipeline.start(self.config)
 
         # YOLO
-        self.img_middle = 208    # this is the middle of the yolo picture, the width is always 416 pixels
         self.green_light = False
         self.traffic_boxes = []
-        self.color_detected = "black"
         signal(SIGINT, self.handler)
 
 
@@ -170,99 +168,29 @@ class Sensors():
         exit(0)
 
     # # YOLO
-    def find_color(self, img, color):
-        # Convert image to HSV
-        imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-        # print("Shape of imghsv", imghsv.shape)
-        cv2.imwrite('cropped_image.jpg', imghsv)
-    
-    
-        # Define the desired colorspace
-        if color == 'red':
-            lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
-            upper = np.array([255, 255, 255], dtype='uint8')
-        elif color == 'green':
-            lower = np.array([40, 40, 50], dtype='uint8')
-            upper = np.array([255, 255, 100], dtype='uint8')
-        elif color == 'yellow':
-            lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
-            upper = np.array([255, 255, 50], dtype='uint8')
-        else:
-            print("Choose a valid color, bro.")
-    
-        # Threshold the HSV image to get only the desired color
-        mask = cv2.inRange(imghsv, lower, upper)
-        cv2.imwrite(color + 'mask.jpg', mask)
-        res = cv2.bitwise_and(img, img, mask=mask)
-        count = cv2.countNonZero(res[:,:,0])
-        return res, count  # returns the image and the count of non-zero pixels
-    
-    # YOLO
-    # def predict_color(self, img):
-    #
-    #     colors = ['red', 'yellow', 'green']
-    #     counts = []
-    #
-    #     for color in colors:
-    #         res, count = self.find_color(img, color)
-    #         counts.append(count)
-    #     print(counts)
-    #
-    #     return colors[counts.index(max(counts))]  # returns the color as a string
 
     def predict_color(self, img):
         red_lower = np.array([0, 0, 230], dtype='uint8')
         red_upper = np.array([60, 60, 255], dtype='uint8')
 
-        green_lower = np.array([0, 220, 0], dtype='uint8')
-        green_upper = np.array([100, 255, 100], dtype='uint8')
-
-        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        green_lower = np.array([0, 200, 0], dtype='uint8')
+        green_upper = np.array([100, 255, 150], dtype='uint8')
+        
+        imghsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
         redmask = cv2.inRange(imghsv, red_lower, red_upper)
         greenmask = cv2.inRange(imghsv, green_lower, green_upper)
 
         imgs = np.hstack((redmask, greenmask))
-        imgs = np.hstack((img,imghsv))
-        plt.imshow(imgs)
-        plt.show()
-        return('red')
-        '''
-        ret, redmask = cv2.threshold(cv2.extractChannel(img, 0), 127, 255,
-                                     cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
-        ret, greenmask = cv2.threshold(cv2.extractChannel(img, 1), 127, 255, cv2.THRESH_BINARY)
-
-        redcount = cv2.countNonZero(redmask)
-        greencount = cv2.countNonZero(greenmask)
-
-        count = [redcount, greencount]
-
-        pixel_threshold = int(0.05 * img.shape[0] * img.shape[1])
-
-        if greencount > pixel_threshold :# and redcount < greencount: #if greencount > pixel_threshold and redcount < pixel_threshold:
-            res = 'green'
-        else:
-            res = 'red'
-
-        print("[redcount, greencount]:", count)
-
-        # this is from the old code, I just want to see how it works
-        colors = ['red', 'yellow', 'green']
-        counts = []
-    
-        for color in colors:
-            res2, count = self.find_color(img, color)
-            counts.append(count)
         
-        print("old code counts:", counts)
-        print("old color:", colors[counts.index(max(counts))])
-
-        # return colors[counts.index(max(counts))]  # returns the color as a string
-
-        return res  # returns the image and the count of non-zero pixels
-        '''
+        count = cv2.countNonZero(greenmask)#[:,:,0])
+        # print(count)
+        # plt.imshow(imgs)
+        # plt.show()
+        if count > 200 :
+            return 'green'
+        else:
+            return 'red'
 
     # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
@@ -336,20 +264,18 @@ class Sensors():
         #### Implement YOLOv3MXNet ####
         if yolo_flag:
             # from gluoncv import data
-            yolo_image = Image.fromarray(frame, 'RGB')
+            frame2 = frame[0:int(self.H/2), int(1*self.W/3):self.W] # cropping image
+
+            yolo_image = Image.fromarray(frame2, 'RGB')
             
             x, img = load_test(yolo_image, short=416)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
+            cropimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
             class_IDs, scores, bounding_boxs = net(x.copyto(device))
 
             # The next two lines draw boxes around detected objects
-            ax = utils.viz.plot_bbox(img, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
-            plt.show()
-
-            # print(class_IDs)
-            # print(scores)
-            # print(bounding_boxs)
+            # ax = utils.viz.plot_bbox(cropimg, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
+            # plt.show()
 
             # Convert to numpy arrays, then to lists
             class_IDs = class_IDs.asnumpy().tolist()
@@ -372,17 +298,11 @@ class Sensors():
                 self.current_bb = [0, 0, 0, 0]
                 print("YOLO didn't find anything. :(")
 
-            #print("Bounding Box Coordinates: ", self.current_bb)
-            #cv2.imshow("Camera Feed", frame)
-
             light_boxes = []
             # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
             for box in range(0, len(self.traffic_boxes)):
-                #print("x1:",self.traffic_boxes)
-                #print("x2:",self.traffic_boxes[box])
-                if self.traffic_boxes[box][0] > self.img_middle and self.traffic_boxes[box][2] > self.img_middle:  # bounding box is on the right side of the camera
-                    light_boxes.append(self.traffic_boxes[box])
-                    print(light_boxes[-1])
+                light_boxes.append(self.traffic_boxes[box])
+                print(light_boxes[-1])
             y_of_light = 400  # arbitrary value that is used to compare when there is more than one detected traffic light
             if len(light_boxes) < 1:
                 print("DEBUG: oh no! there aren't any boxes!")  # exit frame and try again
@@ -402,10 +322,9 @@ class Sensors():
                 y1 = int(light_boxes[desired_light][1])
                 x2 = int(light_boxes[desired_light][2])
                 y2 = int(light_boxes[desired_light][3])
-                cropped_img = img[y1:y2, x1:x2]
-                self.color_detected = self.predict_color(cropped_img)
-                #print(self.color_detected, " is the winner!")
-                ################## I need to double check that y = 0 is the top ############
+                cropped_img = cropimg[y1:y2, x1:x2]
+                if self.predict_color(cropped_img) == 'green' :
+                    self.green_light = True
         #### END OF YOLO ####
 
         # iterate through camera/IMU data, updating global variable

@@ -221,7 +221,6 @@ if __name__ == "__main__":
 
                     if car.yolo_frame_count == 5:  # not sure how many frames we should count before we check YOLO. # monte carlo
                         car.cc.update_sensors(yolo_flag=True)
-                        print("The light is: ", car.cc.sensor.color_detected)
                         car.yolo_frame_count = 0
                     else:
                         car.cc.update_sensors(yolo_flag=False)
@@ -229,10 +228,8 @@ if __name__ == "__main__":
                     car.cc.update_sensors(yolo_flag=False)
 
                 #print("in yolo region")
-                #print("The light is: ", car.cc.sensor.color_detected)
-                if car.cc.sensor.color_detected == 'green':
+                if car.cc.sensor.green_light:
                     #print("GO! it's a green light")
-                    car.cc.sensor.green_light = True
                     if stop_at_light:
                         #restart_car = True
                         stop_at_light = False
@@ -247,7 +244,6 @@ if __name__ == "__main__":
                 car.cc.update_sensors(yolo_flag=False)
                 print("NOT in yolo region")
                 car.yolo_region = False  # we are not currently in the region to check for traffic lights
-                car.cc.sensor.color_detected = 'black'  # make sure it's not an actual color we are detecting
                 car.cc.sensor.green_light = False  # set this back to false so we don't lock out the function when we're in the region again
             # end of YOLO
 
