@@ -324,7 +324,7 @@ class Sensors():
                 y2 = int(light_boxes[desired_light][3])
                 cropped_img = cropimg[y1:y2, x1:x2]
                 # cv2.imshow("Traffic Light",cropped_img)
-                cv2.waitKey(1)
+                # cv2.waitKey(1)
                 if self.predict_color(cropped_img) == 'green' :
                     self.green_light = True
         #### END OF YOLO ####
