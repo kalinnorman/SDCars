@@ -18,6 +18,24 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 
 pipeline.start(config)
 
+def crop_image(img):
+        """
+        Tkes in an image and crops out a specified range
+        """
+        cropVertices = [(350,0), (350,100), (450, 100), (450,0)]                      # Corners of cropped image
+
+        # Blank matrix that matches the image height/width
+        mask = np.zeros_like(img)
+
+        match_mask_color = 255 # Set to 255 to account for grayscale
+
+        cv2.fillPoly(mask, np.array([cropVertices], np.int32), match_mask_color) # Fill polygon
+
+        masked_image = cv2.bitwise_and(img, mask)
+
+        return masked_image
+
+
 try:
     while True:
         for x in range(10):
@@ -44,7 +62,6 @@ try:
        
         plt.imshow(imageStack)
         plt.show()
-        #cv2.imshow("image", imageStack)
-        #cv2.waitKey(0)
+
 finally:
     pipeline.stop()
