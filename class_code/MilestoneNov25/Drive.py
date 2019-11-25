@@ -90,7 +90,7 @@ try:
                     car.cc.drive(0)
                     stopAtIntersection = False
                     # FIXME (IMPLEMENT THE THREE LINES OF COMMENTED OUT CODE BENEATH THIS)
-                    while not car.cc..sensor.green_light:
+                    while not car.cc.sensor.green_light:
                         car.cc.update_sensors(yolo_flag=True)
                     car.cc.drive(car.speed)
                     car.cc.sensor.green_light = False

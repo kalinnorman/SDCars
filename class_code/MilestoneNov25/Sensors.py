@@ -184,7 +184,7 @@ class Sensors():
         imgs = np.hstack((redmask, greenmask))
         
         count = cv2.countNonZero(greenmask)#[:,:,0])
-        # print(count)
+        print(count)
         # plt.imshow(imgs)
         # plt.show()
         if count > 200 :
@@ -289,8 +289,8 @@ class Sensors():
                     current_class_id = net.classes[int((class_IDs[0][i])[0])]
                     current_score = (scores[0][i])[0]
                     self.current_bb = bounding_boxs[0][i]# - 1]
-                    print("current_bb:",bounding_boxs[0][i])#-1])
-                    print("ID:", current_class_id)
+                    # print("current_bb:",bounding_boxs[0][i])#-1])
+                    # print("ID:", current_class_id)
                     if current_class_id == 'traffic light':
                         self.traffic_boxes.append(self.current_bb)
 
@@ -323,6 +323,7 @@ class Sensors():
                 x2 = int(light_boxes[desired_light][2])
                 y2 = int(light_boxes[desired_light][3])
                 cropped_img = cropimg[y1:y2, x1:x2]
+                cv2.imshow("Traffic Light",cropped_img)
                 if self.predict_color(cropped_img) == 'green' :
                     self.green_light = True
         #### END OF YOLO ####
