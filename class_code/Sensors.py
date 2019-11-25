@@ -60,7 +60,7 @@ from matplotlib import pyplot as plt
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-c", "--confidence", type=float, default=0.5,
+ap.add_argument("-c", "--confidence", type=float, default=0.4,
 	help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
 
@@ -213,7 +213,23 @@ class Sensors():
     #     return colors[counts.index(max(counts))]  # returns the color as a string
 
     def predict_color(self, img):
+        red_lower = np.array([0, 0, 230], dtype='uint8')
+        red_upper = np.array([60, 60, 255], dtype='uint8')
 
+        green_lower = np.array([0, 220, 0], dtype='uint8')
+        green_upper = np.array([100, 255, 100], dtype='uint8')
+
+        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        redmask = cv2.inRange(imghsv, red_lower, red_upper)
+        greenmask = cv2.inRange(imghsv, green_lower, green_upper)
+
+        imgs = np.hstack((redmask, greenmask))
+        imgs = np.hstack((img,imghsv))
+        plt.imshow(imgs)
+        plt.show()
+        return('red')
+        '''
         ret, redmask = cv2.threshold(cv2.extractChannel(img, 0), 127, 255,
                                      cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
         ret, greenmask = cv2.threshold(cv2.extractChannel(img, 1), 127, 255, cv2.THRESH_BINARY)
@@ -246,6 +262,7 @@ class Sensors():
         # return colors[counts.index(max(counts))]  # returns the color as a string
 
         return res  # returns the image and the count of non-zero pixels
+        '''
 
     # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
@@ -320,13 +337,15 @@ class Sensors():
         if yolo_flag:
             # from gluoncv import data
             yolo_image = Image.fromarray(frame, 'RGB')
+            
             x, img = load_test(yolo_image, short=416)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             class_IDs, scores, bounding_boxs = net(x.copyto(device))
 
             # The next two lines draw boxes around detected objects
             ax = utils.viz.plot_bbox(img, bounding_boxs[0], scores[0], class_IDs[0], class_names=net.classes)
-            #plt.show()
+            plt.show()
 
             # print(class_IDs)
             # print(scores)
@@ -343,9 +362,9 @@ class Sensors():
                 if ((scores[0][i])[0]) > args["confidence"] or i == 0:
                     current_class_id = net.classes[int((class_IDs[0][i])[0])]
                     current_score = (scores[0][i])[0]
-                    self.current_bb = bounding_boxs[0][i - 1]
-                    print("current_bb:",bounding_boxs[0][i-1])
-                    #print("ID:", current_class_id)
+                    self.current_bb = bounding_boxs[0][i]# - 1]
+                    print("current_bb:",bounding_boxs[0][i])#-1])
+                    print("ID:", current_class_id)
                     if current_class_id == 'traffic light':
                         self.traffic_boxes.append(self.current_bb)
 
@@ -365,14 +384,10 @@ class Sensors():
                     light_boxes.append(self.traffic_boxes[box])
                     print(light_boxes[-1])
             y_of_light = 400  # arbitrary value that is used to compare when there is more than one detected traffic light
-            if not light_boxes:
+            if len(light_boxes) < 1:
                 print("DEBUG: oh no! there aren't any boxes!")  # exit frame and try again
-                ########## we don't care about the rest of the code
-            # we only want to look at one light, so if we detect more than one,
-            # we will look at the traffic light that is closest to the top of the pic as
-            # that one is likely to be the one we want to look at
             else:
-                #print("light boxes = ", len(light_boxes))
+                print("There are light boxes")
                 if len(light_boxes) > 1:
                     for i in range(0, len(light_boxes)):
                         top_y = min(light_boxes[i][1], light_boxes[i][3])
