@@ -201,9 +201,9 @@ if __name__ == "__main__":
     print("Initial waypoint coordinates: ", des_x, des_y)
 
     # Begin Driving
-    car.cc.drive(0.6)  # get the car moving
+    #car.cc.drive(0.6)  # get the car moving
     time.sleep(0.1)  # ...but only briefly
-    car.cc.drive(car.speed)  # get the car moving again
+    #car.cc.drive(car.speed)  # get the car moving again
     restart_car = False
     stop_at_light = False
 
@@ -216,7 +216,7 @@ if __name__ == "__main__":
 
             if car.get_gray_value(coordinates, car.yolo_map)[0] == car.yolo_region_color:
                 car.yolo_region = True
-                if car.cc.sensor.green_light == False:
+                if True : # car.cc.sensor.green_light == False:
                     car.yolo_frame_count += 1  # = 10
 
                     if car.yolo_frame_count == 5:  # not sure how many frames we should count before we check YOLO. # monte carlo
@@ -234,7 +234,7 @@ if __name__ == "__main__":
                     #print("GO! it's a green light")
                     car.cc.sensor.green_light = True
                     if stop_at_light:
-                        restart_car = True
+                        #restart_car = True
                         stop_at_light = False
                 else:  # red or yellow light has been detected
                     car.cc.sensor.green_light = False
@@ -275,7 +275,7 @@ if __name__ == "__main__":
             ##################################################
 
 
-            ''' YOLO '''
+            ''' YOLO 
             while car_location == prev_gps or prev_gps[0] < 0:
                 # Get GPS coordinates
                 car_location = car.cc.sensor.get_gps_coord("Blue")  # ([height],[width]) (0,0) in upper right corner
@@ -322,9 +322,9 @@ if __name__ == "__main__":
             else:  # if the gps didn't find us
                 car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
                 prev_gps = car_location
-
-            car.update_log_file()  # update the log file
             
+            car.update_log_file()  # update the log file
+            '''
         car.cc.drive(0)  # stop the car
         print("Terminating Program")
         car.out_file.close()  # close the log file

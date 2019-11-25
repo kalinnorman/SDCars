@@ -170,37 +170,36 @@ class Sensors():
         exit(0)
 
     # # YOLO
-    # def find_color(self, img, color):
-    #     # Convert image to HSV
-    #     imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    #     imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    #
-    #     print("Shape of imghsv", imghsv.shape)
-    #     cv2.imwrite('cropped_image.jpg', imghsv)
-    #
-    #
-    #     # Define the desired colorspace
-    #     if color == 'red':
-    #         lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
-    #         upper = np.array([255, 255, 255], dtype='uint8')
-    #     elif color == 'green':
-    #         lower = np.array([40, 40, 50], dtype='uint8')
-    #         upper = np.array([255, 255, 100], dtype='uint8')
-    #     elif color == 'yellow':
-    #         lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
-    #         upper = np.array([255, 255, 50], dtype='uint8')
-    #     else:
-    #         print("Choose a valid color, bro.")
-    #
-    #     # Threshold the HSV image to get only the desired color
-    #     mask = cv2.inRange(imghsv, lower, upper)
-    #     cv2.imwrite(color + 'mask.jpg', mask)
-    #     res = cv2.bitwise_and(img, img, mask=mask)
-    #     count = cv2.countNonZero(res[:,:,0])
-    #
-    #     return res, count  # returns the image and the count of non-zero pixels
-    #
-    # # YOLO
+    def find_color(self, img, color):
+        # Convert image to HSV
+        imgrgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        imghsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        # print("Shape of imghsv", imghsv.shape)
+        cv2.imwrite('cropped_image.jpg', imghsv)
+    
+    
+        # Define the desired colorspace
+        if color == 'red':
+            lower = np.array([40, 40, 150], dtype='uint8') # was [150, 40, 40]
+            upper = np.array([255, 255, 255], dtype='uint8')
+        elif color == 'green':
+            lower = np.array([40, 40, 50], dtype='uint8')
+            upper = np.array([255, 255, 100], dtype='uint8')
+        elif color == 'yellow':
+            lower = np.array([40, 40, 0], dtype='uint8') #np.array([0, 40, 40], dtype='uint8')
+            upper = np.array([255, 255, 50], dtype='uint8')
+        else:
+            print("Choose a valid color, bro.")
+    
+        # Threshold the HSV image to get only the desired color
+        mask = cv2.inRange(imghsv, lower, upper)
+        cv2.imwrite(color + 'mask.jpg', mask)
+        res = cv2.bitwise_and(img, img, mask=mask)
+        count = cv2.countNonZero(res[:,:,0])
+        return res, count  # returns the image and the count of non-zero pixels
+    
+    # YOLO
     # def predict_color(self, img):
     #
     #     colors = ['red', 'yellow', 'green']
@@ -232,6 +231,19 @@ class Sensors():
             res = 'red'
 
         print("[redcount, greencount]:", count)
+
+        # this is from the old code, I just want to see how it works
+        colors = ['red', 'yellow', 'green']
+        counts = []
+    
+        for color in colors:
+            res2, count = self.find_color(img, color)
+            counts.append(count)
+        
+        print("old code counts:", counts)
+        print("old color:", colors[counts.index(max(counts))])
+
+        # return colors[counts.index(max(counts))]  # returns the color as a string
 
         return res  # returns the image and the count of non-zero pixels
 
@@ -328,10 +340,12 @@ class Sensors():
 
             # iterate through detected objects
             for i in range(len(class_IDs[0])):
-                if ((scores[0][i])[0]) > args["confidence"]:
+                if ((scores[0][i])[0]) > args["confidence"] or i == 0:
                     current_class_id = net.classes[int((class_IDs[0][i])[0])]
                     current_score = (scores[0][i])[0]
                     self.current_bb = bounding_boxs[0][i - 1]
+                    print("current_bb:",bounding_boxs[0][i-1])
+                    #print("ID:", current_class_id)
                     if current_class_id == 'traffic light':
                         self.traffic_boxes.append(self.current_bb)
 
@@ -345,6 +359,8 @@ class Sensors():
             light_boxes = []
             # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
             for box in range(0, len(self.traffic_boxes)):
+                #print("x1:",self.traffic_boxes)
+                #print("x2:",self.traffic_boxes[box])
                 if self.traffic_boxes[box][0] > self.img_middle and self.traffic_boxes[box][2] > self.img_middle:  # bounding box is on the right side of the camera
                     light_boxes.append(self.traffic_boxes[box])
                     print(light_boxes[-1])
