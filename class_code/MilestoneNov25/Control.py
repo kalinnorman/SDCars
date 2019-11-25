@@ -35,12 +35,12 @@ class Control:
         for i in range(0, 10):
             self.update_sensors()
 
-    def update_sensors(self):
+    def update_sensors(self, yolo_flag=False):
         """
         updates the sensors values
         :return:
         """
-        self.sensor.update_sensors()
+        self.sensor.update_sensors(yolo_flag=yolo_flag)
 
     def drive(self, speed):
         """
