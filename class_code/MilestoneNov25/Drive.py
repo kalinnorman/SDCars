@@ -18,7 +18,6 @@ car.start_car()
 # car.cc.steer(0)  # set the steering to straight
 # car.cc.drive(car.speed)
 stopAtIntersection = True
-
 try:
     while True:
 
@@ -91,9 +90,10 @@ try:
                     car.cc.drive(0)
                     stopAtIntersection = False
                     # FIXME (IMPLEMENT THE THREE LINES OF COMMENTED OUT CODE BENEATH THIS)
-                    # while YOLO STUFF:
-                    #     if light is green:
-                    #         car.cc.drive(car.speed)
+                    while not car.cc.green_light:
+                        car.cc.update_sensors(yolo_flag=True)
+                    car.cc.drive(car.speed)
+                    car.cc.green_light = False
                 elif car.cur_region == car.desired_region:
                     car.update_desired_region()
             steering_angle = car.get_angle()
