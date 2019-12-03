@@ -40,7 +40,7 @@ try:
         while car.cur_gps == car.prev_gps: # Wait for new gps coordinate
             # FIXME insert object detection behavior here!
             car.cc.update_sensors()
-            object_detected, image = car.cc.detector.detect_object()
+            pixel_count, object_detected, image = car.cc.detector.detect_object()
 
             if (object_detected):
                 if (not car.restart_car): # meaning the car is just stopping
