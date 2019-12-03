@@ -113,13 +113,17 @@ def detect_object(img):
     """
     # height = img.shape[0]
     # width = img.shape[1]
+    
+    pixelCount = 0   
 
     for y in range(y_min, y_max):
         for x in range(x_min, x_max):
             if img[y][x] > min_compare_value:
-                return (y,x), True
+                pixelCount += 1               
 
-    return (0,0), False
+    if (pixelCount > 0):
+        return (0,0), pixelCount,  True
+    return (0,0), pixelCount, False
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
@@ -154,7 +158,11 @@ try:
 #        cv2.imshow("image",threshold_image)
 #        key = cv2.waitKey(0)
 
-        location, objectFound = detect_object(threshold_image)
+        location, pxlCount, objectFound = detect_object(threshold_image)
+
+        print("pixel count = ", pxlCount)
+        plt.imshow(threshold_image)
+        plt.show()
 
         if objectFound:
             iterCount += 1

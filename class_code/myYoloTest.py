@@ -12,6 +12,8 @@ config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
+img_middle = 208
+
 
 try:
     while True:
@@ -26,8 +28,11 @@ try:
         # color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
 
         img = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
-        cv2.imshow("Img", img)
-        cv2.waitKey(0)
+#        cv2.imshow("Img", img)
+#        cv2.waitKey(0)
+
+        plt.imshow(img)
+        plt.show()
 
         bounding_boxes, yolo_img = yo.main_yolo(img)
         light_boxes = []
