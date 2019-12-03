@@ -16,7 +16,7 @@ class Follower:
     def __init__(self):
         self.speed = 0.3
         self.angle_multiplier = 0.5
-        self.cc = Control(start="1573")
+        self.cc = Control(start="1572")
         self.cur_angle = 0
         self.cur_gps = self.update_gps_pos()
         self.prev_gps = self.cur_gps

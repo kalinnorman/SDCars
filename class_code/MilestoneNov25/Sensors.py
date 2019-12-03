@@ -187,7 +187,7 @@ class Sensors():
         print(count)
         # plt.imshow(imgs)
         # plt.show()
-        if count > 200 :
+        if count > 170 :
             return 'green'
         else:
             return 'red'
