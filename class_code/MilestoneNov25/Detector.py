@@ -70,13 +70,13 @@ class Detector:
             for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
                 for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
                     if img[y][x] > self.min_difference:
-                        pixelCount += pixelCount
+                        pixelCount += 1
 
         else:
             for y in range(self.y_min, self.y_max):# 115 <= y <= 164
                 for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
                     if img[y][x] > self.min_difference:
-                        pixelCount += pixelCount
+                        pixelCount += 1
 
         if (pixelCount > 0):
             return pixelCount, True
