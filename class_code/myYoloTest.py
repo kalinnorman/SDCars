@@ -22,7 +22,10 @@ try:
         if not depth_frame or not color_frame:
             continue
 
-        img = cv2.cvtColor(color_frame, cv2.COLOR_BGR2RGB)
+        color_image = np.asanyarray(color_frame.get_data())   
+        # color_frame = cv2.applyColorMap(cv2.convertScaleAbs(color_frame, alpha=0.03), cv2.COLORMAP_JET)
+
+        img = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
         cv2.imshow("Img", img)
         cv2.waitKey(0)
 
