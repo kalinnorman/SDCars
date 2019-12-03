@@ -9,6 +9,8 @@ import math
 import cv2
 import sys
 
+pixel_threshold = 215 # How many pixels constitutes a car in front of us
+
 # Setup
 car = Follower()  # initialize the car
 prev_region = car.cur_region
@@ -22,13 +24,13 @@ try:
     while True:
 
         car.cc.update_sensors()
-        object_detected, image = car.cc.detector.detect_object()
+        pixel_count, object_detected, image = car.cc.detector.detect_object()
 
         if (object_detected):
             if (not car.restart_car): # meaning the car is just stopping
                 car.stop_time = time.time()
             car.stop_car()
-            if ( (time.time() - car.stop_time) > car.attempt_time): # after a few seconds, try to fix
+            if ( (time.time() - car.stop_time) > car.attempt_time) and (pixel_count < pixel_threshold): # after a few seconds, try to fix (if not behind a car)
                 car.attempt_correction()
             continue
         if (car.restart_car):
@@ -44,7 +46,7 @@ try:
                 if (not car.restart_car): # meaning the car is just stopping
                     car.stop_time = time.time()
                 car.stop_car()
-                if ( (time.time() - car.stop_time) > car.attempt_time):  # after a few seconds, try to fix
+                if ( (time.time() - car.stop_time) > car.attempt_time) and (pixel_count < pixel_threshold):  # after a few seconds, try to fix
                     car.attempt_correction()
                 continue
             if (car.restart_car):

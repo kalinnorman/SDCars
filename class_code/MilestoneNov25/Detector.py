@@ -65,18 +65,22 @@ class Detector:
         Searches through a picture for non-zero values, returning True if something is found
         (Search area is in need of further tuning)
         """
+        pixelCount = 0
         if (self.inIntersection):
             for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
                 for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
                     if img[y][x] > self.min_difference:
-                        return True
+                        pixelCount += pixelCount
+
         else:
             for y in range(self.y_min, self.y_max):# 115 <= y <= 164
                 for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
                     if img[y][x] > self.min_difference:
-                        return True
+                        pixelCount += pixelCount
 
-        return False
+        if (pixelCount > 0):
+            return pixelCount, True
+        return 0, False
 
     def detect_object(self):
         """
@@ -93,19 +97,19 @@ class Detector:
             cropped_image = self.crop_image(birdseye_frame)
             threshold_image = cv2.subtract(self.reference_image, cropped_image)
 
-            object_found = self.search_range(threshold_image)
+            pixel_count, object_found = self.search_range(threshold_image)
             
             if (object_found):
                 self.count = self.count + 1
                 if (self.count >= self.debuggerCount):
                    # self.count = 0 <- removed so it doesn't keep restarting and stopping
-                    return True, threshold_image
+                    return pixel_count, True, threshold_image
             else:
                 self.count = 0
-            return False, threshold_image
+            return pixel_count, False, threshold_image
         except:
             print("Detect Image Failed")
-            return False, 0
+            return pixel_count, False, 0
 
     def locate_object(self):
         """
