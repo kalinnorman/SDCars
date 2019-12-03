@@ -10,8 +10,6 @@ get_depth_data()
 get_rgb_data()
 get_gyro_data()
 get_accel_data()
-# Functions for GPS
-get_region()
 # Functions to access yolo data
 get_class_id()
 get_score()
@@ -21,7 +19,6 @@ gyro_data(gyro)
 accel_data(accel)
 update_sensors()
 # Functions for GPS
-get_gps_region()
 get_gps_coord(color)
 Author: KAB'B
 """
@@ -135,7 +132,6 @@ class Sensors():
         self.current_class_id = None
         self.current_score = None
         self.current_bb = [0, 0, 0, 0]
-        self.region = None
 
         # initialize the video stream, pointer to output video file, and
         # frame dimensions
@@ -219,10 +215,6 @@ class Sensors():
     def get_accel_data(self):
         return time.time(), self.current_accel
 
-    # Functions for GPS
-    def get_region(self):
-        return time.time(), self.region
-
     # Functions to access yolo data
     def get_class_id(self):
         return time.time(), self.current_class_id
@@ -258,7 +250,6 @@ class Sensors():
         rsframes = self.pipeline.wait_for_frames()
 
         # GPS data
-        self.region = self.get_gps_region()
         coordinates = self.get_gps_coord("Blue")
 
         #### Implement YOLOv3MXNet ####
@@ -344,29 +335,7 @@ class Sensors():
                 self.current_rgb = frame
 
         gc.collect()  # collect garbage
-
-    # call this when car has reached an intersection
-    def get_gps_region(self):
-        x,y = self.get_gps_coord("Blue")  # outputs coordinates (x,y)
-
-        # arbitrary values, need to test when have testing space
-        # we only care about the horizontal axis (y) for turning purposes
-        if y > 1400 :
-            region = 'north'
-            # should go left
-        elif y > 1200 :
-            region = 'middle north'
-            # should go right
-        elif y < 200 :
-            region = 'south'
-            # should go left
-        elif y < 500 :
-            region = 'middle south'
-            # should go right
-        else :
-            region = 'middle'
-            # can go any direction
-        return region
+        return coordinates
 
     # retrieves the coordinates of a car (provided in class code)
     # car color options are: "Green", "Red", "Purple", "Blue", "Yellow"

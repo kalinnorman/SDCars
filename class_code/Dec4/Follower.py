@@ -19,7 +19,7 @@ class Follower:
         self.cc = Control(start="1572")
         self.start_time = time.time()
         self.cur_angle = 0
-        self.cur_gps = self.update_gps_pos()
+        self.cur_gps = self.cc.sensor.get_gps_coord("Blue")
         self.prev_gps = self.cur_gps
         self.regions_img = cv2.imread('../MilestoneNov25/Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
@@ -135,9 +135,10 @@ class Follower:
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
-    def update_gps_pos(self):
-        self.cur_gps = self.cc.sensor.get_gps_coord("Blue")
-        return self.cur_gps
+    def update_gps_pos(self, coordinates):
+        self.cur_gps = coordinates
+        # self.cur_gps = self.cc.sensor.get_gps_coord("Blue")
+        # return self.cur_gps
 
     def update_log_file(self):
         if self.cur_region == 0:
