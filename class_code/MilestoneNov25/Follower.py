@@ -24,8 +24,8 @@ class Follower:
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
         self.cur_region = self.update_region()
         self.update_desired_region()
-        self.stops_and_lights = cv2.imread('Maps/StopSignsAndLightDetection.bmp') # RGB
-        self.stops_and_lights = cv2.cvtColor(self.stops_and_lights, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.intersectionStops = cv2.imread('Maps/IntersectionStops.bmp') # RGB
+        self.intersectionStops = cv2.cvtColor(self.intersectionStops, cv2.COLOR_BGR2GRAY) # Grayscale
         self.log_filename = "Log.txt" # Creates file named by the date and time to log items for debugging
         if os.path.exists(self.log_filename):
             os.remove(self.log_filename)
@@ -50,10 +50,10 @@ class Follower:
         self.region4to1 = cv2.cvtColor(self.region4to1, cv2.COLOR_BGR2GRAY) # Grayscale
         self.region4to2 = cv2.imread('Maps/Region4to2.bmp') # RGB
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
-
- 
+        
         self.restart_car = False
         self.attempt_time = 3.5
+        
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = Planner(self.regions1and4, search_radius=50)
             print("using regions 1 and 4")
@@ -198,24 +198,4 @@ class Follower:
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve left...")
-
-        # onLeft, onRight = self.cc.detector.locate_object()
-        # print("attempting to avoid")
-        # #if (onLeft and onRight):
-        # #    self.restart_car = False
-        # #    print("Obstacle too hard to avoid!")
-        # #    return
-        # if onLeft: # swerve right     # perhaps make it inch? *.9 speed? stop?
-
-        # elif onRight: # swerve left
-        #     print("onRight")
-        #     self.cc.steer(-30)
-        #     self.cc.drive(self.speed)
-        #     self.restart_car = False
-        #     print("Swerve left...")
-        # else: # Unnecessary ?
-        #     print("Object thin and centered - choosing either side")
-        #     self.cc.steer(-30)
-        #     self.cc.drive(self.speed)
-        #     self.restart_car = False
         time.sleep(1)

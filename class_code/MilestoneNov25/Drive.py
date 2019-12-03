@@ -17,7 +17,7 @@ cur_img = car.predict.map
 car.start_car()
 # car.cc.steer(0)  # set the steering to straight
 # car.cc.drive(car.speed)
-
+stopAtIntersection = True
 try:
     while True:
 
@@ -30,7 +30,6 @@ try:
             car.stop_car()
             if ( (time.time() - car.stop_time) > car.attempt_time): # after a few seconds, try to fix
                 car.attempt_correction()
-                #print("Attempting Correction")
             continue
         if (car.restart_car):
             car.start_car()
@@ -47,7 +46,6 @@ try:
                 car.stop_car()
                 if ( (time.time() - car.stop_time) > car.attempt_time):  # after a few seconds, try to fix
                     car.attempt_correction()
-                    #print("Attempted Correction")
                 continue
             if (car.restart_car):
                 car.start_car()
@@ -58,7 +56,7 @@ try:
                 continue
             elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
                 continue
-            print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
+#            print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
             if car.prev_gps[0] < 0: # Updates the prev gps if the car was out of bounds but reentered
                 car.prev_gps = car.cur_gps
         # Make steering decisions if a valid GPS coordinate was returned
@@ -86,8 +84,16 @@ try:
                     car.cc.drive(0)
                     time.sleep(2)
                     car.cc.drive(car.speed)
-                # FIXME elif for YOLO behavior will go here
-                # FIXME if we do need to stop at the light I also need to add in a good way to detect where that is...
+                    stopAtIntersection = True
+                elif car.get_gray_value(car.cur_gps, car.intersectionStops) == 128 and stopAtIntersection:
+                    car.cc.steer(0)
+                    car.cc.drive(0)
+                    stopAtIntersection = False
+                    # FIXME (IMPLEMENT THE THREE LINES OF COMMENTED OUT CODE BENEATH THIS)
+                    while not car.cc.sensor.green_light:
+                        car.cc.update_sensors(yolo_flag=True)
+                    car.cc.drive(car.speed)
+                    car.cc.sensor.green_light = False
                 elif car.cur_region == car.desired_region:
                     car.update_desired_region()
             steering_angle = car.get_angle()
