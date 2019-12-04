@@ -165,7 +165,7 @@ class Sensors():
 
     # # YOLO
 
-    def predict_color(self, img, show_masks=False):
+    def predict_color(self, img, show_masks=True):
         """
         Updated by redd ot hopefully be more robust.
         Hopefully.
