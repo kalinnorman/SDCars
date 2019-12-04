@@ -166,27 +166,34 @@ class Sensors():
     # # YOLO
 
     def predict_color(self, img):
-        red_lower = np.array([0, 0, 230], dtype='uint8')
-        red_upper = np.array([60, 60, 255], dtype='uint8')
+        """
+        Updated by redd ot hopefully be more robust.
+        Hopefully.
+        If you don't think it's working very well, it's probably not.
+        """
 
-        green_lower = np.array([0, 200, 0], dtype='uint8')
-        green_upper = np.array([100, 255, 150], dtype='uint8')
-        
-        imghsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+        top = img[0:int(img.shape[0] / 2), :]
+        bottom = img[int(img.shape[0] / 2):img.shape[0], :]
 
-        redmask = cv2.inRange(imghsv, red_lower, red_upper)
-        greenmask = cv2.inRange(imghsv, green_lower, green_upper)
+        ret, redmask = cv2.threshold(cv2.extractChannel(top, 2), 170, 255, cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
+        ret, greenmask = cv2.threshold(cv2.extractChannel(bottom, 1), 127, 255, cv2.THRESH_BINARY)
 
-        imgs = np.hstack((redmask, greenmask))
-        
-        count = cv2.countNonZero(greenmask)#[:,:,0])
-        print(count)
-        # plt.imshow(imgs)
-        # plt.show()
-        if count > 170 :
-            return 'green'
+        redcount = cv2.countNonZero(redmask)
+        greencount = cv2.countNonZero(greenmask)
+
+        count = [redcount, greencount]
+
+        if greencount > redcount:
+            res = 'green'
         else:
-            return 'red'
+            res = 'red'
+
+        if show_masks:
+            cv2.imshow("r", redmask)
+            cv2.imshow("g", greenmask)
+            cv2.waitKey(0)
+
+        return res
 
     # Data is from IMU, camera, and YOLO3
     def get_all_data(self):
