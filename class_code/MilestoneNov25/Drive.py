@@ -17,13 +17,12 @@ prev_region = car.cur_region
 next_region = car.desired_region
 cur_img = car.predict.map
 car.start_car()
-# car.cc.steer(0)  # set the steering to straight
-# car.cc.drive(car.speed)
+object_detected = False
 stopAtIntersection = True
 try:
     while True:
         # Get new GPS Coordinate and check for objects
-        while car.cur_gps == car.prev_gps: # Don't move on in the code until the car has moved
+        while car.cur_gps == car.prev_gps or object_detected: # Don't move on in the code until the car has moved
             car.update_log_file()  # update the log file
             coords = car.cc.update_sensors()
             car.update_gps_pos(coords)
