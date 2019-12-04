@@ -22,26 +22,12 @@ car.start_car()
 stopAtIntersection = True
 try:
     while True:
-
-        car.cc.update_sensors()
-        pixel_count, object_detected, image = car.cc.detector.detect_object()
-
-        if (object_detected):
-            if (not car.restart_car): # meaning the car is just stopping
-                car.stop_time = time.time()
-            car.stop_car()
-            if ( (time.time() - car.stop_time) > car.attempt_time) and (pixel_count < pixel_threshold): # after a few seconds, try to fix (if not behind a car)
-                car.attempt_correction()
-            continue
-        if (car.restart_car):
-            car.start_car()
-
-        # Get new GPS Coordinate
-        while car.cur_gps == car.prev_gps: # Wait for new gps coordinate
-            # FIXME insert object detection behavior here!
-            car.cc.update_sensors()
+        # Get new GPS Coordinate and check for objects
+        while car.cur_gps == car.prev_gps: # Don't move on in the code until the car has moved
+            car.update_log_file()  # update the log file
+            coords = car.cc.update_sensors()
+            car.update_gps_pos(coords)
             pixel_count, object_detected, image = car.cc.detector.detect_object()
-
             if (object_detected):
                 if (not car.restart_car): # meaning the car is just stopping
                     car.stop_time = time.time()
@@ -51,9 +37,7 @@ try:
                 continue
             if (car.restart_car):
                 car.start_car()
-
-
-            car.update_gps_pos()
+            
             if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
                 continue
             elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
@@ -102,13 +86,9 @@ try:
             car.cc.steer(steering_angle)
             car.prev_gps = car.cur_gps
 
-            
-
         else:  # if the gps didn't find us
             car.cur_region = gp.region_dict['Out of bounds']  # indicate we are out of bounds
             car.prev_gps = car.cur_gps
-           
-        car.update_log_file()  # update the log file
     
 except KeyboardInterrupt:  # if the user Ctrl+C's us
     print("User Terminated Program")

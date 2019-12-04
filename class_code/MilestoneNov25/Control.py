@@ -40,7 +40,8 @@ class Control:
         updates the sensors values
         :return:
         """
-        self.sensor.update_sensors(yolo_flag=yolo_flag)
+        coords = self.sensor.update_sensors(yolo_flag=yolo_flag)
+        return coords
 
     def drive(self, speed):
         """

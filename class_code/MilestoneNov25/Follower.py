@@ -18,8 +18,9 @@ class Follower:
         self.angle_multiplier = 0.5
         self.cc = Control(start="1572")
         self.cur_angle = 0
-        self.cur_gps = self.update_gps_pos()
+        self.cur_gps = self.cc.sensor.get_gps_coord("Blue")
         self.prev_gps = self.cur_gps
+        self.start_time = time.time()
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
         self.cur_region = self.update_region()
@@ -134,15 +135,16 @@ class Follower:
         self.cur_region = gp.region_dict[gp.region_values[current_gray_val]]
         return self.cur_region
 
-    def update_gps_pos(self):
-        self.cur_gps = self.cc.sensor.get_gps_coord("Blue")
-        return self.cur_gps
+    def update_gps_pos(self, coordinates):
+        self.cur_gps = coordinates
 
     def update_log_file(self):
         if self.cur_region == 0:
             out_string = "OUTSIDE OF GPS BOUNDS"
         else:
-            out_string = "Region:"+str(self.cur_region)+" | GPS:"+str(self.cur_gps)+" | Angle:"+str(self.cur_angle)
+            duration = time.time() - self.start_time
+            self.start_time = time.time()
+            out_string = "Region:"+str(self.cur_region)+" | GPS:"+str(self.cur_gps)+" | Angle:"+str(self.cur_angle)+" | Time Duration:"+str(duration)
         self.out_file.write(out_string + "\n")
 
     def update_desired_region(self):
