@@ -116,11 +116,10 @@ class Detector:
 No longer being used
 
     def locate_object(self):
-        """
-        Loads in a depth image, converts to birdseye view, crops
-        Determines whether the object is found on the right side or left side
-        Allows car to attempt to go around object
-        """
+        #Loads in a depth image, converts to birdseye view, crops
+        #Determines whether the object is found on the right side or left side
+        #Allows car to attempt to go around object
+        
         print("In locate object")
         try:
             time, depth_image = self.sensor.get_depth_data()
@@ -140,10 +139,11 @@ No longer being used
             return False, 0
 
     def search_side(self, img):
-        """
-        Searches through a picture for non-zero values, returning True if something is found
-        (Search area is in need of further tuning)
-        """
+        
+        #Searches through a picture for non-zero values, returning True if something is found
+        #(Search area is in need of further tuning)
+       
+        
         print("In search side")
         width = img.shape[1]
         offset = 5
