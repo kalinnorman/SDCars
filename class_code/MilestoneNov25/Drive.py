@@ -26,6 +26,7 @@ try:
             car.update_log_file()  # update the log file
             coords = car.cc.update_sensors()
             car.update_gps_pos(coords)
+            car.update_region()
             pixel_count, object_detected, image = car.cc.detector.detect_object()
             if (object_detected):
                 if (not car.restart_car): # meaning the car is just stopping
@@ -37,16 +38,16 @@ try:
             if (car.restart_car):
                 car.start_car()
             
-            if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
-                continue
-            elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
-                continue
+            # if car.cur_gps[0] > 1024 or car.cur_gps[1] > 1600:
+            #     continue
+            # elif car.cur_gps[0] < 0 or car.cur_gps[1] < 0:
+            #     continue
 #            print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
             if car.prev_gps[0] < 0: # Updates the prev gps if the car was out of bounds but reentered
                 car.prev_gps = car.cur_gps
         # Make steering decisions if a valid GPS coordinate was returned
         if car.cur_gps[0] > 0:
-            car.update_region()
+            # car.update_region()
             # First case: Entering the intersection from any region
             if prev_region != gp.region_dict['Intersection'] and car.cur_region == gp.region_dict['Intersection']: 
                 cur_img, next_region = car.get_intersection_map(prev_region)  # use the appropriate map to turn
