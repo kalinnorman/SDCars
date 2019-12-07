@@ -53,7 +53,7 @@ class Follower:
         self.region4to2 = cv2.cvtColor(self.region4to2, cv2.COLOR_BGR2GRAY) # Grayscale
         
         self.restart_car = False
-        self.attempt_time = 3.5
+        self.attempt_time = 2
         
         if self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']:
             self.predict = Planner(self.regions1and4, search_radius=50)

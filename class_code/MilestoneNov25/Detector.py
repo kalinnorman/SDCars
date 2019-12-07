@@ -111,6 +111,10 @@ class Detector:
             print("Detect Image Failed")
             return pixel_count, False, 0
 
+
+"""
+No longer being used
+
     def locate_object(self):
         """
         Loads in a depth image, converts to birdseye view, crops
@@ -171,3 +175,5 @@ class Detector:
             return False, True
         else:
             return True, True
+
+"""
