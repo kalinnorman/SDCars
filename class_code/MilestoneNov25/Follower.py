@@ -137,8 +137,10 @@ class Follower:
 
     def update_gps_pos(self, coordinates):
         if coordinates[0] < 0:
-            coordinates[0] = coordinates[0]*-1
-            coordinates[1] = coordinates[1]*-1
+            temp1 = coordinates[0]*-1
+            temp2 = coordinates[1]*-1
+            coordinates = (temp1,temp2)
+            print("fixed negative GPS vals")
         self.cur_gps = coordinates
 
     def update_log_file(self):
