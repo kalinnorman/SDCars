@@ -174,8 +174,9 @@ class Sensors():
 
         if save_img_data:
             dir = 'training_data/'
-            np.save(dir+str(time.time())+'.data.npy', img)
-            cv2.imwrite(dir+str(time.time())+'.img.jpeg', img)
+            id = str(time.time())
+            np.save(dir+id+'.data.npy', img)
+            cv2.imwrite(dir+id+'.img.jpeg', img)
 
         top = img[0:int(img.shape[0] / 2), :]
         bottom = img[int(img.shape[0] / 2):img.shape[0], :]
