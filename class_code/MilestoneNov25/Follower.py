@@ -136,6 +136,9 @@ class Follower:
         return self.cur_region
 
     def update_gps_pos(self, coordinates):
+        if coordinates[0] < 0:
+            coordinates[0] = coordinates[0]*-1
+            coordinates[1] = coordinates[1]*-1
         self.cur_gps = coordinates
 
     def update_log_file(self):
