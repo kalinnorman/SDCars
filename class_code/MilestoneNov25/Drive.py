@@ -77,14 +77,15 @@ try:
                 if car.check_stop_signs(): # If at a stop sign location
                     car.cc.steer(0)
                     car.cc.drive(0)
+                    print("Stopped At Stop Sign")
                     time.sleep(2)
+                    print("Starting At Stop Sign")
                     car.cc.drive(car.speed)
                     stopAtIntersection = True
                 elif car.get_gray_value(car.cur_gps, car.intersectionStops) == 128 and stopAtIntersection:
                     car.cc.steer(0)
                     car.cc.drive(0)
                     stopAtIntersection = False
-                    # FIXME (IMPLEMENT THE THREE LINES OF COMMENTED OUT CODE BENEATH THIS)
                     while not car.cc.sensor.green_light:
                         car.cc.update_sensors(yolo_flag=True)
                     car.cc.drive(car.speed)
