@@ -19,10 +19,13 @@ cur_img = car.predict.map
 car.start_car()
 object_detected = False
 stopAtIntersection = True
+wait = False
+wait_duration = 1.0/5.0
+wait_time_begin = time.time() - wait_duration
 try:
     while True:
         # Get new GPS Coordinate and check for objects
-        while car.cur_gps == car.prev_gps or object_detected: # Don't move on in the code until the car has moved
+        while car.cur_gps == car.prev_gps or object_detected or wait: # Don't move on in the code until the car has moved
             car.update_log_file()  # update the log file
             coords = car.cc.update_sensors()
             car.update_gps_pos(coords)
@@ -45,6 +48,12 @@ try:
 #            print(car.get_gray_value(car.cur_gps, car.stops_and_lights)) # FIXME Delete this line once we have the gray value for YOLO
             if car.prev_gps[0] < 0: # Updates the prev gps if the car was out of bounds but reentered
                 car.prev_gps = car.cur_gps
+            if time.time()-wait_time_begin >= wait_duration:
+                wait = False
+            else:
+                time.sleep(1.0/20.0)
+        wait_time_begin = time.time()
+        wait = True
         # Make steering decisions if a valid GPS coordinate was returned
         if car.cur_gps[0] > 0:
             # car.update_region()
