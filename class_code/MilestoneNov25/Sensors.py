@@ -262,7 +262,7 @@ class Sensors():
         #### Implement YOLOv3MXNet ####
         if yolo_flag:
             # from gluoncv import data
-            frame2 = frame[0:int(self.H/2), int(1*self.W/3):self.W] # cropping image
+            frame2 = frame[0:int(self.H/2), 0:self.W] # cropping image
 
             yolo_image = Image.fromarray(frame2, 'RGB')
             
