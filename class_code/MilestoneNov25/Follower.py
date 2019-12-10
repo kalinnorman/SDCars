@@ -23,6 +23,7 @@ class Follower:
         self.start_time = time.time()
         self.regions_img = cv2.imread('Maps/regions.bmp') # RGB
         self.regions_img = cv2.cvtColor(self.regions_img, cv2.COLOR_BGR2GRAY) # Grayscale
+        self.turn = False
         self.cur_region = self.update_region()
         self.update_desired_region()
         self.intersectionStops = cv2.imread('Maps/IntersectionStops.bmp') # RGB
@@ -153,14 +154,26 @@ class Follower:
         self.out_file.write(out_string + "\n")
 
     def update_desired_region(self):
-        if self.cur_region == gp.region_dict['Region 1']:
-            self.desired_region = gp.region_dict['Region 2']
-        elif self.cur_region == gp.region_dict['Region 2']:
-            self.desired_region = gp.region_dict['Region 3']
-        elif self.cur_region == gp.region_dict['Region 3']:
-            self.desired_region = gp.region_dict['Region 4']
+        if self.turn:
+            if self.cur_region == gp.region_dict['Region 1']:
+                self.desired_region = gp.region_dict['Region 4']
+            elif self.cur_region == gp.region_dict['Region 2']:
+                self.desired_region = gp.region_dict['Region 2']
+            elif self.cur_region == gp.region_dict['Region 3']:
+                self.desired_region = gp.region_dict['Region 3']
+            else:
+                self.desired_region = gp.region_dict['Region 1']
+            self.turn = False
         else:
-            self.desired_region = gp.region_dict['Region 1']
+            if self.cur_region == gp.region_dict['Region 1']:
+                self.desired_region = gp.region_dict['Region 3']
+            elif self.cur_region == gp.region_dict['Region 2']:
+                self.desired_region = gp.region_dict['Region 4']
+            elif self.cur_region == gp.region_dict['Region 3']:
+                self.desired_region = gp.region_dict['Region 1']
+            else:
+                self.desired_region = gp.region_dict['Region 2']
+            self.turn = True
         return self.desired_region
 
     def check_stop_signs(self):
