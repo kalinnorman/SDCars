@@ -78,6 +78,9 @@ class Planner:
     
     def set_img(self,img):
         self.map = img
+
+    def get_img(self):
+        return self.map
     
     def set_gray_val(self, desired_gray_val):
         self.desired_gray_val = desired_gray_val
