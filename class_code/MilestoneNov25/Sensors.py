@@ -306,12 +306,12 @@ class Sensors():
             # bounding_box = [x1, y1, x2, y2]   # format of bounding_boxes[i]
             for box in range(0, len(self.traffic_boxes)):
                 light_boxes.append(self.traffic_boxes[box])
-                print(light_boxes[-1])
+                # print(light_boxes[-1])
             y_of_light = 400  # arbitrary value that is used to compare when there is more than one detected traffic light
             if len(light_boxes) < 1:
-                print("DEBUG: oh no! there aren't any boxes!")  # exit frame and try again
+                print("DEBUG: oh no! there aren't any traffic lights!")  # exit frame and try again
             else:
-                print("There are light boxes")
+                # print("There are light boxes")
                 if len(light_boxes) > 1:
                     for i in range(0, len(light_boxes)):
                         top_y = min(light_boxes[i][1], light_boxes[i][3])

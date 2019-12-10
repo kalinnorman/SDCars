@@ -179,19 +179,19 @@ class Follower:
     def check_stop_signs(self):
         if self.cur_region == gp.region_dict['Region 1']:
             if self.cur_gps[0] < 280:
-                if self.prev_gps[1] > 230 and self.cur_gps[1] <= 230:
+                if self.prev_gps[1] > 235 and self.cur_gps[1] <= 235:
                     return True
         elif self.cur_region == gp.region_dict['Region 2']:
             if self.cur_gps[1] < 75:
-                if self.prev_gps[0] > 370 and self.cur_gps[0] <= 370:
+                if self.prev_gps[0] > 375 and self.cur_gps[0] <= 375:
                     return True
         elif self.cur_region == gp.region_dict['Region 3']:
             if self.cur_gps[1] > 1500:
-                if self.prev_gps[0] < 690 and self.cur_gps[0] >= 690:
+                if self.prev_gps[0] < 685 and self.cur_gps[0] >= 685:
                     return True
         elif self.cur_region == gp.region_dict['Region 4']:
             if self.cur_gps[0] > 790:
-                if self.prev_gps[1] < 1330 and self.cur_gps[1] >= 1330:
+                if self.prev_gps[1] < 1325 and self.cur_gps[1] >= 1325:
                     return True
         return False
 
