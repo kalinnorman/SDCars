@@ -209,7 +209,7 @@ class Follower:
     def attempt_correction(self):
         img = self.predict.get_img()
         gray_val = self.get_gray_value(self.cur_gps, img)
-        if gray_val >= 128:
+        if gray_val <= 128:
             self.cc.steer(-18)
             self.cc.drive(self.speed)
             self.restart_car = False
