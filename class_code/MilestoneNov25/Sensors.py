@@ -182,7 +182,7 @@ class Sensors():
         bottom = img[int(img.shape[0] / 2):img.shape[0], :]
 
         ret, redmask = cv2.threshold(cv2.extractChannel(top, 0), 170, 255, cv2.THRESH_BINARY)  # may need to be 0 on Jetson.
-        ret, greenmask = cv2.threshold(cv2.extractChannel(bottom, 1), 127, 255, cv2.THRESH_BINARY)
+        ret, greenmask = cv2.threshold(cv2.extractChannel(bottom, 1), 170, 255, cv2.THRESH_BINARY)
 
         redcount = cv2.countNonZero(redmask)
         greencount = cv2.countNonZero(greenmask)
