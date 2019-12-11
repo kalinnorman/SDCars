@@ -61,11 +61,13 @@ try:
             # First case: Entering the intersection from any region
             if prev_region != gp.region_dict['Intersection'] and car.cur_region == gp.region_dict['Intersection']: 
                 cur_img, next_region = car.get_intersection_map(prev_region)  # use the appropriate map to turn
+                print("Entering Intersection from region",prev_region,"and going to region",next_region,"trying to get to region",car.desired_region)
                 car.predict.set_img(cur_img)
                 prev_region = car.cur_region
                 car.cc.detector.inIntersection = True
             # Second case: Leaving the intersection
             elif prev_region == gp.region_dict['Intersection'] and car.cur_region != gp.region_dict['Intersection']:
+                print("Leaving Intersection and following region",next_region)
                 if next_region == gp.region_dict['Region 1'] or next_region == gp.region_dict['Region 4']:
                     cur_img = car.regions1and4 
                 else:
@@ -91,6 +93,7 @@ try:
                     car.cc.sensor.green_light = False
                 elif car.cur_region == car.desired_region:
                     car.update_desired_region()
+                    print("reached the desired region and the next region is region",car.desired_region)
             steering_angle = car.get_angle()
             car.cc.steer(steering_angle)
             car.prev_gps = car.cur_gps
