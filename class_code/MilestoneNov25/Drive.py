@@ -30,8 +30,8 @@ try:
             coords = car.cc.update_sensors()
             car.update_gps_pos(coords)
             car.update_region()
-            #pixel_count, object_detected, image = car.cc.detector.detect_object()
-            pixel_count, object_detected, image = car.cc.detector.detect_object(car.cur_angle)
+            pixel_count, object_detected, image = car.cc.detector.detect_object()
+            # pixel_count, object_detected, image = car.cc.detector.detect_object(car.cur_angle)
             if (object_detected):
                 if (not car.restart_car): # meaning the car is just stopping
                     car.stop_time = time.time()

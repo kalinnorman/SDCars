@@ -63,6 +63,63 @@ class Detector:
     def search_range(self, img):
         #""
         #Searches through a picture for non-zero values, returning True if something is found
+        #(Search area is in need of further tuning)
+        #""
+        pixelCount = 0
+        if (self.inIntersection):
+            for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
+                for x in range(self.x_min_int, self.x_max_int):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        pixelCount += 1
+
+        else:
+            for y in range(self.y_min, self.y_max):# 115 <= y <= 164
+                for x in range(self.x_min, self.x_max):    # 25 <= x <= 160
+                    if img[y][x] > self.min_difference:
+                        pixelCount += 1
+
+        if (pixelCount > 0):
+            return pixelCount, True
+        return 0, False
+
+    def detect_object(self):
+        #""
+        #Main class method
+       # Loads in a depth image, converts to birdseye view, Cannies, and then crops.
+       #""
+        try:
+            time, depth_image = self.sensor.get_depth_data()
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+
+            grayed_depth = cv2.cvtColor(depth_colormap, cv2.COLOR_BGR2GRAY)
+            birdseye_frame = cv2.warpPerspective(grayed_depth, self.birdseye_transform_matrix, (200, 200))
+            # cannied_image = cv2.Canny(birdseye_frame, 50, 200) 
+            cropped_image = self.crop_image(birdseye_frame)
+            threshold_image = cv2.subtract(self.reference_image, cropped_image)
+
+            pixel_count, object_found = self.search_range(threshold_image)
+            
+            if (object_found):
+                self.count = self.count + 1
+                if (self.count >= self.debuggerCount):
+                   # self.count = 0 <- removed so it doesn't keep restarting and stopping
+                    return pixel_count, True, threshold_image
+            else:
+                self.count = 0
+            return pixel_count, False, threshold_image
+        except:
+            print("Detect Image Failed")
+            return pixel_count, False, 0
+
+"""
+    #Used to account for angle being passed in 
+    #    Good idea? 
+
+
+
+    def search_range(self, img, angle):
+        #""
+        #Searches through a picture for non-zero values, returning True if something is found
         #Search area is in need of further tuning)
         #""
 
@@ -122,7 +179,7 @@ class Detector:
             print("Detect Image Failed")
             return pixel_count, False, 0
 """
-
+"""
 No longer being used
 
     def locate_object(self):
