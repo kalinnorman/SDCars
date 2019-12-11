@@ -232,4 +232,4 @@ class Follower:
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve left...")
-        time.sleep(0.75)
+        time.sleep(1)
