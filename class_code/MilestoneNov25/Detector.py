@@ -25,12 +25,12 @@ class Detector:
         self.birdseye_transform_matrix = np.load('car_perspective_transform_matrix_warp_2.npy')
         self.count = 0
         self.debuggerCount = 3 # Accounts for noise
-        self.min_difference = 3 # Accounts for normal fluctuation when comparing to reference image
+        self.min_difference = 5 # Accounts for normal fluctuation when comparing to reference image
         self.reference_image = cv2.imread("/home/nvidia/Desktop/class_code/MilestoneNov25/referenceImage.jpg",0)
         self.inIntersection = False
 
         # Search Region Parameters:
-        self.y_min = 118 # 118
+        self.y_min = 115 # 118
         self.y_max = 163 # (193?)
         self.x_min = 81
         self.x_max = 107
@@ -60,11 +60,12 @@ class Detector:
 
         return masked_image
 
+"""
     def search_range(self, img):
-        """
-        Searches through a picture for non-zero values, returning True if something is found
-        (Search area is in need of further tuning)
-        """
+        #""
+        #Searches through a picture for non-zero values, returning True if something is found
+        #(Search area is in need of further tuning)
+        #""
         pixelCount = 0
         if (self.inIntersection):
             for y in range(self.y_min_int, self.y_max_int):# 115 <= y <= 164
@@ -83,10 +84,10 @@ class Detector:
         return 0, False
 
     def detect_object(self):
-        """
-        Main class method
-        Loads in a depth image, converts to birdseye view, Cannies, and then crops.
-        """
+        #""
+        #Main class method
+       # Loads in a depth image, converts to birdseye view, Cannies, and then crops.
+       #""
         try:
             time, depth_image = self.sensor.get_depth_data()
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
@@ -111,8 +112,9 @@ class Detector:
             print("Detect Image Failed")
             return pixel_count, False, 0
 
-""" Used to account for angle being passed in 
-        Good idea? 
+"""
+    #Used to account for angle being passed in 
+    #    Good idea? 
 
 
     def search_range(self, img):
@@ -178,7 +180,7 @@ class Detector:
             return pixel_count, False, 0
 """
 
-"""
+""
 No longer being used
 
     def locate_object(self):

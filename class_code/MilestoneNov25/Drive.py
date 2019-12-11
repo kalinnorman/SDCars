@@ -9,7 +9,7 @@ import math
 import cv2
 import sys
 
-pixel_threshold = 215 # How many pixels constitutes a car in front of us
+pixel_threshold = 160 # How many pixels constitutes a car in front of us
 
 # Setup
 car = Follower()  # initialize the car
@@ -30,8 +30,8 @@ try:
             coords = car.cc.update_sensors()
             car.update_gps_pos(coords)
             car.update_region()
-            pixel_count, object_detected, image = car.cc.detector.detect_object()
-            # pixel_count, object_detected, image = car.cc.detector.detect_object(car.cur_angle)
+            #pixel_count, object_detected, image = car.cc.detector.detect_object()
+            pixel_count, object_detected, image = car.cc.detector.detect_object(car.cur_angle)
             if (object_detected):
                 if (not car.restart_car): # meaning the car is just stopping
                     car.stop_time = time.time()

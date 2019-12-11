@@ -219,7 +219,7 @@ class Follower:
             self.cc.drive(self.speed)
             self.restart_car = False
             print("Swerve right...")
-        time.sleep(1)
+        time.sleep(0.75)
 
         # if (self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']): # In inside lanes, swerve right
         #     self.cc.steer(18)
