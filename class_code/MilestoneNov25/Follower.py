@@ -207,29 +207,29 @@ class Follower:
         self.StopTime = time.time()
 
     def attempt_correction(self):
-        img = self.predict.get_img()
-        gray_val = self.get_gray_value(self.cur_gps, img)
-        if gray_val <= 128:
-            self.cc.steer(-18)
-            self.cc.drive(self.speed)
-            self.restart_car = False
-            print("Swerve left...")
-        else:
-            self.cc.steer(18)
-            self.cc.drive(self.speed)
-            self.restart_car = False
-            print("Swerve right...")
-        time.sleep(0.75)
-
-        # if (self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']): # In inside lanes, swerve right
-        #     self.cc.steer(18)
-        #     self.cc.drive(self.speed)
-        #     self.restart_car = False
-        #     print("Swerve right...")
-        
-        # else:  # In outside lanes, swerve left
+        # img = self.predict.get_img()
+        # gray_val = self.get_gray_value(self.cur_gps, img)
+        # if gray_val <= 128:
         #     self.cc.steer(-18)
         #     self.cc.drive(self.speed)
         #     self.restart_car = False
         #     print("Swerve left...")
-        # time.sleep(1)
+        # else:
+        #     self.cc.steer(18)
+        #     self.cc.drive(self.speed)
+        #     self.restart_car = False
+        #     print("Swerve right...")
+        # time.sleep(0.75)
+
+        if (self.cur_region == gp.region_dict['Region 1'] or self.cur_region == gp.region_dict['Region 4']): # In inside lanes, swerve right
+            self.cc.steer(18)
+            self.cc.drive(self.speed)
+            self.restart_car = False
+            print("Swerve right...")
+        
+        else:  # In outside lanes, swerve left
+            self.cc.steer(-18)
+            self.cc.drive(self.speed)
+            self.restart_car = False
+            print("Swerve left...")
+        time.sleep(0.75)
